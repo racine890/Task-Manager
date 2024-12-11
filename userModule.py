@@ -1,12 +1,13 @@
 import hashlib
 from shutil import copy
 from os import remove, listdir
-from fileServer import run as run_file_server
+from fileServer import run as run_file_server, UPLOAD_DIR
+import ch2
 
 def persistFile(filePath, folder="profiles"):
-	if filePath.startswith('data/tmp/'):
+	if filePath.startswith(ch2.ch_data('$DATA_DIR', 'consts.ch')+'/tmp/'):
 		filename = filePath[9:]
-		newName = "data/"+folder+"/"+filename
+		newName = ch2.ch_data('$DATA_DIR', 'consts.ch')+"/"+folder+"/"+filename
 		copy(filePath, newName)
 		remove(filePath)
 		return newName
@@ -24,7 +25,7 @@ def isHigherVersion(current, other):
 # Get the migration files
 def migrate(currentVersion, dbObject, repChar='?'):
 	isPerfect = True
-	availables = listdir("./data/migrations")
+	availables = listdir(ch2.ch_data('$DATA_DIR', 'consts.ch')+"/migrations")
 	if len(availables) == 0:
 		return isPerfect
 
@@ -35,7 +36,7 @@ def migrate(currentVersion, dbObject, repChar='?'):
 		if isHigherVersion(currentVersion, migration_code):
 			logs+="\nPerforming migration : "+migration_code+"\n"
 
-			mf = open("./data/migrations/"+migration, 'r')
+			mf = open(ch2.ch_data('$DATA_DIR', 'consts.ch')+"/migrations/"+migration, 'r')
 			queries = mf.readlines()
 			mf.close
 

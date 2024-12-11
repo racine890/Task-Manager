@@ -59,7 +59,7 @@ evaluate {*exported_data}.__setitem__('tasks', {*exported_tasks})
 evaluate str({*exported_data}).encode('utf-8', 'ignore')
 SetVar *fcontents LASTRESULT
 
-add ./data/tmp/project- *arg_id
+add $DATA_DIR /tmp/project- *arg_id
 add LASTRESULT .tmpro
 
 evaluate open({LASTRESULT}, 'wb') =>*fh

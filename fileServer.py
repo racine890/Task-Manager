@@ -4,8 +4,11 @@ import uuid
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
 import time
+import ch2
 
-UPLOAD_DIR = 'data/tmp'
+
+UPLOAD_DIR = ch2.ch_data('$DATA_DIR', 'consts.ch')+'/tmp'
+print(UPLOAD_DIR)
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
