@@ -1,0 +1,19 @@
+# Update a user
+SetVar *result evaluate(None)
+
+GetTableElement key of API_DATA
+SetVar *arg_key LASTRESULT
+
+GetTableElement value of API_DATA
+SetVar *arg_value LASTRESULT
+
+# Login check
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+# Persistence
+execute app/scripts/db/updateSetting.gcs
+
+end

@@ -1,0 +1,96 @@
+SetVar *result evaluate(None)
+
+#GetTableElement id of API_PARAMS
+#SetVar *arg_id LASTRESULT
+
+#GetTableElement format of API_PARAMS
+#SetVar *arg_format LASTRESULT
+
+#count *session_user
+#compare LASTRESULT 0
+#if $EQUAL then
+#	end
+
+execute app/scripts/db/getProjectById.gcs
+SetVar *project LASTTUPLE
+
+GetTableElement 3 of *project
+SetVar *arg_id LASTRESULT
+execute app/scripts/db/getCategoryById.gcs
+SetVar *category LASTTUPLE
+SetVar *exported_category evaluate(dict())
+if evaluate({LASTTUPLE} != None) then
+	evaluate {*exported_category}.__setitem__('id', {*category}[0])
+	evaluate {*exported_category}.__setitem__('name', {*category}[1])
+	evaluate {*exported_category}.__setitem__('description', {*category}[2])
+	evaluate {*exported_category}.__setitem__('active', {*category}[3])
+
+GetTableElement 0 of *project
+SetVar *arg_id LASTRESULT
+execute app/scripts/db/getTasksCompleteByProjectId.gcs
+SetVar *tasks LASTLIST
+SetVar *exported_tasks evaluate(list())
+ForEach *task of *tasks processTasks
+
+#GetTableElement 0 of *project
+#SetVar *arg_id LASTRESULT
+#execute app/scripts/db/getResourcesCompleteByProjectId.gcs
+#SetVar *resources LASTLIST
+#SetVar *exported_resources evaluate(list())
+#ForEach *resource of *resources processResources
+
+SetVar *exported_data evaluate(dict())
+
+evaluate {*exported_data}.__setitem__('id', {*project}[0])
+evaluate {*exported_data}.__setitem__('name', {*project}[1])
+evaluate {*exported_data}.__setitem__('description', {*project}[2])
+evaluate {*exported_data}.__setitem__('creator', {*project}[3])
+evaluate {*exported_data}.__setitem__('status', {*project}[4])
+evaluate {*exported_data}.__setitem__('start_date', {*project}[5])
+evaluate {*exported_data}.__setitem__('end_date', {*project}[6])
+evaluate {*exported_data}.__setitem__('effective_start', {*project}[7])
+evaluate {*exported_data}.__setitem__('effective_end', {*project}[8])
+evaluate {*exported_data}.__setitem__('parent_id', {*project}[9])
+evaluate {*exported_data}.__setitem__('category', {*exported_category})
+evaluate {*exported_data}.__setitem__('create_date', {*project}[11])
+evaluate {*exported_data}.__setitem__('active', {*project}[12])
+evaluate {*exported_data}.__setitem__('tasks', {*exported_tasks})
+
+evaluate str({*exported_data}).encode('utf-8', 'ignore')
+SetVar *fcontents LASTRESULT
+
+add ./data/tmp/project- *arg_id
+add LASTRESULT .tmpro
+
+evaluate open({LASTRESULT}, 'wb') =>*fh
+evaluate {*fh}.write({*fcontents})
+evaluate {*fh}.close()
+
+end
+
+[@processTasks]
+SetVar *exported_task evaluate(dict())
+evaluate {*exported_task}.__setitem__('id', {*task}[0])
+evaluate {*exported_task}.__setitem__('creator', {*task}[1])
+evaluate {*exported_task}.__setitem__('mother_idea', {*task}[2])
+evaluate {*exported_task}.__setitem__('project_id', {*task}[3])
+evaluate {*exported_task}.__setitem__('name', {*task}[4])
+evaluate {*exported_task}.__setitem__('description', {*task}[5])
+evaluate {*exported_task}.__setitem__('status', {*task}[6])
+evaluate {*exported_task}.__setitem__('category_id', {*task}[7])
+evaluate {*exported_task}.__setitem__('create_date', {*task}[8])
+evaluate {*exported_task}.__setitem__('active', {*task}[9])
+evaluate {*exported_tasks}.append({*exported_task})
+[/@processTasks]
+
+[@processResources]
+SetVar *exported_resource evaluate(dict())
+evaluate {*exported_resource}.__setitem__('id', {*resource}[0])
+evaluate {*exported_resource}.__setitem__('title', {*resource}[1])
+evaluate {*exported_resource}.__setitem__('path', {*resource}[2])
+evaluate {*exported_resource}.__setitem__('create_date', {*resource}[3])
+GetTableElement 2 of *resource
+ReadBinaryFile LASTRESULT
+evaluate {*exported_resource}.__setitem__('resource_bin', {LASTRESULT})
+evaluate {*exported_resources}.append({*exported_resource})
+[/@processResources]

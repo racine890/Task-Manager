@@ -1,0 +1,12 @@
+SetVar *result evaluate(None)
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/getCategories.gcs
+
+SetVar *result LASTLIST
+
+end

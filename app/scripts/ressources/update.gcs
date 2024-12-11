@@ -1,0 +1,20 @@
+SetVar *result evaluate(None)
+
+GetTableElement name of API_DATA
+SetVar *arg_name LASTRESULT
+
+GetTableElement path of API_DATA
+evaluate persistFile({LASTRESULT}, "ressources")
+SetVar *arg_path LASTRESULT
+
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/updateRessource.gcs
+
+end

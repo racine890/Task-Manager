@@ -1,0 +1,16 @@
+SetVar *result evaluate(None)
+
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+GetTableElement rid of API_PARAMS
+SetVar *arg_resource_id LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/dropResourceByProject.gcs
+
+end

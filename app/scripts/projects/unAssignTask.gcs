@@ -1,0 +1,13 @@
+SetVar *result evaluate(None)
+
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/unAssocTaskToProject.gcs
+
+end

@@ -1,0 +1,15 @@
+SetVar *result evaluate(None)
+
+GetTableElement start of API_PARAMS
+SetVar *arg_start LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/getCategoriesPaginated.gcs
+
+SetVar *result LASTLIST
+
+end

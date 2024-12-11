@@ -1,0 +1,14 @@
+SetVar *result evaluate(None)
+
+GetTableElement key of API_PARAMS
+SetVar *arg_key LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/getConfigByKey.gcs
+SetVar *result LASTTUPLE
+
+end

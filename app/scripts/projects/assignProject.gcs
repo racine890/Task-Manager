@@ -1,0 +1,16 @@
+SetVar *result evaluate(None)
+
+GetTableElement pid of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+GetTableElement spid of API_PARAMS
+SetVar *arg_sub_project_id LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/assocProjectToProject.gcs
+
+end
