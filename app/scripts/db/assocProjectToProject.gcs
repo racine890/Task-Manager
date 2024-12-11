@@ -1,0 +1,42 @@
+# Check that all params are set
+check var *arg_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_id
+	end
+
+check var *arg_sub_project_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_sub_project_id
+	end
+
+evaluate [ {*arg_id}, {*arg_sub_project_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+query select_one with test pass *prepared_vars
+compare LASTTUPLE None
+if 5 then
+	end
+
+execute query i pass *prepared_vars
+commit
+
+SetVar *result *prepared_vars
+
+# Close the database
+close database
+end
+
+[test]
+select id from project where parent = ? and id = ? and active = 1;
+[/test]
+
+[i]
+update project set parent = ? where id = ? ;
+[/i]

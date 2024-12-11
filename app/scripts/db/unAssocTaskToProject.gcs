@@ -1,0 +1,28 @@
+# Check that all params are set
+check var *arg_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_id
+	end
+
+evaluate [ {*arg_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+execute query i pass *prepared_vars
+commit
+
+SetVar *result *prepared_vars
+
+# Close the database
+close database
+end
+
+[i]
+update task set project_id = null where id = ? ;
+[/i]

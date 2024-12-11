@@ -1,0 +1,53 @@
+# Check that all params are set
+check var *arg_name
+if $MISSING then
+	print Error ------- Missing argument : *arg_password
+	end
+
+check var *arg_description
+if $MISSING then
+	print Error ------- Missing argument : *arg_username
+	end
+
+check var *arg_start_date
+if $MISSING then
+	print Error ------- Missing argument : *arg_start_date
+	end
+
+check var *arg_end_date
+if $MISSING then
+	print Error ------- Missing argument : *arg_end_date
+	end
+
+check var *arg_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_id
+	end
+
+check var *arg_category_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_category_id
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_start_date}, {*arg_end_date}, {*arg_category_id}, {*arg_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+execute query i with *prepared_vars
+commit
+
+SetVar *result *prepared_vars
+
+# Close the database
+close database
+end
+
+[i]
+update project set name=?, description=?, start_date=?, end_date=?, category_id=? where id=? ;
+[/i]

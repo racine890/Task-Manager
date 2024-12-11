@@ -1,0 +1,25 @@
+# Check that all params are set
+check var *arg_start
+if $MISSING then
+	print Error ------- Missing argument : *arg_start
+	end
+
+evaluate [ {*arg_start} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+query select_all with q with *prepared_vars
+
+# Close the database
+close database
+end
+
+[q]
+select * from user where id > ? limit 20 ;
+[/q]

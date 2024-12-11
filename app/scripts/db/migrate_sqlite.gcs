@@ -1,0 +1,17 @@
+connect database $DATA_DIR/$DATABASE_NAME
+
+query select_one with version
+compare LASTTUPLE None
+if $EQUAL then
+	end
+
+GetTableElement 0 of LASTTUPLE
+SetVar *last_version LASTRESULT
+
+evaluate migrate({*last_version}, self.connect)
+close database
+end
+
+[version]
+	select value from config where key="db_version" limit 1;
+[/version]

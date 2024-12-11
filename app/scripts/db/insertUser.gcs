@@ -1,0 +1,43 @@
+# Check that all params are set
+check var *arg_username
+if $MISSING then
+	print Error ------- Missing argument : *arg_username
+	end
+
+check var *arg_password
+if $MISSING then
+	print Error ------- Missing argument : *arg_password
+	end
+
+check var *arg_pic
+if $MISSING then
+	print Error ------- Missing argument : *arg_pic
+	end
+
+check var *arg_email
+if $MISSING then
+	print Error ------- Missing argument : *arg_email
+	end
+
+evaluate [ {*arg_username}, hashlib.sha256({*arg_password}.encode()).hexdigest(), {*arg_pic}, {*arg_email} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+execute query i with *prepared_vars
+commit
+
+SetVar *result *prepared_vars
+
+# Close the database
+close database
+end
+
+[i]
+insert into user( username, password, profile_pic, email ) values ( ?, ?, ?, ?) ;
+[/i]

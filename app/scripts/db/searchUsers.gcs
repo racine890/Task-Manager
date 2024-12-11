@@ -1,0 +1,25 @@
+# Check that all params are set
+check var *arg_term
+if $MISSING then
+	print Error ------- Missing argument : *arg_term
+	end
+
+evaluate [ '%'+{*arg_term}+'%' ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+query select_all with q pass *prepared_vars
+
+# Close the database
+close database
+end
+
+[q]
+select id, username from user where username like ? and active = 1 limit 10 ;
+[/q]

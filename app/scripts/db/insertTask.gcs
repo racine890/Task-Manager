@@ -1,0 +1,65 @@
+# Check that all params are set
+check var *arg_name
+if $MISSING then
+	print Error ------- Missing argument : *arg_password
+	end
+
+check var *arg_description
+if $MISSING then
+	print Error ------- Missing argument : *arg_username
+	end
+
+check var *arg_author
+if $MISSING then
+	print Error ------- Missing argument : *arg_author
+	end
+
+check var *arg_idea_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_idea_id
+	end
+
+check var *arg_project_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_project_id
+	end
+
+check var *arg_category_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_category_id
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_project_id} ]
+SetVar . *prepared_vars_2 LASTRESULT
+
+query select_one with test pass *prepared_vars_2
+compare LASTTUPLE None
+if 5 then
+	end
+
+execute query i with *prepared_vars
+commit
+
+SetVar *result *prepared_vars
+
+# Close the database
+close database
+end
+
+[test]
+select id from task where name = ? and description = ? and project_id = ? ;
+[/test]
+
+[i]
+insert into task( name, description, creator, project_id, mother_idea, category_id ) values ( ?, ?, ?, ?, ?, ?) ;
+[/i]

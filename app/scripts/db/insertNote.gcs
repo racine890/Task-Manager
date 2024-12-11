@@ -1,0 +1,38 @@
+# Check that all params are set
+check var *arg_task_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_task_id
+	end
+
+check var *arg_note
+if $MISSING then
+	print Error ------- Missing argument : *arg_note
+	end
+
+evaluate [ {*arg_task_id}, {*arg_note}, {*arg_author} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+execute query i with *prepared_vars
+commit
+
+query select_one with last
+SetVar *result LASTTUPLE
+
+# Close the database
+close database
+end
+
+[i]
+insert into note( task_id, description, creator ) values ( ?, ?, ? ) ;
+[/i]
+
+[last]
+select id, description from note where id = ( select max(id) from note );
+[/last]

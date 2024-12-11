@@ -1,0 +1,257 @@
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+# Create tables
+create table user with u
+create table right with r
+create table user_right with ur
+create table role with ro
+create table right_role with rr
+create table category with c
+create table project with p
+create table user_project with up
+create table idea with i
+create table task with t
+create table user_task with ut
+create table note with n
+create table resource with re
+create table note_resource with nr
+create table task_resource with tr
+create table project_resource with pr
+create table config with co
+
+# Import the data from the json data
+ImportData from app/res/defaultUsers.json to user
+ImportData from app/res/defaultRights.json to right
+ImportData from app/res/defaultUserRights.json to user_right
+ImportData from app/res/defaultRoles.json to role
+ImportData from app/res/defaultRightRoles.json to right_role
+ImportData from app/res/defaultCategories.json to category
+ImportData from app/res/defaultConfigs.json to config
+
+# Close the database
+close database
+
+execute app/scripts/db/getUsers.gcs
+ForEach *user of LASTLIST hash
+
+end
+
+[@hash]
+GetTableElement 0 of *user
+SetVar *arg_id LASTRESULT
+GetTableElement 2 of *user
+SetVar *arg_password LASTRESULT
+execute app/scripts/db/hashUserPasswords.gcs
+[/@hash]
+
+[u]
+create table user (
+	id integer primary key autoincrement,
+	username varchar(20) not null,
+	password varchar(257) not null,
+	profile_pic varchar(80) not null,
+	email varchar(20) not null,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1)
+);
+[/u]
+
+[r]
+create table right (
+	id integer primary key autoincrement,
+	name varchar(20) not null,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1)
+);
+[/r]
+
+[ur]
+create table user_right (
+	id integer primary key autoincrement,
+	user_id integer,
+	right_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(user_id) references user(id),
+	foreign key(right_id) references right(id)
+);
+[/ur]
+
+[ro]
+create table role (
+	id integer primary key autoincrement,
+	name varchar(20),
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1)
+);
+[/ro]
+
+[rr]
+create table right_role (
+	id integer primary key autoincrement,
+	right_id integer,
+	role_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(role_id) references role(id),
+	foreign key(right_id) references right(id)
+);
+[/rr]
+
+[p]
+create table project (
+	id integer primary key autoincrement,
+	name varchar(20),
+	description text,
+	creator integer,
+	status integer(1) default(0),
+	start_date timestamp,
+	end_date timestamp,
+	effective_start timestamp,
+	effective_end timestamp,
+	parent integer,
+	category_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(creator) references user(id),
+	foreign key(category_id) references category(id),
+	foreign key(parent) references project(id)
+);
+[/p]
+
+[up]
+create table user_project (
+	id integer primary key autoincrement,
+	user_id integer,
+	project_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(user_id) references user(id),
+	foreign key(project_id) references project(id)
+)
+[/up]
+
+[i]
+create table idea (
+	id integer primary key autoincrement,
+	creator integer,
+	name varchar(20),
+	description text,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(creator) references user(id)
+)
+[/i]
+
+[t]
+create table task (
+	id integer primary key autoincrement,
+	creator integer,
+	mother_idea integer,
+	project_id integer,
+	name varchar(20),
+	description text,
+	status integer(1) default(0),
+	category_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(creator) references user(id),
+	foreign key(mother_idea) references idea(id),
+	foreign key(category_id) references category(id),
+	foreign key(project_id) references project(id)
+)
+[/t]
+
+[ut]
+create table user_task (
+	id integer primary key autoincrement,
+	user_id integer,
+	task_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(user_id) references user(id),
+	foreign key(task_id) references task(id)
+)
+[/ut]
+
+[n]
+create table note (
+	id integer primary key autoincrement,
+	description text,
+	creator integer,
+	task_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(creator) references user(id),
+	foreign key(task_id) references task(id)
+)
+[/n]
+
+[re]
+create table resource (
+	id integer primary key autoincrement,
+	title varchar(20),
+	path text,
+	create_date timestamp default(CURRENT_TIMESTAMP)
+)
+[/re]
+
+[nr]
+create table note_resource (
+	id integer primary key autoincrement,
+	note_id integer,
+	resource_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(note_id) references note(id),
+	foreign key(resource_id) references resource(id)
+);
+[/nr]
+
+[tr]
+create table task_resource (
+	id integer primary key autoincrement,
+	task_id integer,
+	resource_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(task_id) references task(id),
+	foreign key(resource_id) references resource(id)
+)
+[/tr]
+
+[pr]
+create table project_resource (
+	id integer primary key autoincrement,
+	project_id integer,
+	resource_id integer,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1),
+	foreign key(project_id) references project(id),
+	foreign key(resource_id) references resource(id)
+)
+[/pr]
+
+[c]
+create table category (
+	id integer primary key autoincrement,
+	name varchar(60),
+	description text,
+	create_date timestamp default(CURRENT_TIMESTAMP),
+	active integer(1) default(1)
+)
+[/c]
+
+[co]
+create table config (
+	id integer primary key autoincrement,
+	key varchar(60),
+	value text
+)
+[/co]
+

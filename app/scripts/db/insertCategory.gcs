@@ -1,0 +1,33 @@
+# Check that all params are set
+check var *arg_name
+if $MISSING then
+	print Error ------- Missing argument : *arg_password
+	end
+
+check var *arg_description
+if $MISSING then
+	print Error ------- Missing argument : *arg_username
+	end
+
+evaluate [ {*arg_name}, {*arg_description} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+execute query i with *prepared_vars
+commit
+
+SetVar *result *prepared_vars
+
+# Close the database
+close database
+end
+
+[i]
+insert into category( name, description ) values ( ?, ? ) ;
+[/i]
