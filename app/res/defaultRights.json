@@ -1,0 +1,54 @@
+[
+	{
+	  "name" : "admin",
+	  "active" : 1
+	},
+	{
+	  "name" : "read_idea",
+	  "active" : 1
+	},
+	{
+	  "name" : "create_idea",
+	  "active" : 1
+	},
+	{
+	  "name" : "update_idea",
+	  "active" : 1
+	},
+	{
+	  "name" : "delete_idea",
+	  "active" : 1
+	},
+	{
+	  "name" : "read_project",
+	  "active" : 1
+	},
+	{
+	  "name" : "create_project",
+	  "active" : 1
+	},
+	{
+	  "name" : "update_project",
+	  "active" : 1
+	},
+	{
+	  "name" : "delete_project",
+	  "active" : 1
+	},
+	{
+	  "name" : "read_idea",
+	  "active" : 1
+	},
+	{
+	  "name" : "create_idea",
+	  "active" : 1
+	},
+	{
+	  "name" : "update_idea",
+	  "active" : 1
+	},
+	{
+	  "name" : "delete_idea",
+	  "active" : 1
+	}
+]

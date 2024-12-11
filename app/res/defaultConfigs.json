@@ -1,0 +1,10 @@
+[
+	{
+	  "key" : "db_version",
+	  "value" : "0.0.0.0"
+	},
+	{
+	  "key" : "ItemsLength",
+	  "value" : "10"
+	}
+]
