@@ -1,0 +1,6 @@
+{
+	"server_url" : "http://127.0.0.1:8080",
+	"server_authentication" : "basic",
+	"server_username" : "deidara",
+	"server_password" : "ak@tsuki"
+}

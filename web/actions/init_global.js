@@ -1,0 +1,19 @@
+// We create an instance of each service if there is not
+if(typeof DataManager != 'undefined')
+    appDataManager = new DataManager();
+if(typeof userService != 'undefined')
+    appUserService = new userService();
+if(typeof ideaService != 'undefined')
+    appIdeaService = new ideaService();
+if(typeof projectService != 'undefined')
+    appProjectService = new projectService();
+if(typeof searchService != 'undefined')
+    appSearchService = new searchService();
+if(typeof taskService != 'undefined')
+    appTaskService = new taskService();
+if(typeof categoryService != 'undefined')
+    appCategoryService = new categoryService();
+if(typeof ressourceService != 'undefined')
+    appRessourceService = new ressourceService();
+if(typeof settingService != 'undefined')
+    appSettingService = new settingService();

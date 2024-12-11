@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Projet</title>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="preload" href="../assets/style/project.css" as="style"onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="../assets/style/project.css"></noscript>
+    <link rel="stylesheet" href="../assets/style/selection.css">
+    <link rel="stylesheet" href="../assets/style/dashboard.css">
+</head>
+<body>
+    <NavBarComponent title="Project details"></NavBarComponent>
+<div class="project-container" id="to-print">
+    <h1 id="title">Title</h1>
+    
+    <div class="details">
+        <p><strong>Category : </strong><span class="label" id="category"></span></p>
+        <p><strong>Description :</strong></p>
+        <p id="description">Description</p>
+        <p><strong>Started the :</strong> <span id="start-date">2024-01-01</span></p>
+        <p><strong>Should end the :</strong> <span id="end-date">2024-12-31</span></p>
+        <span class="label" id="status">Status</span>
+        <p>
+            <button id="todo" style="display: none">mark as todo</button>
+            <button id="start" style="display: none">start</button>
+            <button id="pause" style="display: none">pause</button>
+            <button id="test" style="display: none">test</button>
+            <button id="finish" style="display: none">finish</button>
+            <button id="abandon" style="display: none">abandon</button>
+        </p>
+    </div>
+
+    <div class="assignments">
+        <strong>Assignated on this project</strong>
+        <SelectionComponent id="user-search" title="Search a user" object="user" editAction="editUser" deleteAction="removeUser" validateAction="validateUser"></SelectionComponent>
+        <ul id="users-list">
+        </ul>
+    </div>
+
+    <div class="subprojects">
+        <strong>Sub-projects</strong>
+        <SelectionComponent id="project-search" title="Search a project" object="project" editAction="editProject" deleteAction="removeProject" validateAction="validateProject"></SelectionComponent>
+        <ul id="projects-list">
+        </ul>
+    </div>
+
+    <div class="tasks">
+        <strong>Tasks list</strong>
+        <SelectionComponent id="task-search" title="Search a task" object="task" editAction="editTask" deleteAction="removeTask" validateAction="validateTask"></SelectionComponent>
+        <ul id="tasks-list">
+        </ul>
+    </div>
+
+    <div class="assignments">
+        <strong>Ressources</strong>
+        <ul id="ressources-list">
+        </ul>
+    </div>
+
+    <button type="button" onclick="createTask()">Create a task</button>
+    <input type="file" id="fileInput" style="display:none;">
+    <button type="button" onclick="uploadFileAsResource()">Upload a file</button>
+    <button onclick="printProject()">Print</button>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="exportMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="exportMenu()">
+            Export as
+        </button>
+        <div class="dropdown-menu" aria-labelledby="exportMenu" id="export-options">
+            <a class="dropdown-item" href="#" onclick="exportAs('tmpro')">
+                <i class="fas fa-file-code"></i> Task Manager (tmpro) Project File
+            </a>
+        </div>
+    </div>
+</div>
+    
+    <!-- Core scripts -->
+	<script src="../core/Service.js"></script>
+    <script src="../core/Model.js"></script>
+    <script src="../core/DataManager.js"></script>
+    <script src="../core/Component.js"></script>
+
+    <!-- Pdf Tool -->
+    <script src="../tools/pdf.js"></script>
+    <script src="../tools/prism/prism.min.js"></script>
+    <script src="../tools/prism/components/prism-javascript.js"></script>
+    <script src="../tools/html2pdf/html2pdf.bundle.min.js"></script>
+
+    <script src="../services/categoryService.js"></script>
+    <script src="../models/category.js"></script>
+    <script src="../managers/category_manager.js"></script>
+
+    <!-- Ressource objects -->
+    <script src="../services/ressourceService.js"></script>
+    <script src="../managers/ressource_manager.js"></script>
+    <script src="../models/ressource.js"></script>
+
+    <!-- User objects -->
+    <script src="../services/userService.js"></script>
+    <script src="../models/user.js"></script>
+    <script src="../managers/user_manager.js"></script>
+
+    <!-- Project objects -->
+    <script src="../services/projectService.js"></script>
+    <script src="../models/project.js"></script>
+
+    <!-- Search objects -->
+    <script src="../services/searchService.js"></script>
+    <script src="../models/search.js"></script>
+
+    <!-- Initializers -->
+    <script src="../actions/utils.js"></script>
+    <script src="../actions/init_global.js"></script>
+
+    <!-- specific scripts -->
+    <script src="../actions/projectDetails.js"></script>
+    <script src="../managers/project_manager.js"></script>
+    <script src="../managers/selection_manager.js"></script>
+    <script src="../components/navbar.js"></script>
+    <script src="../components/selection.js"></script>
+</body>
+</html>
+

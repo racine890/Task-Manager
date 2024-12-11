@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Ressources</title>
+    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <link rel="stylesheet" href="../tools/prism/prism.min.css">
+</head>
+<body>
+    <NavBarComponent title="Ressources"></NavBarComponent>
+    <div class="container">
+        <button onclick="redirect('ressourceForm.html')">Add</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Path</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="my-table">
+                <!-- Les projets seront ajoutés ici par JavaScript -->
+            </tbody>
+
+        </table>
+        <div class="pagination">
+            <button id="prev">Précédent</button>
+            <button id="next">Suivant</button>
+        </div>
+    </div>
+    <!-- Core scripts -->
+	<script src="../core/Service.js"></script>
+    <script src="../core/Model.js"></script>
+    <script src="../core/DataManager.js"></script>
+    <script src="../core/Component.js"></script>
+
+    <!-- Pdf Tool -->
+     <script src="../tools/pdf.js"></script>
+     <script src="../tools/prism/prism.min.js"></script>
+     <script src="../tools/prism/components/prism-javascript.js"></script>
+
+    <!-- User objects -->
+    <script src="../services/userService.js"></script>
+    <script src="../models/user.js"></script>
+    <script src="../managers/user_manager.js"></script>
+
+     <!-- User objects -->
+     <script src="../services/ressourceService.js"></script>
+     <script src="../models/ressource.js"></script>
+     <script src="../managers/ressource_manager.js"></script>
+
+    <!-- Initializers -->
+    <script src="../actions/utils.js"></script>
+    <script src="../actions/init_global.js"></script>
+
+    <!-- Specific scripts -->
+    <script src="../actions/dashboard-ressources.js"></script>
+    <script src="../components/navbar.js"></script>
+
+</body>
+</html>

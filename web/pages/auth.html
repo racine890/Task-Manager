@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="../assets/style/login.css">
+</head>
+<body>
+    <div class="container">
+        <form class="auth-form" id="authForm">
+            <h2>Signing in</h2>
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Sign In</button>
+            <div class="footer">
+                <p>No account ? <a href="#">Sign Up</a></p>
+            </div>
+        </form>
+    </div>
+    <!-- Core scripts -->
+	<script src="../core/Service.js"></script>
+    <script src="../core/Model.js"></script>
+    <script src="../core/DataManager.js"></script>
+    <script src="../core/Action.js"></script>
+    <script src="../core/Form.js"></script>
+
+    <!-- User objects -->
+    <script src="../services/userService.js"></script>
+    <script src="../models/user.js"></script>
+    <script src="../managers/user_manager.js"></script>
+
+    <!-- Initializers -->
+    <script src="../actions/utils.js"></script>
+    <script src="../actions/init_global.js"></script>
+
+    <!-- Specific scripts -->
+    <script src="../actions/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+Todo : An app to manage projects.
+
+Todo:
+	* Associate *.model files by default (At the end)
+	* Rights (End the project first)
+	* Optimize
+	* Publish (At the end)
+	* Document ( Finish first )
+	* Gantt Modeling
+	
+	* Optimized cache to store temporary data while they are on edition (Do it on classes)
+	* Import / Export (Check for other apps to fit with)
+	* Progress level on task
+
+Done:
+	* Task / Project Category (ok)
+	* Load Resources in task (ok)
+	* If no project is opened, propose one (Y réfléchir davantage) (ok)
+	* Projects CRUD (A project can have a parent project) (ok)
+	* Users CRUD (ok)
+	* externalize database creation scripts, make migrations (ok)
+	* Change a project status (ok)
+	* Authentication (ok)
+	* Turn Idea to Project (ok)
+	* Ideas CRUD (ok)
+	* Tasks CRUD (Projects view First) (ok)
+	* Add project global view, as much detailed as possible (ok)
+	* Settings config (ok)
+	* Hash All passwords (bcrypt) (ok, done with hashlib)
+	* Task details (ok)
+	* Charger les fichiers dans le backend (ok)
+	* Task transitions (ok)
+	* Task Notes CRUD (ok)

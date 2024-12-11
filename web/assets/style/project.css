@@ -1,0 +1,140 @@
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	background-color: #f4f4f4;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+.project-container {
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	width: 90%;
+	margin: auto;
+	overflow: hidden;
+}
+h1 {
+	font-size: 28px;
+	margin-bottom: 10px;
+}
+.details {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 15px;
+	background-color: #f9f9f9;
+	margin-bottom: 20px;
+}
+.details p {
+	margin: 5px 0;
+}
+.label {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 4px;
+	background-color: #007bff;
+	color: #fff;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+.assignments, .subprojects, .tasks {
+	margin-bottom: 20px;
+}
+.assignments ul, .subprojects ul, .tasks ul {
+	list-style-type: none;
+	padding: 0;
+}
+.assignments li, .subprojects li, .tasks li {
+	padding: 10px;
+	background: #e9ecef;
+	border-radius: 4px;
+	margin-bottom: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.icon {
+	cursor: pointer;
+	color: #007bff;
+	transition: color 0.3s;
+}
+.icon:hover {
+	color: #0056b3;
+}
+.New {
+	background-color: #ca950a;
+}
+.Todo {
+	background-color: #caa120;
+}
+.Started {
+	background-color: #ba3305;
+}
+.Paused {
+	background-color: #60a910;
+}
+.Testing {
+	background-color: #560330;
+}
+.Finished {
+	background-color: #acaa12;
+}
+.Abandoned {
+	background-color: #0ca950;
+}
+i {
+	margin-left: 10px;
+}
+#noteCreation {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+
+#newNote {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1.5;
+    resize: none;
+    box-sizing: border-box;
+}
+
+#newNote:focus {
+    border-color: #66afe9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+}
+
+button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #333;
+}
+
+button:focus {
+    outline: none;
+}
+
+.line {
+	display: flex;
+	justify-content: space-between;
+}

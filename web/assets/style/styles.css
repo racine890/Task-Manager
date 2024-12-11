@@ -1,0 +1,77 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    position: relative;
+    height: 60vh;
+    background-image: url('../img/main.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+}
+
+.hero-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.hero-text h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.auth-button, .register-button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth-button {
+    background-color: #007BFF;
+    color: white;
+}
+
+.register-button {
+    background-color: #28A745;
+    color: white;
+}
+
+.projects {
+    padding: 20px;
+    text-align: center;
+}
+
+.projects h2 {
+    margin-bottom: 20px;
+}
+
+.project-card {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    display: inline-block;
+    width: 200px;
+    text-align: left;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #343a40;
+    color: white;
+}
+
