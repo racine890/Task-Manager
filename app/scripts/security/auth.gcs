@@ -1,0 +1,12 @@
+SetVar *result evaluate(None)
+
+GetTableElement username of API_DATA
+SetVar *arg_username LASTRESULT
+GetTableElement password of API_DATA
+SetVar *arg_password LASTRESULT
+
+execute app/scripts/db/getUserByCredentials.gcs
+
+SetVar *result LASTTUPLE
+SetVar *session_user LASTTUPLE
+end

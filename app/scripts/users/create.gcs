@@ -1,0 +1,23 @@
+SetVar *result evaluate(None)
+
+GetTableElement username of API_DATA
+SetVar *arg_username LASTRESULT
+
+GetTableElement password of API_DATA
+SetVar *arg_password LASTRESULT
+
+GetTableElement pic of API_DATA
+evaluate persistFile({LASTRESULT}, "profiles")
+SetVar *arg_pic LASTRESULT
+
+GetTableElement email of API_DATA
+SetVar *arg_email LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/insertUser.gcs
+
+end

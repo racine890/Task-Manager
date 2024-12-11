@@ -1,0 +1,10 @@
+check var *log_text
+if $MISSING then
+	print val ** Error : *log_text var is missing.
+	end
+
+GetTimeStamp
+stringify LASTRESULT
+evaluate {LASTRESULT}+'\t\t'+{*log_text}+'\n'
+append LASTRESULT=>$LOGS_DIR/log.txt
+end

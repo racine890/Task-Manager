@@ -1,0 +1,28 @@
+SetVar *result evaluate(None)
+
+GetTableElement name of API_DATA
+SetVar *arg_name LASTRESULT
+
+GetTableElement description of API_DATA
+SetVar *arg_description LASTRESULT
+
+GetTableElement mother_idea of API_DATA
+SetVar *arg_idea_id LASTRESULT
+
+GetTableElement project_id of API_DATA
+SetVar *arg_project_id LASTRESULT
+
+GetTableElement category_id of API_DATA
+SetVar *arg_category_id LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+GetTableElement 0 of *session_user
+SetVar *arg_author LASTRESULT
+
+execute app/scripts/db/insertTask.gcs
+
+end

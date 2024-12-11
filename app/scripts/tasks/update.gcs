@@ -1,0 +1,22 @@
+SetVar *result evaluate(None)
+
+GetTableElement name of API_DATA
+SetVar *arg_name LASTRESULT
+
+GetTableElement description of API_DATA
+SetVar *arg_description LASTRESULT
+
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+GetTableElement category_id of API_DATA
+SetVar *arg_category_id LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/updateTask.gcs
+
+end

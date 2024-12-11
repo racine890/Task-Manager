@@ -1,0 +1,79 @@
+expose /api/auth using *result from app/scripts/security/auth.gcs with POST
+expose /api/check-auth using *result from app/scripts/security/checkAuth.gcs with POST
+expose /api/logout using *result from app/scripts/security/logout.gcs with POST
+
+expose /api/user/{start} using *result from app/scripts/users/getPagination.gcs with GET
+expose /api/user/get/{id} using *result from app/scripts/users/getById.gcs with GET
+expose /api/user/{id} using *result from app/scripts/users/delete.gcs with DELETE
+expose /api/user/enable/{id} using *result from app/scripts/users/enable.gcs with PATCH
+expose /api/user using *result from app/scripts/users/create.gcs with POST
+expose /api/user/{id} using *result from app/scripts/users/update.gcs with PATCH
+
+expose /api/idea/get/{id} using *result from app/scripts/ideas/getById.gcs with GET
+expose /api/idea using *result from app/scripts/ideas/create.gcs with POST
+expose /api/idea/{id} using *result from app/scripts/ideas/update.gcs with PATCH
+expose /api/idea/{id} using *result from app/scripts/ideas/delete.gcs with DELETE
+expose /api/idea/{start} using *result from app/scripts/ideas/getPagination.gcs with GET
+
+expose /api/task/get/{id} using *result from app/scripts/tasks/getById.gcs with GET
+expose /api/task using *result from app/scripts/tasks/create.gcs with POST
+expose /api/task/{id} using *result from app/scripts/tasks/update.gcs with PATCH
+expose /api/task/{id} using *result from app/scripts/tasks/delete.gcs with DELETE
+expose /api/task/{start} using *result from app/scripts/tasks/getPagination.gcs with GET
+expose /api/task/workers/{id} using *result from app/scripts/tasks/getWorkers.gcs with GET
+expose /api/task/workers/{tid}/{wid} using *result from app/scripts/tasks/deleteWorkers.gcs with DELETE
+expose /api/task/workers/{tid}/{wid} using *result from app/scripts/tasks/assignWorkers.gcs with POST
+expose /api/task/notes/{tid} using *result from app/scripts/tasks/addNote.gcs with POST
+expose /api/task/notes/{id} using *result from app/scripts/tasks/getNotes.gcs with GET
+expose /api/task/ressources/{id} using *result from app/scripts/tasks/getRessources.gcs with GET
+expose /api/task/status/{id}/{status} using *result from app/scripts/tasks/changeStatus.gcs with POST
+expose /api/task/assign-last/{id} using *result from app/scripts/tasks/assignLastRessource.gcs with POST
+expose /api/task/resources/{id} using *result from app/scripts/tasks/getResources.gcs with GET
+expose /api/task/resources/{id}/{rid} using *result from app/scripts/tasks/deleteResources.gcs with DELETE
+expose /api/task/notes/{id}/{nid} using *result from app/scripts/tasks/deleteNotes.gcs with DELETE
+
+expose /api/project/get/{id} using *result from app/scripts/projects/getById.gcs with GET
+expose /api/project using *result from app/scripts/projects/create.gcs with POST
+expose /api/project/{id} using *result from app/scripts/projects/update.gcs with PATCH
+expose /api/project/{id} using *result from app/scripts/projects/delete.gcs with DELETE
+expose /api/project/{start} using *result from app/scripts/projects/getPagination.gcs with GET
+expose /api/project/workers/{id} using *result from app/scripts/projects/getWorkers.gcs with GET
+expose /api/project/workers/{pid}/{wid} using *result from app/scripts/projects/deleteWorkers.gcs with DELETE
+expose /api/project/workers/{pid}/{wid} using *result from app/scripts/projects/assignWorkers.gcs with POST
+expose /api/project/sub-projects/{pid}/{spid} using *result from app/scripts/projects/assignProject.gcs with POST
+expose /api/project/tasks/{id}/{tid} using *result from app/scripts/projects/assignTask.gcs with POST
+expose /api/project/sub-projects/{id} using *result from app/scripts/projects/unAssignProject.gcs with DELETE
+expose /api/project/sub-projects/{id} using *result from app/scripts/projects/getSubProjects.gcs with GET
+expose /api/project/ressources/{id} using *result from app/scripts/projects/getRessources.gcs with GET
+expose /api/project/tasks/{id} using *result from app/scripts/projects/getTasks.gcs with GET
+expose /api/project/tasks/{id} using *result from app/scripts/projects/unAssignTask.gcs with DELETE
+expose /api/project/status/{id}/{status} using *result from app/scripts/projects/changeStatus.gcs with POST
+expose /api/project/assign-last/{id} using *result from app/scripts/projects/assignLastRessource.gcs with POST
+expose /api/project/resources/{id} using *result from app/scripts/projects/getResources.gcs with GET
+expose /api/project/resources/{id}/{rid} using *result from app/scripts/projects/deleteResources.gcs with DELETE
+expose /api/project/export/{id}/{format} using *result from app/scripts/projects/export.gcs with POST
+
+expose /api/search/user/{term} using *result from app/scripts/search/users.gcs with GET
+expose /api/search/project/{term} using *result from app/scripts/search/projects.gcs with GET
+expose /api/search/task/{term} using *result from app/scripts/search/tasks.gcs with GET
+
+expose /api/category using *result from app/scripts/categories/get.gcs with GET
+expose /api/category/get/{id} using *result from app/scripts/categories/getById.gcs with GET
+expose /api/category using *result from app/scripts/categories/create.gcs with POST
+expose /api/category/{id} using *result from app/scripts/categories/update.gcs with PATCH
+expose /api/category/{id} using *result from app/scripts/categories/delete.gcs with DELETE
+expose /api/category/{start} using *result from app/scripts/categories/getPagination.gcs with GET
+
+expose /api/ressource/get/{id} using *result from app/scripts/ressources/getById.gcs with GET
+expose /api/ressource using *result from app/scripts/ressources/create.gcs with POST
+expose /api/ressource/{id} using *result from app/scripts/ressources/update.gcs with PATCH
+expose /api/ressource/{id} using *result from app/scripts/ressources/delete.gcs with DELETE
+expose /api/ressource/{start} using *result from app/scripts/ressources/getPagination.gcs with GET
+expose /api/ressource/upload using *result from app/scripts/ressources/upload.gcs with POST
+expose /api/ressource/download using *result from app/scripts/ressources/download.gcs with GET
+
+expose /api/config/get/{key} using *result from app/scripts/configs/getByKey.gcs with GET
+expose /api/config using *result from app/scripts/configs/update.gcs with PATCH
+expose /api/config/{start} using *result from app/scripts/configs/getPagination.gcs with GET
+
+end

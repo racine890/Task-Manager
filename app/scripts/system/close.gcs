@@ -1,0 +1,4 @@
+stop server
+evaluate {*file_server}.shutdown()
+CreateText 2 Server closed ...
+end

@@ -1,0 +1,13 @@
+SetVar *result evaluate(None)
+
+GetTableElement term of API_PARAMS
+SetVar *arg_term LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+execute app/scripts/db/searchTasks.gcs
+SetVar *result LASTLIST
+end

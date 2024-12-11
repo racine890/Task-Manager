@@ -1,0 +1,19 @@
+SetVar *result evaluate(None)
+
+GetTableElement tid of API_PARAMS
+SetVar *arg_task_id LASTRESULT
+
+GetTableElement note of API_DATA
+SetVar *arg_note LASTRESULT
+
+count *session_user
+compare LASTRESULT 0
+if $EQUAL then
+	end
+
+GetTableElement 0 of *session_user
+SetVar *arg_author LASTRESULT
+
+execute app/scripts/db/insertNote.gcs
+
+end

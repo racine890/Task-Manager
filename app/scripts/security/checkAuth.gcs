@@ -1,0 +1,8 @@
+SetVar *result evaluate(None)
+
+count *session_user
+compare LASTRESULT 0
+if $DIFFERENT then
+	SetVar *result *session_user
+
+end

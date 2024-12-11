@@ -1,1 +1,42 @@
+compare $DATABASE_TYPE sqlite
+if 0 then
+	# Test database existence
+	check file $DATA_DIR/$DATABASE_NAME
+	if 0 then
+		# Create the database if it doesn't exists
+		execute app/scripts/db/initDatabase.gcs
+		end
+	if 1 then
+		execute app/scripts/db/migrate_sqlite.gcs
+		end
 
+# And for Mysql ...
+try @initMySQL else @mySQLError
+
+end
+
+# Just try to connect
+[@initMySQL]
+connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+query select_one with show
+compare LASTTUPLE None
+if $EQUAL then
+	execute app/scripts/db/initDatabase.gcs
+if $DIFFERENT then
+	execute app/scripts/db/migrate_mysql.gcs
+close database
+end
+[/@initMySQL]
+
+# Popup an error
+[@mySQLError]
+MessageBox Error Could not create the MySQL database. Please contact your administrator.
+end
+[/@mySQLError]
+
+[show]
+show tables;
+[/show]
+
+# By Including consts.ch at least once, we load consts into the app
+constants: consts.ch

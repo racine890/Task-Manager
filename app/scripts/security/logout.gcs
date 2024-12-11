@@ -1,0 +1,4 @@
+free var *session_user
+free var *result
+
+end
