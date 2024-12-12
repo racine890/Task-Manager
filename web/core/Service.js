@@ -16,12 +16,17 @@ class Service {
             .then((response) => response.json())
             .then((json) => {
                 this.config = json;
-                appDataManager.setvar('config', json);
+
+				if (!window.location.href.includes('localhost') 
+					&& !window.location.href.includes('127.0.0.1')) {
+					this.config.server_url = window.location.href.split('/').slice(0, 3).join('/');
+				}
+                
+				appDataManager.setvar('config', json);
             });
         } else {
             this.config = appDataManager.getvar('config');
-        }
-        
+        }   
     }
 
     // That method you will more likely use.

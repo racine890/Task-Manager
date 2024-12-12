@@ -66,7 +66,6 @@ async function getUsers(lastDisplayed){
 async function getUser(id){
     try{
         let response = await appUserService.getByID(id);
-        console.log(response);
         if(response != null){
             let nproject = new user();
             nproject.map(response);

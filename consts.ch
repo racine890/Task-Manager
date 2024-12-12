@@ -11,8 +11,8 @@ $DATABASE_PASSWORD
 $DATA_DIR ./data
 
 # Web server params
-$HOST 0.0.0.0:8080
-$PORT 8080
+$HOST 0.0.0.0
+$PORT 6102
 $WEB_APP_ROOT ./web
 
 # Api Authentication params

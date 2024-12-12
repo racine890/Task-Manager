@@ -27,6 +27,6 @@ Text.nb: 1
 Text1: Server is closed
 Text1.id: 2
 2.x: 150
-2.y: 50
+2.y: 55
 
 Onload: app/scripts/init.gcs

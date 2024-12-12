@@ -3,7 +3,7 @@ config api set authentication to basic
 config api set username to deidara
 config api set password to ak@tsuki
 
-serve to 0.0.0.0:8080
+serve to 0.0.0.0:6102
 execute app/scripts/system/apis.gcs
 CreateText 2 Server listening ...
 

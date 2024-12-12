@@ -88,7 +88,7 @@ class FileServerHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b"Error: Invalid path.")
 
-def run(server_class=HTTPServer, handler_class=FileServerHandler, port=8081):
+def run(server_class=HTTPServer, handler_class=FileServerHandler, port=6103):
     """Démarre le serveur HTTP dans un thread séparé."""
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)

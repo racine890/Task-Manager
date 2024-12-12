@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         uploadRessource(file).then((path)=>{
             lastUploadedFile = path;
-            console.log(path);
         })
         
     });

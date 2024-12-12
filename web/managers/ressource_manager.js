@@ -93,7 +93,7 @@ async function uploadRessource(file){
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:8081/upload', {
+            const response = await fetch('http://localhost:6103/upload', {
                 method: 'POST',
                 body: formData
             });
@@ -112,7 +112,7 @@ async function uploadRessource(file){
 async function downloadRessource(filename) {
     if (filename) {
         try {
-            const response = await fetch(`http://localhost:8081/download/${filename}`, {
+            const response = await fetch(`http://localhost:6103/download/${filename}`, {
                 method: 'GET'
             });
 
@@ -134,7 +134,7 @@ async function downloadRessource(filename) {
 async function getRessourceUrl(filename) {
     if (filename) {
         try {
-            const response = await fetch(`http://localhost:8081/download/${filename}`, {
+            const response = await fetch(`http://localhost:6103/download/${filename}`, {
                 method: 'GET'
             });
 

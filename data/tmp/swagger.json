@@ -1,0 +1,56 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Mon API",
+    "version": "1.0.0",
+    "description": "API pour gérer les données des utilisateurs"
+  },
+  "paths": {
+    "/api/user": {
+      "get": {
+        "summary": "Récupérer tous les utilisateurs",
+        "responses": {
+          "200": {
+            "description": "Une liste d'utilisateurs",
+            "content": {
+              "application/json": {
+                "example": [
+                  { "id": 1, "name": "John Doe" },
+                  { "id": 2, "name": "Jane Doe" }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Récupérer un utilisateur par ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utilisateur trouvé",
+            "content": {
+              "application/json": {
+                "example": { "id": 1, "name": "John Doe" }
+              }
+            }
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          }
+        }
+      }
+    }
+  }
+}
