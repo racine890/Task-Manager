@@ -5,9 +5,21 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
 import time
 import ch2
+import platform
 
 
-UPLOAD_DIR = ch2.ch_data('$DATA_DIR', 'consts.ch')+'/tmp'
+if platform.system() =='Linux':
+	basepath= os.path.expanduser("~")+"/.gc_programms/tk/tm/"
+else:
+	basepath="C:/GC_PROGRAMMS/tk/tm/"
+
+def getConfig(configName, defaultValue=''):
+	configValue = ch2.ch_data(configName, 'consts.ch', alt=defaultValue)
+	if '~' in configValue:
+		configValue = configValue.replace('~', basepath[:-1])
+	return configValue
+
+UPLOAD_DIR = getConfig('$DATA_DIR')+'/tmp'
 
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
