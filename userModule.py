@@ -51,7 +51,7 @@ def migrate(currentVersion, dbObject, repChar='?'):
 						isPerfect = False
 			dbObject.cursor.execute(f"update config set value = {repChar} where key = 'db_version'", (migration_code,))
 	
-	logs_file = open("./logs/migrations.log.txt", "w")
+	logs_file = open(ch_data('$LOGS_DIR', 'consts.ch')"/migrations.log.txt", "w")
 	logs_file.write(logs)
 	logs_file.close()
 

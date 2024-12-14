@@ -1,2 +1,4 @@
 /trash
+/dist
 *.model
+*.db
