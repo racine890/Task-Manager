@@ -16,10 +16,14 @@ if $DIFFERENT then
 
 query select_one with q with *prepared_vars
 
+compare LASTTUPLE None
+if $DIFFERENT then
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'key', 'value')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from config where key = ? limit 1 ;
+select id, key, value from config where id = ? limit 1 ;
 [/q]

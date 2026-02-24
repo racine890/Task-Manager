@@ -16,10 +16,14 @@ if $DIFFERENT then
 
 query select_one with q with *prepared_vars
 
+compare LASTTUPLE None
+if $DIFFERENT then
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'title', 'path')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from resource where id = ? ;
+select id, title, path from resource where id = ? ;
 [/q]

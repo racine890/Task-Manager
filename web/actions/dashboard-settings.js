@@ -1,62 +1,20 @@
-let lastDisplayed = 0;
-let allUsers = [];
-let loadedPages = [];
+// Updated. Those are just the actions for the table component
+function onLoadColumns() { return ["Id", "Nom", "Valeur"]; }
 
-function fillArray(users, userList){
-    userList.innerHTML = '';
-    users.forEach(user => {
-        const row = `<tr>
-            <td>${user.id}</td>
-            <td>${user.key}</td>
-            <td>${user.value}</td>
-            <td>
-                <button onclick="editSetting('${user.key}')">Edit</button>
-            </td>
-        </tr>`;
-        lastDisplayed = user.id;
-        userList.innerHTML += row;
-    });
+function onLoadData(setting) { return [setting.id, setting.key, setting.value]; }
+
+function onLoadAction(setting) {
+    return [
+        { name: "Edit", func: "editSetting", arg: setting.id, right: "update_settings" },
+    ];
 }
 
-function displaySettings(forward=true) {
-    const settingList = document.getElementById('my-table');
-
-    if(forward == true){
-        getSettings(lastDisplayed).then((settings)=>{
-            if(settings.length > 0){
-                allUsers = settings;
-                fillArray(settings, settingList);
-            } else if(loadedPages.length != 0) {
-                loadedPages.pop();
-                alert("No more data behind!");
-            }
-        });
-    } else if(loadedPages.length > 0) {
-        allUsers = loadedPages.pop();
-        fillArray(allUsers, settingList);
-    } else {
-        alert("No more data before!");
-    }
-
+function editSetting(id) {
+    redirect("settingForm.html", false, [["no", id]]);
 }
 
-function editSetting(key) {
-    appDataManager.setvar("form.setting.key", key);
-    redirect("settingForm.html");
-}
-
-function deleteSetting(id) {
-    const confirme = confirm("Do you want to remove that Setting ?");
-	if (confirme) {
-		deleteSetting(id).then(()=>{
-            lastDisplayed = 0;
-			displaySettings()
-        });
-	}
-}
-
-function printSettings(){
-    setTimeout(function() {
+function printSettings() {
+    setTimeout(function () {
         const options = {
             filename: 'settings-list.pdf',
             margin: 1,
@@ -69,22 +27,3 @@ function printSettings(){
         var worker = html2pdf().set(options).from(element).save();
     }, 2000);
 }
-
-document.getElementById('next').onclick = () => {
-    loadedPages.push(allUsers);
-    displaySettings();
-};
-
-document.getElementById('prev').onclick = () => {
-    displaySettings(false);
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
-    appDataManager.remvar("form.setting.key");
-    displaySettings();
-});

@@ -1,15 +1,18 @@
 SetVar *result evaluate(None)
 
+if evaluate(not hasRight('read_category', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
 GetTableElement start of API_PARAMS
 SetVar *arg_start LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/getCategoriesPaginated.gcs
 
-SetVar *result LASTLIST
+evaluate {API_TOKEN}['username'] + ' displayed the categories.' =>*log_text
+execute app/scripts/system/writeLog.gcs
+
+SetVar *result *json
 
 end

@@ -1,0 +1,12 @@
+SetVar *result evaluate(None)
+
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+GetTableElement progress of API_PARAMS
+SetVar *arg_progress LASTRESULT
+
+execute app/scripts/db/changeTaskProgress.gcs
+SetVar *result evaluate({'msg': 'Task progress changed successfully'})
+
+end

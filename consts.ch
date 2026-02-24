@@ -1,3 +1,5 @@
+$DEV_MODE 1
+
 # Database configuration
 # Could be mysql
 $DATABASE_TYPE sqlite
@@ -9,6 +11,7 @@ $DATABASE_PASSWORD
 
 # Directory to store files in
 $DATA_DIR ./data
+$TM_DATA_DIR ~/data
 
 # Web server params
 $HOST 0.0.0.0

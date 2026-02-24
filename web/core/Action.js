@@ -1,17 +1,25 @@
-class Action{
-	constructor(formId = "", form=null){
+class Action {
+	constructor(formId = "", form = null, submitName = "submit") {
 		this.formId = formId;
 		this.form = form;
+		this.params = new URLSearchParams(window.location.search);
+		this.submitName = submitName;
 	}
 
-	exec(){
-		if(this.form != null){
+	init() {
+	}
+
+	exec() {
+		if (this.form != null) {
+
+			this.init();
+
 			this.form.preload();
 
 			document.getElementById(this.formId).addEventListener('submit', (event) => {
 				event.preventDefault();
 
-				if(this.form.isValid()){
+				if (this.form.isValid()) {
 					this.submit();
 				} else {
 					alert(this.form.errormsg);
@@ -20,6 +28,6 @@ class Action{
 		}
 	}
 
-	submit(){
+	submit() {
 	}
 }

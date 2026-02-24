@@ -1,10 +1,14 @@
 [
 	{
-	  "key" : "db_version",
-	  "value" : "0.0.0.0"
+		"key": "db_version",
+		"value": "0.0.0.0"
 	},
 	{
-	  "key" : "ItemsLength",
-	  "value" : "10"
+		"key": "ItemsLength",
+		"value": "10"
+	},
+	{
+		"key": "DefaultPassword",
+		"value": "123456"
 	}
 ]

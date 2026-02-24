@@ -7,88 +7,88 @@
  * Please take a look at fetchAResource method to see how it works.
  * */
 class projectService extends Service {
-    constructor(){
+    constructor() {
         super();
         this.initConfig('../core/app.config.json');
     }
 
-    async get(){
+    async get() {
         return super.fetchAResource("/api/project", "GET");
     }
-    
-    async getByID(id){
+
+    async getByID(id) {
         return super.fetchAResource(`/api/project/get/${id}`, "GET");
     }
-    
-    async save(payload){
+
+    async save(payload) {
         return super.fetchAResource(`/api/project`, "POST", {}, payload);
     }
 
-    async update(id, payload){
+    async update(id, payload) {
         return super.fetchAResource(`/api/project/${id}`, "PATCH", {}, payload);
     }
-    
-    async delete(id){
+
+    async delete(id) {
         return super.fetchAResource(`/api/project/${id}`, "DELETE");
     }
 
-    async get_paginated(last){
-        return super.fetchAResource(`/api/project/${last}`, "GET");
+    async get_paginated(last, filters) {
+        return super.fetchAResource(`/api/project/${last}`, "POST", {}, { 'filters': filters });
     }
 
-    async get_workers(id){
+    async get_workers(id) {
         return super.fetchAResource(`/api/project/workers/${id}`, "GET");
     }
 
-    async get_sub_projects(id){
+    async get_sub_projects(id) {
         return super.fetchAResource(`/api/project/sub-projects/${id}`, "GET");
     }
 
-    async get_tasks(id){
+    async get_tasks(id) {
         return super.fetchAResource(`/api/project/tasks/${id}`, "GET");
     }
 
-    async add_worker(pid, wid){
+    async add_worker(pid, wid) {
         return super.fetchAResource(`/api/project/workers/${pid}/${wid}`, "POST");
     }
 
-    async add_sub_project(pid, spid){
+    async add_sub_project(pid, spid) {
         return super.fetchAResource(`/api/project/sub-projects/${pid}/${spid}`, "POST");
     }
 
-    async add_task(pid, tid){
+    async add_task(pid, tid) {
         return super.fetchAResource(`/api/project/tasks/${pid}/${tid}`, "POST");
     }
 
-    async delete_workers(pid, wid){
+    async delete_workers(pid, wid) {
         return super.fetchAResource(`/api/project/workers/${pid}/${wid}`, "DELETE");
     }
 
-    async delete_project(id){
+    async delete_project(id) {
         return super.fetchAResource(`/api/project/sub-projects/${id}`, "DELETE");
     }
 
-    async delete_task(id){
+    async delete_task(id) {
         return super.fetchAResource(`/api/project/tasks/${id}`, "DELETE");
     }
 
-    async change_status(id, status){
+    async change_status(id, status) {
         return super.fetchAResource(`/api/project/status/${id}/${status}`, "POST");
     }
 
-    async assign_last_resource(id){
+    async assign_last_resource(id) {
         return super.fetchAResource(`/api/project/assign-last/${id}`, "POST");
     }
 
-    async get_resources(id){
+    async get_resources(id) {
         return super.fetchAResource(`/api/project/resources/${id}`, "GET");
     }
 
-    async deleteResource(id, rid){
+    async deleteResource(id, rid) {
         return super.fetchAResource(`/api/project/resources/${id}/${rid}`, "DELETE");
     }
 
-    async export(id, format){
+    async export(id, format) {
         return super.fetchAResource(`/api/project/export/${id}/${format}`, "POST");
     }
 

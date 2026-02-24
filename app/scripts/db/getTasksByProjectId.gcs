@@ -16,6 +16,11 @@ if $DIFFERENT then
 
 query select_all with q pass *prepared_vars
 
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'name')) =>*json
+
 # Close the database
 close database
 end

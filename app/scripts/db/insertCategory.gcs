@@ -1,12 +1,12 @@
 # Check that all params are set
 check var *arg_name
 if $MISSING then
-	print Error ------- Missing argument : *arg_password
+	print val Error ------- Missing argument : *arg_name
 	end
 
 check var *arg_description
 if $MISSING then
-	print Error ------- Missing argument : *arg_username
+	print val Error ------- Missing argument : *arg_description
 	end
 
 evaluate [ {*arg_name}, {*arg_description} ]

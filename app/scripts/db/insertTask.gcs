@@ -1,35 +1,45 @@
 # Check that all params are set
 check var *arg_name
 if $MISSING then
-	print Error ------- Missing argument : *arg_password
+	print val Error ------- Missing argument : *arg_name
 	end
 
 check var *arg_description
 if $MISSING then
-	print Error ------- Missing argument : *arg_username
+	print val Error ------- Missing argument : *arg_description
 	end
 
 check var *arg_author
 if $MISSING then
-	print Error ------- Missing argument : *arg_author
+	print val Error ------- Missing argument : *arg_author
 	end
 
 check var *arg_idea_id
 if $MISSING then
-	print Error ------- Missing argument : *arg_idea_id
+	print val Error ------- Missing argument : *arg_idea_id
 	end
 
 check var *arg_project_id
 if $MISSING then
-	print Error ------- Missing argument : *arg_project_id
+	print val Error ------- Missing argument : *arg_project_id
 	end
 
 check var *arg_category_id
 if $MISSING then
-	print Error ------- Missing argument : *arg_category_id
+	print val Error ------- Missing argument : *arg_category_id
 	end
 
-evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id} ]
+check var *arg_start_date
+if $MISSING then
+	print val Error ------- Missing argument : *arg_start_date
+	end
+
+check var *arg_end_date
+if $MISSING then
+	print val Error ------- Missing argument : *arg_end_date
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id}, {*arg_start_date}, {*arg_end_date} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -48,6 +58,12 @@ if 5 then
 	end
 
 execute query i with *prepared_vars
+
+evaluate [ {*arg_author} ]
+SetVar . *prepared_vars LASTRESULT
+
+execute query i2 with *prepared_vars
+
 commit
 
 SetVar *result *prepared_vars
@@ -61,5 +77,9 @@ select id from task where name = ? and description = ? and project_id = ? ;
 [/test]
 
 [i]
-insert into task( name, description, creator, project_id, mother_idea, category_id ) values ( ?, ?, ?, ?, ?, ?) ;
+insert into task( name, description, creator, project_id, mother_idea, category_id, start_date, end_date ) values ( ?, ?, ?, ?, ?, ?, ?, ?) ;
 [/i]
+
+[i2]
+insert into user_task( user_id, task_id ) values ( ?, (select last_insert_rowid()) ) ;
+[/i2]

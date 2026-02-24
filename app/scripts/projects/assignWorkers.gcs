@@ -6,11 +6,7 @@ SetVar *arg_id LASTRESULT
 GetTableElement wid of API_PARAMS
 SetVar *arg_worker_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/assocUserToProject.gcs
+SetVar *result evaluate({'msg': 'Workers assigned successfully'})
 
 end

@@ -1,0 +1,18 @@
+/* STYLE SPÉCIFIQUE POUR L’IMPRESSION */
+@media print {
+	body * {
+		visibility: hidden;
+	}
+
+	#to-print,
+	#to-print * {
+		visibility: visible;
+	}
+
+	#to-print {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+	}
+}

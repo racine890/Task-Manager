@@ -1,13 +1,19 @@
-expose /api/auth using *result from app/scripts/security/auth.gcs with POST
-expose /api/check-auth using *result from app/scripts/security/checkAuth.gcs with POST
+expose public /api/auth using *result from app/scripts/security/auth.gcs with POST
 expose /api/logout using *result from app/scripts/security/logout.gcs with POST
 
+expose /api/user/me using *result from app/scripts/users/getMe.gcs with GET
+expose /api/user/me using *result from app/scripts/users/updateMe.gcs with PATCH
 expose /api/user/{start} using *result from app/scripts/users/getPagination.gcs with GET
 expose /api/user/get/{id} using *result from app/scripts/users/getById.gcs with GET
 expose /api/user/{id} using *result from app/scripts/users/delete.gcs with DELETE
 expose /api/user/enable/{id} using *result from app/scripts/users/enable.gcs with PATCH
 expose /api/user using *result from app/scripts/users/create.gcs with POST
 expose /api/user/{id} using *result from app/scripts/users/update.gcs with PATCH
+expose /api/user/rights/{id} using *result from app/scripts/security/getRightsByUser.gcs with GET
+expose /api/user/rights/{id}/{rightId} using *result from app/scripts/security/dropUserRight.gcs with DELETE
+expose /api/user/rights/{id}/{rightId} using *result from app/scripts/security/addUserRight.gcs with POST
+expose /api/user/me/password using *result from app/scripts/users/updatePassword.gcs with PATCH
+expose /api/user/assignations/{id} using *result from app/scripts/users/getAssignations.gcs with GET
 
 expose /api/idea/get/{id} using *result from app/scripts/ideas/getById.gcs with GET
 expose /api/idea using *result from app/scripts/ideas/create.gcs with POST
@@ -19,7 +25,7 @@ expose /api/task/get/{id} using *result from app/scripts/tasks/getById.gcs with 
 expose /api/task using *result from app/scripts/tasks/create.gcs with POST
 expose /api/task/{id} using *result from app/scripts/tasks/update.gcs with PATCH
 expose /api/task/{id} using *result from app/scripts/tasks/delete.gcs with DELETE
-expose /api/task/{start} using *result from app/scripts/tasks/getPagination.gcs with GET
+expose /api/task/{start} using *result from app/scripts/tasks/getPagination.gcs with POST
 expose /api/task/workers/{id} using *result from app/scripts/tasks/getWorkers.gcs with GET
 expose /api/task/workers/{tid}/{wid} using *result from app/scripts/tasks/deleteWorkers.gcs with DELETE
 expose /api/task/workers/{tid}/{wid} using *result from app/scripts/tasks/assignWorkers.gcs with POST
@@ -31,12 +37,13 @@ expose /api/task/assign-last/{id} using *result from app/scripts/tasks/assignLas
 expose /api/task/resources/{id} using *result from app/scripts/tasks/getResources.gcs with GET
 expose /api/task/resources/{id}/{rid} using *result from app/scripts/tasks/deleteResources.gcs with DELETE
 expose /api/task/notes/{id}/{nid} using *result from app/scripts/tasks/deleteNotes.gcs with DELETE
+expose /api/task/progress/{id}/{progress} using *result from app/scripts/tasks/updateProgress.gcs with POST
 
 expose /api/project/get/{id} using *result from app/scripts/projects/getById.gcs with GET
 expose /api/project using *result from app/scripts/projects/create.gcs with POST
 expose /api/project/{id} using *result from app/scripts/projects/update.gcs with PATCH
 expose /api/project/{id} using *result from app/scripts/projects/delete.gcs with DELETE
-expose /api/project/{start} using *result from app/scripts/projects/getPagination.gcs with GET
+expose /api/project/{start} using *result from app/scripts/projects/getPagination.gcs with POST
 expose /api/project/workers/{id} using *result from app/scripts/projects/getWorkers.gcs with GET
 expose /api/project/workers/{pid}/{wid} using *result from app/scripts/projects/deleteWorkers.gcs with DELETE
 expose /api/project/workers/{pid}/{wid} using *result from app/scripts/projects/assignWorkers.gcs with POST
@@ -56,6 +63,7 @@ expose /api/project/export/{id}/{format} using *result from app/scripts/projects
 expose /api/search/user/{term} using *result from app/scripts/search/users.gcs with GET
 expose /api/search/project/{term} using *result from app/scripts/search/projects.gcs with GET
 expose /api/search/task/{term} using *result from app/scripts/search/tasks.gcs with GET
+expose /api/search/right/{term} using *result from app/scripts/search/rights.gcs with GET
 
 expose /api/category using *result from app/scripts/categories/get.gcs with GET
 expose /api/category/get/{id} using *result from app/scripts/categories/getById.gcs with GET

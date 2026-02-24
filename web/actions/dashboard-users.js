@@ -2,12 +2,12 @@ let lastDisplayed = 0;
 let allUsers = [];
 let loadedPages = [];
 
-function fillArray(users, userList){
+function fillArray(users, userList) {
     userList.innerHTML = '';
     users.forEach(user => {
         eod = "disableUser";
         eodt = "Disable";
-        if(!user.active) {
+        if (!user.active) {
             eod = "enableUser";
             eodt = "Enable";
         }
@@ -17,8 +17,10 @@ function fillArray(users, userList){
             <td>${user.username}</td>
             <td>${user.email}</td>
             <td>
-                <button onclick="editUser(${user.id})">Edit</button>
-                <button onclick="${eod}(${user.id})">${eodt}</button>
+                <button class="btn btn-primary" onclick="editUser(${user.id})">Edit</button>
+                <button class="btn btn-warning" onclick="${eod}(${user.id})">${eodt}</button>
+                <button class="btn btn-success" onclick="manageUser(${user.id})">Manage Rights</button>
+                <button class="btn btn-success" onclick="stateUserAffectations(${user.id})">State Affectations</button>
             </td>
         </tr>`;
         lastDisplayed = user.id;
@@ -26,20 +28,20 @@ function fillArray(users, userList){
     });
 }
 
-function displayUsers(forward=true) {
+function displayUsers(forward = true) {
     const userList = document.getElementById('my-table');
 
-    if(forward == true){
-        getUsers(lastDisplayed).then((users)=>{
-            if(users.length > 0){
+    if (forward == true) {
+        getUsers(lastDisplayed).then((users) => {
+            if (users.length > 0) {
                 allUsers = users;
                 fillArray(users, userList);
-            } else if(loadedPages.length != 0) {
+            } else if (loadedPages.length != 0) {
                 loadedPages.pop();
                 alert("No more data behind!");
             }
         });
-    } else if(loadedPages.length > 0) {
+    } else if (loadedPages.length > 0) {
         allUsers = loadedPages.pop();
         fillArray(allUsers, userList);
     } else {
@@ -48,33 +50,40 @@ function displayUsers(forward=true) {
 
 }
 
+function manageUser(id) {
+    redirect("userRights.html", false, [["no", id]]);
+}
+
+function stateUserAffectations(id) {
+    redirect("stateUserAffectation.html", false, [["no", id]]);
+}
+
 function editUser(id) {
-    appDataManager.setvar("form.user.id", id);
-    redirect("userForm.html");
+    redirect("userForm.html", false, [["no", id]]);
 }
 
 function disableUser(id) {
     const confirme = confirm("Do you want to remove that User ?");
-	if (confirme) {
-		disableUserAccount(id).then(()=>{
+    if (confirme) {
+        disableUserAccount(id).then(() => {
             lastDisplayed = 0;
-			displayUsers()
+            displayUsers()
         });
-	}
+    }
 }
 
 function enableUser(id) {
     const confirme = confirm("Do you want to enable that account ?");
-	if (confirme) {
-        enableUserAccount(id).then(()=>{
+    if (confirme) {
+        enableUserAccount(id).then(() => {
             lastDisplayed = 0;
-			displayUsers()
+            displayUsers()
         });
-	}
+    }
 }
 
-function printUsers(){
-    setTimeout(function() {
+function printUsers() {
+    setTimeout(function () {
         const options = {
             filename: 'users-list.pdf',
             margin: 1,
@@ -98,11 +107,5 @@ document.getElementById('prev').onclick = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
-    appDataManager.remvar("form.user.id");
     displayUsers();
 });

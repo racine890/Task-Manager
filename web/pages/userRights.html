@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Form</title>
+    <link rel="stylesheet" href="../assets/style/forms.css">
+    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <link rel="stylesheet" href="../assets/style/selection.css">
+    <link rel="preload" href="../assets/style/project.css" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="../assets/style/project.css">
+    </noscript>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+</head>
+
+<body>
+    <NavBarComponent title="Set User Rights"></NavBarComponent>
+    <div class="form-container">
+        <h1>Set User Rights</h1>
+
+        <div class="assignments">
+            <strong>Permissions</strong>
+            <SelectionComponent id="permission-search" title="Search a permission" object="right"
+                deleteAction="removeRight" validateAction="validateRight">
+            </SelectionComponent>
+            <ul id="permissions-list">
+            </ul>
+        </div>
+    </div>
+    <!-- Core scripts -->
+    <script src="../core/Service.js"></script>
+    <script src="../core/Model.js"></script>
+    <script src="../core/DataManager.js"></script>
+    <script src="../core/Component.js"></script>
+
+    <!-- Search objects -->
+    <script src="../services/searchService.js"></script>
+    <script src="../models/search.js"></script>
+
+    <!-- User objects -->
+    <script src="../services/userService.js"></script>
+    <script src="../models/user.js"></script>
+
+    <!-- Idea objects -->
+    <script src="../services/ideaService.js"></script>
+    <script src="../models/idea.js"></script>
+
+    <!-- Project objects -->
+    <script src="../services/projectService.js"></script>
+    <script src="../models/project.js"></script>
+
+    <!-- Project objects -->
+    <script src="../services/ressourceService.js"></script>
+    <script src="../models/ressource.js"></script>
+    <script src="../managers/ressource_manager.js"></script>
+
+    <!-- Initializers -->
+    <script src="../actions/utils.js"></script>
+    <script src="../actions/init_global.js"></script>
+
+    <!-- Specific scripts -->
+    <script src="../managers/user_manager.js"></script>
+    <script src="../actions/userRights.js"></script>
+    <script src="../components/navbar.js"></script>
+    <script src="../managers/selection_manager.js"></script>
+    <script src="../components/selection.js"></script>
+</body>
+
+</html>

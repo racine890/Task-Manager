@@ -1,25 +1,22 @@
-let ressource_id = null;
-let lastUploadedFile = null;
+let current_ressource_id = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
 
-    if(appDataManager.checkvar("form.ressource.id")){
-        getRessource(appDataManager.getvar("form.ressource.id")).then((ressource)=>{
+    const params = new URLSearchParams(window.location.search);
+    current_ressource_id = params.get('no');
+
+    if (current_ressource_id) {
+        getRessource(current_ressource_id).then((ressource) => {
             document.getElementById("title").value = ressource.title;
             document.getElementById("submission").innerHTML = "Update";
         });
     }
 
-    document.getElementById('file').addEventListener('change', function(event) {
+    document.getElementById('file').addEventListener('change', function (event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const imgPreview = document.getElementById('preview');
                 imgPreview.src = e.target.result;
                 imgPreview.style.display = 'block';
@@ -27,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         }
 
-        uploadRessource(file).then((path)=>{
+        uploadRessource(file).then((path) => {
             lastUploadedFile = path;
         })
     });
@@ -35,11 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('my-form').addEventListener('submit', (event) => {
         event.preventDefault();
 
-        if(appDataManager.checkvar("form.ressource.id")){
+        if (current_ressource_id) {
             const name = document.getElementById('title').value;
 
-            updateRessource(appDataManager.getvar("form.ressource.id"), name, lastUploadedFile);
-            appDataManager.remvar("form.ressource.id");
+            updateRessource(current_ressource_id, name, lastUploadedFile);
         } else {
             const name = document.getElementById('title').value;
 

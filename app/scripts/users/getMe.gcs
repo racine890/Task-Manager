@@ -1,0 +1,9 @@
+SetVar *result evaluate(None)
+
+GetTableElement id of API_TOKEN
+SetVar *arg_id LASTRESULT
+
+execute app/scripts/db/getUserById.gcs
+SetVar *result *json
+
+end

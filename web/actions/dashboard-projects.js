@@ -1,121 +1,51 @@
-let lastDisplayed = 0;
-let allProjects = [];
-let loadedPages = [];
-appDataManager.remvar("form.project.id");
-appDataManager.remvar("form.idea.id");
+// Updated. Those are just the actions for the table component
+const filters = {
+    0: false,
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+};
 
-function fillArray(projects, projectList){
-    projectList.innerHTML = '';
-    projects.forEach(project => {
+function onLoadColumns() { return ["Id", "Label", "Description"]; }
 
-        const row = `<tr>
-            <td>${project.id}</td>
-            <td>${project.name}</td>
-            <td>${project.description}</td>
-            <td>
-                <button onclick="displayProject(${project.id})">See</button>
-                <button onclick="editProject(${project.id})">Edit</button>
-                <button onclick="deleteProject(${project.id})">Delete</button>
-            </td>
-        </tr>`;
-        lastDisplayed = project.id;
-        projectList.innerHTML += row;
-    });
-}
+function onLoadData(project) { return [project.id, project.name, project.description]; }
 
-function displayProjects(forward=true) {
-    const projectList = document.getElementById('my-table');
-
-    if(forward == true){
-        getProjects(lastDisplayed).then((projects)=>{
-            if(projects.length > 0){
-                allProjects = projects;
-                fillArray(projects, projectList);
-            } else if(loadedPages.length != 0) {
-                loadedPages.pop();
-                alert("No more data behind!");
-            }
-        });
-    } else if(loadedPages.length > 0) {
-        allProjects = loadedPages.pop();
-        fillArray(allProjects, projectList);
-    } else {
-        alert("No more data before!");
-    }
-
+function onLoadAction(project) {
+    return [
+        { name: "View", func: "viewProject", arg: project.id, right: "read_project" },
+        { name: "Edit", func: "editProject", arg: project.id, right: "update_project" },
+        { name: "Delete", func: "deleteProject", arg: project.id, color: "danger", right: "delete_project" }
+    ];
 }
 
 function editProject(id) {
-    appDataManager.setvar("form.project.id", id);
-    redirect("projectForm.html");
-}
-
-function displayProject(id) {
-    appDataManager.setvar("form.project.id", id);
-    redirect("projectDetails.html");
-}
-
-function openRandomProject(){
-    displayProject(allProjects[Math.floor(Math.random() * allProjects.length)].id);
+    redirect("projectForm.html", false, [["no", id]]);
 }
 
 function deleteProject(id) {
     const confirme = confirm("Do you want to remove that Project ?");
-	if (confirme) {
+    if (confirme) {
         removeProject(id).then(() => {
-            displayProjects();
+            alert("Project removed !");
+            location.reload();
         });
-	}
-}
-
-document.getElementById('next').onclick = () => {
-    loadedPages.push(allProjects);
-    displayProjects();
-};
-
-document.getElementById('prev').onclick = () => {
-    displayProjects(false);
-};
-
-async function getProjects(){
-    
-    try{
-        // And let the service save the constructed user.
-        // It's asynchronous, so you have to await it.
-        let response = await appProjectService.get_paginated(lastDisplayed);
-
-        if(response != null){
-            let gotProjects = [];
-			response.forEach((gotProject)=>{
-				let tmp = new project();
-				tmp.map(gotProject);
-				gotProjects.push(
-					tmp
-				)
-			})
-
-			return gotProjects;
-        }
-
-    } catch(Error){
-        alert("An error occured!");
     }
 }
 
-async function removeProject(id){
-    
-    try{
-        // And let the service save the constructed user.
-        // It's asynchronous, so you have to await it.
-        await appProjectService.delete(id);
-
-    } catch(Error){
-        alert("An error occured!");
-    }
+function viewProject(id) {
+    redirect("projectDetails.html", false, [["no", id]]);
 }
 
-function printProjects(){
-    setTimeout(function() {
+// Header buttons
+function openRandomProject() {
+    viewProject(tableMap.get("projectTable").allProjects[Math.floor(Math.random() * tableMap.get("projectTable").allProjects.length)].id);
+}
+
+function printProjects() {
+    setTimeout(function () {
         const options = {
             filename: 'projects-list.pdf',
             margin: 1,
@@ -125,15 +55,23 @@ function printProjects(){
         };
 
         var element = document.getElementById("to-print");
-        var worker = html2pdf().set(options).from(element).save();
+        html2pdf().set(options).from(element).save();
     }, 2000);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
-    displayProjects();
+function filterProjects() {
+    const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', (event) => {
+            filters[event.target.value] = event.target.checked;
+            tableMap.get("projectTable").display(true);
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.checked = false;
+    });
+    filterProjects();
 });

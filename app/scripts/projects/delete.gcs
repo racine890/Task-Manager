@@ -3,11 +3,14 @@ SetVar *result evaluate(None)
 GetTableElement id of API_PARAMS
 SetVar *arg_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
+GetTableElement username of API_TOKEN
+SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/deleteProject.gcs
+
+SetVar *result evaluate({'msg': 'Project deleted successfully'})
+
+evaluate {*arg_author} + ' deleted the project: ' + {*arg_name} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

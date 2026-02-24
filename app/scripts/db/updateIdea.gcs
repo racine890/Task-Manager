@@ -27,8 +27,6 @@ if $DIFFERENT then
 execute query i with *prepared_vars
 commit
 
-SetVar *result *prepared_vars
-
 # Close the database
 close database
 end

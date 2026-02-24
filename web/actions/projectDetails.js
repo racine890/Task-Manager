@@ -2,19 +2,15 @@ current_project_id = null;
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
-
     document.getElementById('export-options').style.display = 'none';
 
-	if(appDataManager.checkvar("form.project.id")){
-        getProject(appDataManager.getvar("form.project.id")).then((project)=>{
-			const statuses = ["New", "Todo", "Started", "Paused", "Testing", "Finished", "Abandoned"];
+    const params = new URLSearchParams(window.location.search);
+    current_project_id = params.get('no');
 
-            current_project_id = project.id;
+    if (current_project_id) {
+        getProject(current_project_id).then((project) => {
+            const statuses = ["New", "Todo", "Started", "Paused", "Testing", "Finished", "Abandoned"];
+
             document.getElementById("title").innerText = project.name;
             document.getElementById("description").innerText = project.description;
             document.getElementById("start-date").innerText = project.start_date;
@@ -22,29 +18,31 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("status").innerText = statuses[project.status];
             document.getElementById("status").classList.add(statuses[project.status]);
 
-            getCategory(project.category_id).then((category)=>{
+            refreshPrismStyles();
+
+            getCategory(project.category_id).then((category) => {
                 document.getElementById("category").innerText = category.name;
             })
 
-            getWorkersByProject(current_project_id).then((workers)=>{
+            getWorkersByProject(current_project_id).then((workers) => {
                 workers.forEach(worker => {
                     preloadUser(worker);
                 });
             });
 
-            getProjectsByProject(current_project_id).then((projects)=>{
+            getProjectsByProject(current_project_id).then((projects) => {
                 projects.forEach(project => {
                     preloadProject(project);
                 });
             });
 
-            getTasksByProject(current_project_id).then((tasks)=>{
+            getTasksByProject(current_project_id).then((tasks) => {
                 tasks.forEach(task => {
                     preloadTask(task);
                 });
             });
 
-            getResourcesByProject(current_project_id).then((resources)=>{
+            getResourcesByProject(current_project_id).then((resources) => {
                 resources.forEach(resource => {
                     preloadResource(resource);
                 });
@@ -57,55 +55,55 @@ document.addEventListener('DOMContentLoaded', () => {
             test_btn = document.getElementById("test");
             finish_btn = document.getElementById("finish");
 
-            if(project.status == STATUS.NEW){
+            if (project.status == STATUS.NEW) {
                 todo_btn.style.display = 'block';
                 start_btn.style.display = 'block';
-            } else if (project.status == STATUS.PAUSED){
+            } else if (project.status == STATUS.PAUSED) {
                 start_btn.style.display = 'block';
-            } else if (project.status == STATUS.STARTED){
+            } else if (project.status == STATUS.STARTED) {
                 pause_btn.style.display = 'block';
                 start_btn.style.display = 'block';
                 abandon_btn.style.display = 'block';
                 finish_btn.style.display = 'block';
-            } else if (project.status == STATUS.TESTING){
+            } else if (project.status == STATUS.TESTING) {
                 start_btn.style.display = 'block';
                 finish_btn.style.display = 'block';
-            } else if (project.status == STATUS.TODO){
+            } else if (project.status == STATUS.TODO) {
                 start_btn.style.display = 'block';
             }
 
-            document.getElementById("todo").addEventListener('click', ()=>{
-                changeProjectStatus(current_project_id, STATUS.TODO).then(()=>{
+            document.getElementById("todo").addEventListener('click', () => {
+                changeProjectStatus(current_project_id, STATUS.TODO).then(() => {
                     location.reload();
                 })
             });
 
-            document.getElementById("abandon").addEventListener('click', ()=>{
-                changeProjectStatus(current_project_id, STATUS.ABANDONED).then(()=>{
+            document.getElementById("abandon").addEventListener('click', () => {
+                changeProjectStatus(current_project_id, STATUS.ABANDONED).then(() => {
                     location.reload();
                 })
             });
 
-            document.getElementById("start").addEventListener('click', ()=>{
-                changeProjectStatus(current_project_id, STATUS.STARTED).then(()=>{
+            document.getElementById("start").addEventListener('click', () => {
+                changeProjectStatus(current_project_id, STATUS.STARTED).then(() => {
                     location.reload();
                 })
             });
 
-            document.getElementById("pause").addEventListener('click', ()=>{
-                changeProjectStatus(current_project_id, STATUS.PAUSED).then(()=>{
+            document.getElementById("pause").addEventListener('click', () => {
+                changeProjectStatus(current_project_id, STATUS.PAUSED).then(() => {
                     location.reload();
                 })
             });
 
-            document.getElementById("test").addEventListener('click', ()=>{
-                changeProjectStatus(current_project_id, STATUS.TESTING).then(()=>{
+            document.getElementById("test").addEventListener('click', () => {
+                changeProjectStatus(current_project_id, STATUS.TESTING).then(() => {
                     location.reload();
                 })
             });
 
-            document.getElementById("finish").addEventListener('click', ()=>{
-                changeProjectStatus(current_project_id, STATUS.FINISHED).then(()=>{
+            document.getElementById("finish").addEventListener('click', () => {
+                changeProjectStatus(current_project_id, STATUS.FINISHED).then(() => {
                     location.reload();
                 })
             });
@@ -118,156 +116,166 @@ function download(path) {
     downloadRessource(path);
 }
 
-function preloadResource(resource){
+function preloadResource(resource) {
     const li = document.createElement('li');
-    li.setAttribute('data-id', resource.key);
+    li.setAttribute('data-id', resource.id);
 
+    const seer = `<i class="fas fa-eye icon" title="Edit" onclick="seeResource(this.parentElement)"></i>
+    <i class="fas fa-download icon" title="Download" onclick="download('${resource.path}')"></i>`;
+    const delr = `<i class="fas fa-trash icon" title="Delete" onclick="removeResource(this.parentElement)"></i>`;
     li.innerHTML = `
-        ${resource.value}
-        <i class="fas fa-eye icon" title="Edit" onclick="seeResource(this.parentElement)"></i>
-        <i class="fas fa-download icon" title="Download" onclick="download('${resource.value}')"></i>
-        <i class="fas fa-trash icon" title="Delete" onclick="removeResource(this.parentElement)"></i>
+        ${resource.path}
+        ${hasRight('read_ressource') ? seer : ''}
+        ${hasRight('delete_ressource') ? delr : ''}
     `;
 
     let list = document.getElementById("ressources-list");
     list.appendChild(li);
 }
 
-function preloadUser(user){
+function preloadUser(user) {
     const li = document.createElement('li');
-    li.setAttribute('data-id', user.key);
+    li.setAttribute('data-id', user.id);
+    const editu = `<i class="fas fa-edit icon" title="Edit" onclick="editUser(this.parentElement)"></i>`;
+    const delu = `<i class="fas fa-trash icon" title="Delete" onclick="removeUser(this.parentElement)"></i>`;
     li.innerHTML = `
-        ${user.value}
-        <i class="fas fa-edit icon" title="Edit" onclick="editUser(this.parentElement)"></i>
-        <i class="fas fa-trash icon" title="Delete" onclick="removeUser(this.parentElement)"></i>
+        ${user.username}
+        ${hasRight('update_user') ? editu : ''}
+        ${hasRight('delete_user') ? delu : ''}
     `;
     let userList = document.getElementById("users-list");
     userList.appendChild(li);
 }
 
-function seeResource(element){
+function seeResource(element) {
     let resId = element.getAttribute('data-id');
-    
-    getRessource(resId).then((resource)=>{
+
+    getRessource(resId).then((resource) => {
         path = resource.path;
-        getRessourceUrl(path).then((url)=>{
+        getRessourceUrl(path).then((url) => {
             const popup = window.open('', 'popup', 'width=600,height=400,scrollbars=yes');
-            if(path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.gif') || path.endsWith('.webp')){
+            if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.gif') || path.endsWith('.webp')) {
                 const img = document.createElement('img');
                 img.src = url;
                 img.style.width = '100%';
                 popup.document.body.appendChild(img);
-            } else if (path.endsWith('.pdf')){
+            } else if (path.endsWith('.pdf')) {
                 const canvas = document.createElement('canvas');
                 canvas.id = 'pdf-canvas';
                 const context = canvas.getContext('2d');
 
                 function renderPage(pdf, pageNum) {
                     pdf.getPage(pageNum).then(page => {
-                    const scale = 1.5;
-                    const viewport = page.getViewport({ scale: scale });
-                    
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
+                        const scale = 1.5;
+                        const viewport = page.getViewport({ scale: scale });
 
-                    popup.document.body.appendChild(canvas);
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
 
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-                    
-                    page.render(renderContext);
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        popup.document.body.appendChild(canvas);
+
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+
+                        page.render(renderContext);
                     });
 
                 }
 
                 pdfjsLib.getDocument(url).promise.then(pdf => {
                     const numPages = pdf.numPages;
-                    
-                for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                    renderPage(pdf, pageNum);
+
+                    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                        renderPage(pdf, pageNum);
                     }
                 }).catch(error => {
                     console.error('Erreur lors du chargement du PDF :', error);
                 });
             } else {
                 fetch(url)
-                .then(response => response.blob())
-                .then(blob => {
-                    const reader = new FileReader();
-                    reader.onload = function() {
-                        const pre = document.createElement("pre");
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const reader = new FileReader();
+                        reader.onload = function () {
+                            const pre = document.createElement("pre");
 
-                        const code = document.createElement("code");
-                        code.classList.add('language-javascript');
-                        code.textContent = reader.result;
-                        Prism.highlightElement(code);
+                            const code = document.createElement("code");
+                            code.classList.add('language-javascript');
+                            code.textContent = reader.result;
+                            Prism.highlightElement(code);
 
-                        pre.appendChild(code);
-                        pre.style.background = 'white';
-                        pre.style.color = 'black';
-                        popup.document.body.appendChild(pre);
-                    };
-                    reader.readAsText(blob);
-                })
-                .catch(error => {
-                    console.error("Erreur lors de la récupération du fichier texte :", error);
-                });
+                            pre.appendChild(code);
+                            pre.style.background = 'white';
+                            pre.style.color = 'black';
+                            popup.document.body.appendChild(pre);
+                        };
+                        reader.readAsText(blob);
+                    })
+                    .catch(error => {
+                        console.error("Erreur lors de la récupération du fichier texte :", error);
+                    });
             }
         });
     })
 }
 
-function removeResource(element){
+function removeResource(element) {
     let resId = element.getAttribute('data-id');
     dropProjectResource(current_project_id, resId);
     const ul = element.parentElement;
     ul.removeChild(element);
 }
 
-function preloadProject(project){
+function preloadProject(project) {
     const li = document.createElement('li');
-    li.setAttribute('data-id', project.key);
+    li.setAttribute('data-id', project.id);
+    const editp = `<i class="fas fa-edit icon" title="Edit" onclick="editProject(this.parentElement)"></i>`;
+    const delp = `<i class="fas fa-trash icon" title="Delete" onclick="removeProject(this.parentElement)"></i>`;
     li.innerHTML = `
-        ${project.value}
-        <i class="fas fa-edit icon" title="Edit" onclick="editProject(this.parentElement)"></i>
-        <i class="fas fa-trash icon" title="Delete" onclick="removeProject(this.parentElement)"></i>
+        ${project.name}
+        ${hasRight('update_project') ? editp : ''}
+        ${hasRight('delete_project') ? delp : ''}
     `;
     let projectList = document.getElementById("projects-list");
     projectList.appendChild(li);
 }
 
-function preloadTask(task){
+function preloadTask(task) {
     const li = document.createElement('li');
-    li.setAttribute('data-id', task.key);
-    li.innerHTML = `<a href="#" onclick="openTask(${task.key})">
-        ${task.value}</a>
-        <i class="fas fa-edit icon" title="Edit" onclick="editTask(this.parentElement)"></i>
-        <i class="fas fa-trash icon" title="Delete" onclick="removeTask(this.parentElement)"></i>
+    li.setAttribute('data-id', task.id);
+    const editp = `<i class="fas fa-edit icon" title="Edit" onclick="editTask(this.parentElement)"></i>`;
+    const delp = `<i class="fas fa-trash icon" title="Delete" onclick="removeTask(this.parentElement)"></i>`;
+    li.innerHTML = `<a href="#" onclick="openTask(${task.id})">
+        ${task.name}</a>
+        ${hasRight('update_task') ? editp : ''}
+        ${hasRight('delete_task') ? delp : ''}
     `;
     let taskList = document.getElementById("tasks-list");
     taskList.appendChild(li);
 }
 
-function validateUser(element){
+function validateUser(element) {
     if (element.selectedItem) {
         affectWorker(current_project_id, element.selectedItem);
 
         const li = document.createElement('li');
         li.setAttribute('data-id', element.selectedItem);
+        const editu = `<i class="fas fa-edit icon" title="Edit" onclick="${element.editAction}(this.parentElement)"></i>`;
+        const delu = `<i class="fas fa-trash icon" title="Delete" onclick="${element.deleteAction}(this.parentElement)"></i>`;
         li.innerHTML = `
             ${element.selectedValue}
-            <i class="fas fa-edit icon" title="Edit" onclick="${element.editAction}(this.parentElement)"></i>
-            <i class="fas fa-trash icon" title="Delete" onclick="${element.deleteAction}(this.parentElement)"></i>
+            ${hasRight('update_user') ? editu : ''}
+            ${hasRight('delete_user') ? delu : ''}
         `;
 
         let userList = document.getElementById("users-list");
         userList.appendChild(li);
-        
+
         element.popup.style.display = 'none';
         element.searchInput.value = '';
         element.resultList.innerHTML = '';
@@ -277,32 +285,34 @@ function validateUser(element){
     }
 }
 
-function editUser(element){
+function editUser(element) {
     let userId = element.getAttribute('data-id');
 }
 
-function removeUser(element){
+function removeUser(element) {
     let userId = element.getAttribute('data-id');
     dropWorker(current_project_id, userId);
     const ul = element.parentElement;
     ul.removeChild(element);
 }
 
-function validateProject(element){
+function validateProject(element) {
     if (element.selectedItem) {
         affectSubProject(current_project_id, element.selectedItem);
 
         const li = document.createElement('li');
         li.setAttribute('data-id', element.selectedItem);
+        const editp = `<i class="fas fa-edit icon" title="Edit" onclick="${element.editAction}(this.parentElement)"></i>`;
+        const delp = `<i class="fas fa-trash icon" title="Delete" onclick="${element.deleteAction}(this.parentElement)"></i>`;
         li.innerHTML = `
             ${element.selectedValue}
-            <i class="fas fa-edit icon" title="Edit" onclick="${element.editAction}(this.parentElement)"></i>
-            <i class="fas fa-trash icon" title="Delete" onclick="${element.deleteAction}(this.parentElement)"></i>
+            ${hasRight('update_project') ? editp : ''}
+            ${hasRight('delete_project') ? delp : ''}
         `;
 
         let projectList = document.getElementById("projects-list");
         projectList.appendChild(li);
-        
+
         element.popup.style.display = 'none';
         element.searchInput.value = '';
         element.resultList.innerHTML = '';
@@ -312,37 +322,36 @@ function validateProject(element){
     }
 }
 
-function editProject(element){
+function editProject(element) {
     let id = element.getAttribute('data-id');
-    appDataManager.remvar("form.idea.id");
-    appDataManager.remvar("form.project.id");
-    appDataManager.setvar("form.project.id", id);
 
-    redirect("projectForm.html", true);
+    redirect("projectForm.html", true, [["no", id]]);
 }
 
-function removeProject(element){
+function removeProject(element) {
     let projectId = element.getAttribute('data-id');
     dropSubProject(projectId);
     const ul = element.parentElement;
     ul.removeChild(element);
 }
 
-function validateTask(element){
+function validateTask(element) {
     if (element.selectedItem) {
         affectTask(current_project_id, element.selectedItem);
 
         const li = document.createElement('li');
         li.setAttribute('data-id', element.selectedItem);
+        const editp = `<i class="fas fa-edit icon" title="Edit" onclick="${element.editAction}(this.parentElement)"></i>`;
+        const delp = `<i class="fas fa-trash icon" title="Delete" onclick="${element.deleteAction}(this.parentElement)"></i>`;
         li.innerHTML = `<a href="#" onclick="openTask(${element.selectedItem})">
             ${element.selectedValue}</a>
-            <i class="fas fa-edit icon" title="Edit" onclick="${element.editAction}(this.parentElement)"></i>
-            <i class="fas fa-trash icon" title="Delete" onclick="${element.deleteAction}(this.parentElement)"></i>
+            ${hasRight('update_task') ? editp : ''}
+            ${hasRight('delete_task') ? delp : ''}
         `;
 
         let taskList = document.getElementById("tasks-list");
         taskList.appendChild(li);
-        
+
         element.popup.style.display = 'none';
         element.searchInput.value = '';
         element.resultList.innerHTML = '';
@@ -352,41 +361,33 @@ function validateTask(element){
     }
 }
 
-function editTask(element){
+function editTask(element) {
     let id = element.getAttribute('data-id');
-    appDataManager.remvar("form.task.id");
-    appDataManager.remvar("form.project.id");
-    appDataManager.setvar("form.task.id", id);
 
-    redirect("taskForm.html", true);
+    redirect("taskForm.html", true, [["no", id]]);
 }
 
-function removeTask(element){
+function removeTask(element) {
     let taskId = element.getAttribute('data-id');
     dropTask(taskId);
     const ul = element.parentElement;
     ul.removeChild(element);
 }
 
-function createTask(){
-    appDataManager.setvar("form.project.id", current_project_id);
-    appDataManager.remvar("form.task.id");
-
-    redirect("taskForm.html", true);
+function createTask() {
+    redirect("taskForm.html", true, [["project", current_project_id]]);
 }
 
-function openTask(taskId){
-    appDataManager.setvar("form.task.id", taskId);
-
-    redirect("taskDetails.html", true);
+function openTask(taskId) {
+    redirect("taskDetails.html", true, [["no", taskId]]);
 }
 
-function uploadFileAsResource(){
+function uploadFileAsResource() {
     document.getElementById('fileInput').click();
 }
 
-function printProject(){
-    setTimeout(function() {
+function printProject() {
+    setTimeout(function () {
         const options = {
             filename: `project-${current_project_id}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
@@ -398,25 +399,36 @@ function printProject(){
     }, 2000);
 }
 
-function exportMenu(){
+function exportMenu() {
     document.getElementById('export-options').style.display = 'block';
 }
 
 function exportAs(format) {
     if (format === "tmpro") {
-        
+
     }
 }
 
 document.getElementById('fileInput').addEventListener('change', (event) => {
     const file = event.target.files[0];
 
-    uploadRessource(file).then((path)=>{
-        saveRessource('pr-'+current_project_id, path).then(()=>{
-            assignLastResourceToProject(current_project_id).then(()=>{
+    uploadRessource(file).then((path) => {
+        saveRessource('pr-' + current_project_id, path).then(() => {
+            assignLastResourceToProject(current_project_id).then(() => {
                 alert("Resource successfully added !");
                 location.reload();
             })
         })
     })
 });
+
+function refreshPrismStyles() {
+    // To highlight all elements with the 'language-' class
+    Prism.highlightAll();
+
+    const codeElements = document.querySelectorAll('.language-javascript');
+
+    codeElements.forEach(el => {
+        el.classList.add('my-class');
+    });
+}

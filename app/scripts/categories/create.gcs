@@ -1,16 +1,24 @@
 SetVar *result evaluate(None)
 
+if evaluate(not hasRight('create_category', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
 GetTableElement name of API_DATA
 SetVar *arg_name LASTRESULT
 
 GetTableElement description of API_DATA
 SetVar *arg_description LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
+GetTableElement username of API_TOKEN
+SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/insertCategory.gcs
+
+SetVar *result evaluate({'msg': 'Category created successfully'})
+
+evaluate {*arg_author} + 'created the category:' + {*arg_name} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

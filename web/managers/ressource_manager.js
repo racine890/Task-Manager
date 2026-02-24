@@ -1,106 +1,84 @@
-async function getRessources(lastDisplayed){
-    
-    try{
-        let response = await appRessourceService.get_paginated(lastDisplayed);
+async function getRessources(lastDisplayed) {
 
-        if(response != null){
-            let gots = [];
-			response.forEach((got)=>{
-				let tmp = new ressource();
-				tmp.map(got);
-				gots.push(
-					tmp
-				)
-			})
+    let response = await appRessourceService.get_paginated(lastDisplayed);
 
-			return gots;
-        }
-
-    } catch(Error){
-        alert("An error occured!");
-    }
+    return response;
 }
 
-async function removeRessource(id){
-    
-    try{
+async function removeRessource(id) {
+
+    try {
         await appRessourceService.delete(id);
 
-    } catch(Error){
+    } catch (Error) {
         alert("An error occured!");
     }
 }
 
-async function getRessource(id){
-    try{
+async function getRessource(id) {
+    try {
         let response = await appRessourceService.getByID(id);
 
-        if(response != null){
-            let nidea = new ressource();
-            nidea.map(response);
-            return nidea;
-        }
+        return response;
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
 async function saveRessource(name, path) {
-    
-    try{
+
+    try {
         let response = await appRessourceService.save({
             name: name,
             path: path
         });
 
-        if(response != null){
-            let newIdea = new ressource();
-            newIdea.mapLite(response);
-			alert("Ressource "+newIdea.title+" has been saved !");
+        if (response != null) {
+            alert("Ressource has been saved !");
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function updateRessource(id, name, path){
-    
-    try{
+async function updateRessource(id, name, path) {
+
+    try {
         let response = await appRessourceService.update(id, {
             name: name,
             path: path
         });
 
-        if(response != null){
+        if (response != null) {
             let newIdea = new ressource();
             newIdea.mapLite(response);
-			alert("Category "+newIdea.title+" has been updated !");
+            alert("Category " + newIdea.title + " has been updated !");
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function uploadRessource(file){
+async function uploadRessource(file) {
     if (file) {
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:6103/upload', {
+            const response = await fetch('http://localhost:6102/upload', {
                 method: 'POST',
                 body: formData
             });
 
             if (response.ok) {
-                const text = await response.text();
-                return text;
+                const text = await response.json();
+                return text.file;
             }
         } catch (Error) {
             console.log(Error);
@@ -112,7 +90,7 @@ async function uploadRessource(file){
 async function downloadRessource(filename) {
     if (filename) {
         try {
-            const response = await fetch(`http://localhost:6103/download/${filename}`, {
+            const response = await fetch(`http://localhost:6102/download/${filename}`, {
                 method: 'GET'
             });
 
@@ -134,7 +112,7 @@ async function downloadRessource(filename) {
 async function getRessourceUrl(filename) {
     if (filename) {
         try {
-            const response = await fetch(`http://localhost:6103/download/${filename}`, {
+            const response = await fetch(`http://localhost:6102/download/${filename}`, {
                 method: 'GET'
             });
 

@@ -18,11 +18,14 @@ SetVar *arg_id LASTRESULT
 GetTableElement category_id of API_DATA
 SetVar *arg_category_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
+GetTableElement username of API_TOKEN
+SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/updateProject.gcs
+
+SetVar *result evaluate({'msg': 'Project updated successfully'})
+
+evaluate {*arg_author} + ' updated the project: ' + {*arg_name} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="../assets/style/forms.css">
     <link rel="stylesheet" href="../assets/style/dashboard.css">
 </head>
+
 <body>
     <NavBarComponent title="Create an Idea"></NavBarComponent>
     <div class="form-container">
@@ -18,13 +20,14 @@
             </div>
             <div class="form-group">
                 <label for="description">Description :</label>
-                <textarea class="form-field" id="description" name="description" rows="4" required></textarea>
+                <textarea class="form-field" id="description" placeholder="Markdown supported" name="description"
+                    rows="4" required></textarea>
             </div>
             <button type="submit" id="submission">Save</button>
         </form>
     </div>
     <!-- Core scripts -->
-	<script src="../core/Service.js"></script>
+    <script src="../core/Service.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>
@@ -47,4 +50,5 @@
     <script src="../actions/save_idea.js"></script>
     <script src="../components/navbar.js"></script>
 </body>
+
 </html>

@@ -6,11 +6,7 @@ SetVar *arg_id LASTRESULT
 GetTableElement status of API_PARAMS
 SetVar *arg_status LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/changeProjectStatus.gcs
+SetVar *result evaluate({'msg': 'Project status changed successfully'})
 
 end

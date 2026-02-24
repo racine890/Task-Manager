@@ -1,26 +1,36 @@
 # Check that all params are set
 check var *arg_username
 if $MISSING then
-	print Error ------- Missing argument : *arg_username
+	print val Error ------- Missing argument : *arg_username
 	end
 
 check var *arg_password
 if $MISSING then
-	print Error ------- Missing argument : *arg_password
+	print val Error ------- Missing argument : *arg_password
 	end
 
 check var *arg_pic
 if $MISSING then
-	print Error ------- Missing argument : *arg_pic
+	print val Error ------- Missing argument : *arg_pic
 	end
 
 check var *arg_email
 if $MISSING then
-	print Error ------- Missing argument : *arg_email
+	print val Error ------- Missing argument : *arg_email
 	end
 
-evaluate [ {*arg_username}, hashlib.sha256({*arg_password}.encode()).hexdigest(), {*arg_pic}, {*arg_email} ]
+check var *arg_role
+if $MISSING then
+	print val Error ------- Missing argument : *arg_role
+	end
+
+evaluate [ {*arg_username}, {*arg_email} ]
+SetVar . *test_vars LASTRESULT
+
+evaluate [ {*arg_username}, '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', {*arg_pic}, {*arg_email} ]
 SetVar . *prepared_vars LASTRESULT
+
+SetVar LASTTUPLE evaluate(None)
 
 # Connect to the database
 compare $DATABASE_TYPE sqlite
@@ -29,15 +39,38 @@ if $EQUAL then
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
-execute query i with *prepared_vars
-commit
+query select_one with q pass *test_vars
 
-SetVar *result *prepared_vars
+compare LASTTUPLE None
+if 5 then
+	SetVar API_RESPONSE 400
+	SetVar *result evaluate({"msg": "User already exists!"})
+	close database
+	end
+
+execute query i with *prepared_vars
+
+evaluate [ {*arg_role} ]
+SetVar . *prepared_vars LASTRESULT
+execute query link with *prepared_vars
+
+commit
 
 # Close the database
 close database
 end
 
+[q]
+select * from user where username = ? or email = ? limit 1;
+[/q]
+
 [i]
 insert into user( username, password, profile_pic, email ) values ( ?, ?, ?, ?) ;
 [/i]
+
+[link]
+insert into user_right (user_id, right_id)
+select (select max(id) from user), right_id
+from right_role
+where role_id = (select id from role where name = ?);
+[/link]

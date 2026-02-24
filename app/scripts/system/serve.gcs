@@ -1,12 +1,18 @@
 config api set path to ./web
-config api set authentication to basic
-config api set username to deidara
-config api set password to ak@tsuki
+config api set authentication to bearer
+config api set secret to ak@tsuki
+
+evaluate getDataDir()
+add LASTRESULT /uploads/
+define $UPLOAD_DIR LASTRESULT
+
+config api set upload_dir to $UPLOAD_DIR
+config api set download_dir to $UPLOAD_DIR
 
 serve to 0.0.0.0:6102
+
 execute app/scripts/system/apis.gcs
 CreateText 2 Server listening ...
 
-evaluate run_file_server()
 SetVar *file_server LASTRESULT
 end

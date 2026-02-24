@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Worker Assignations</title>
+	<link rel="stylesheet" href="../assets/style/states.css">
+	<link rel="stylesheet" href="../assets/style/dashboard.css">
+</head>
+
+<body>
+	<NavBarComponent title="Task details"></NavBarComponent>
+
+	<div class="container" id="container">
+
+		<div class="header">
+			<div class="profile">
+				<div class="avatar" id="initials">CD</div>
+				<div>
+					<h2 id="name">Claire Dubois</h2>
+					<p id="job">Développeuse Back-End</p>
+					<p id="email">Email : claire.dubois@entreprise.com</p>
+				</div>
+			</div>
+
+			<div class="stats">
+				<div class="card">
+					<h3 id="active_tasks">4</h3>
+					<span>Active tasks</span>
+				</div>
+				<div class="card">
+					<h3 id="delayed">1</h3>
+					<span>Delayed</span>
+				</div>
+				<div class="card">
+					<h3 id="progression">78%</h3>
+					<span>Averrage Progression</span>
+				</div>
+			</div>
+		</div>
+
+		<h3>Active tasks</h3>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Task</th>
+					<th>Project</th>
+					<th>Started on</th>
+					<th>Should end on</th>
+					<th>Progression</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody id="activeTasks">
+
+				<tr>
+					<td>Développement API paiement</td>
+					<td>Refonte E-commerce</td>
+					<td>03/02/2026</td>
+					<td>28/02/2026</td>
+					<td>
+						<div class="progress-container">
+							<div class="progress-bar" style="width:75%; background:#4e73df;"></div>
+						</div>
+					</td>
+					<td><span class="status en-cours">En cours</span></td>
+				</tr>
+
+				<tr class="retard-row">
+					<td>Optimisation requêtes SQL</td>
+					<td>Migration ERP</td>
+					<td>15/01/2026</td>
+					<td>15/02/2026</td>
+					<td>
+						<div class="progress-container">
+							<div class="progress-bar" style="width:60%; background:#dc3545;"></div>
+						</div>
+					</td>
+					<td><span class="status retard">En retard</span></td>
+				</tr>
+
+				<tr>
+					<td>Documentation API</td>
+					<td>Refonte E-commerce</td>
+					<td>10/02/2026</td>
+					<td>05/03/2026</td>
+					<td>
+						<div class="progress-container">
+							<div class="progress-bar" style="width:90%; background:#1cc88a;"></div>
+						</div>
+					</td>
+					<td><span class="status en-cours">En cours</span></td>
+				</tr>
+
+				<tr>
+					<td>Correction bug sécurité</td>
+					<td>Application Mobile RH</td>
+					<td>20/02/2026</td>
+					<td>27/02/2026</td>
+					<td>
+						<div class="progress-container">
+							<div class="progress-bar" style="width:100%; background:#28a745;"></div>
+						</div>
+					</td>
+					<td><span class="status termine">Terminé</span></td>
+				</tr>
+
+			</tbody>
+		</table>
+
+		<footer>
+			Last update : <span id="last_update"></span> — Automatic individual report
+		</footer>
+
+	</div>
+	<!-- Core scripts -->
+	<script src="../core/Service.js"></script>
+	<script src="../core/Model.js"></script>
+	<script src="../core/DataManager.js"></script>
+	<script src="../core/Component.js"></script>
+
+	<!-- User objects -->
+	<script src="../services/userService.js"></script>
+	<script src="../models/user.js"></script>
+	<script src="../managers/user_manager.js"></script>
+	<script src="../components/navbar.js"></script>
+	<!-- Initializers -->
+	<script src="../actions/utils.js"></script>
+	<script src="../actions/init_global.js"></script>
+
+	<!-- specific scripts -->
+	<script src="../actions/stateUserAffectations.js"></script>
+</body>
+
+</html>

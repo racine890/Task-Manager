@@ -15,14 +15,23 @@ SetVar *arg_project_id LASTRESULT
 GetTableElement category_id of API_DATA
 SetVar *arg_category_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
+GetTableElement start_date of API_DATA
+SetVar *arg_start_date LASTRESULT
 
-GetTableElement 0 of *session_user
+GetTableElement end_date of API_DATA
+SetVar *arg_end_date LASTRESULT
+
+GetTableElement username of API_TOKEN
+SetVar *trace_author LASTRESULT
+
+GetTableElement id of API_TOKEN
 SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/insertTask.gcs
+
+SetVar *result evaluate({'msg': 'Task created successfully'})
+
+evaluate {*trace_author} + ' created the task:' + {*arg_name} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

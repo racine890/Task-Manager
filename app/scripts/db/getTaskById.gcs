@@ -16,10 +16,14 @@ if $DIFFERENT then
 
 query select_one with q with *prepared_vars
 
+compare LASTTUPLE None
+if $DIFFERENT then
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'name', 'description', 'create_date', 'status', 'progress', 'creator.username', 'creator.profile_pic', 'creator.email', 'category_id', 'project_id')) =>*json
+end
 # Close the database
 close database
 end
 
 [q]
-select * from task where id = ? ;
+select task.id, task.name, task.description, task.create_date, task.status, task.progression, user.username, user.profile_pic, user.email, task.category_id, task.project_id from task, user where task.creator = user.id and task.active = 1 and task.id = ? ;
 [/q]

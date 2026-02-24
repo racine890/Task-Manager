@@ -1,6 +1,6 @@
 async function saveProject(title, description, start_date, end_date, category_id) {
-    
-    try{
+
+    try {
         let response = await appProjectService.save({
             name: title,
             description: description,
@@ -9,37 +9,35 @@ async function saveProject(title, description, start_date, end_date, category_id
             category_id: category_id
         });
 
-        if(response != null){
-            let newProject = new project();
-            newProject.mapLite(response);
-			alert("Project "+newProject.name+" has been saved !");
+        if ('msg' in response) {
+            alert(response.msg);
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getProject(id){
-    try{
-        let response = await appProjectService.getByID(id);
+async function getProject(id) {
+    let response = await appProjectService.getByID(id);
 
-        if(response != null){
-            let nproject = new project();
-            nproject.map(response);
-            return nproject;
-        }
-
-    } catch(Error){
-        console.log(Error);
-        alert("An error occured!");
-    }
+    return response;
 }
 
-async function updateProject(id, title, description, start_date, end_date, category_id){
-    
-    try{
+async function getProjects(lastDisplayed, filters = []) {
+
+    let response = await appProjectService.get_paginated(lastDisplayed, filters);
+
+    if (response != null) {
+        return response;
+    }
+
+}
+
+async function updateProject(id, title, description, start_date, end_date, category_id) {
+
+    try {
         let response = await appProjectService.update(id, {
             name: title,
             description: description,
@@ -48,181 +46,147 @@ async function updateProject(id, title, description, start_date, end_date, categ
             category_id: category_id
         });
 
-        if(response != null){
-            let newProject = new project();
-            newProject.mapLite(response);
-			alert("Project "+newProject.name+" has been updated !");
+        if ('msg' in response) {
+            alert(response.msg);
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function affectWorker(id, wid){
-    try{
+async function affectWorker(id, wid) {
+    try {
         await appProjectService.add_worker(id, wid);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function affectSubProject(id, pid){
-    try{
+async function affectSubProject(id, pid) {
+    try {
         await appProjectService.add_sub_project(id, pid);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function dropWorker(id, wid){
-    try{
+async function dropWorker(id, wid) {
+    try {
         await appProjectService.delete_workers(id, wid);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function dropSubProject(id){
-    try{
+async function dropSubProject(id) {
+    try {
         await appProjectService.delete_project(id);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function dropTask(id){
-    try{
+async function dropTask(id) {
+    try {
         await appProjectService.delete_task(id);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getWorkersByProject(id){
-    try{
+async function getWorkersByProject(id) {
+    try {
         let response = await appProjectService.get_workers(id);
 
-        if(response != null){
-            let workers = [];
-            response.forEach(element => {
-                let newUser = new search();
-                newUser.map(element);
-                workers.push(newUser);
-            });
-            return workers;
-        }
-    } catch(Error){
+        return response;
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getProjectsByProject(id){
-    try{
+async function getProjectsByProject(id) {
+    try {
         let response = await appProjectService.get_sub_projects(id);
 
-        if(response != null){
-            let projects = [];
-            response.forEach(element => {
-                let newUser = new search();
-                newUser.map(element);
-                projects.push(newUser);
-            });
-            return projects;
-        }
-    } catch(Error){
+        return response;
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getTasksByProject(id){
-    try{
+async function getTasksByProject(id) {
+    try {
         let response = await appProjectService.get_tasks(id);
 
-        if(response != null){
-            let tasks = [];
-            response.forEach(element => {
-                let newTask = new search();
-                newTask.map(element);
-                tasks.push(newTask);
-            });
-            return tasks;
-        }
-    } catch(Error){
+        return response;
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function affectTask(id, tid){
-    try{
+async function affectTask(id, tid) {
+    try {
         await appProjectService.add_task(id, tid);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function changeProjectStatus(id, status){
-    try{
+async function changeProjectStatus(id, status) {
+    try {
         await appProjectService.change_status(id, status);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getResourcesByProject(id){
-    try{
+async function getResourcesByProject(id) {
+    try {
         let response = await appProjectService.get_resources(id);
-        
-        if(response != null){
-            let notes = [];
-            response.forEach(element => {
-                let newNote = new search();
-                newNote.map(element);
-                notes.push(newNote);
-            });
-            return notes;
-        }
-    } catch(Error){
+
+        return response;
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function dropProjectResource(id, rid){
-    
-    try{
+async function dropProjectResource(id, rid) {
+
+    try {
         await appProjectService.deleteResource(id, rid);
 
-    } catch(Error){
+    } catch (Error) {
         alert("An error occured!");
     }
 }
 
-async function assignLastResourceToProject(id){
-    try{
+async function assignLastResourceToProject(id) {
+    try {
         await appProjectService.assign_last_resource(id);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function exportProject(id, format='tmpro'){
-    try{
+async function exportProject(id, format = 'tmpro') {
+    try {
         let response = await appProjectService.export(id, format);
-        
-        if(response != null){
+
+        if (response != null) {
             let notes = [];
             response.forEach(element => {
                 let newNote = new search();
@@ -231,7 +195,7 @@ async function exportProject(id, format='tmpro'){
             });
             return notes;
         }
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }

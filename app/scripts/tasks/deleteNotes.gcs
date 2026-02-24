@@ -6,11 +6,7 @@ SetVar *arg_id LASTRESULT
 GetTableElement nid of API_PARAMS
 SetVar *arg_note_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/dropNoteByTask.gcs
 
+SetVar *result evaluate({'msg': 'Note deleted successfully!'})
 end

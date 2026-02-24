@@ -1,15 +1,25 @@
 # Check that all params are set
 check var *arg_task_id
 if $MISSING then
-	print Error ------- Missing argument : *arg_task_id
+	print val Error ------- Missing argument : *arg_task_id
 	end
 
 check var *arg_note
 if $MISSING then
-	print Error ------- Missing argument : *arg_note
+	print val Error ------- Missing argument : *arg_note
 	end
 
-evaluate [ {*arg_task_id}, {*arg_note}, {*arg_author} ]
+check var *arg_type
+if $MISSING then
+	print val Error ------- Missing argument : *arg_type
+	end
+
+check var *arg_author
+if $MISSING then
+	print val Error ------- Missing argument : *arg_author
+	end
+
+evaluate [ {*arg_task_id}, {*arg_note}, {*arg_author}, {*arg_type} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -23,16 +33,19 @@ execute query i with *prepared_vars
 commit
 
 query select_one with last
-SetVar *result LASTTUPLE
+
+compare LASTTUPLE None
+if $DIFFERENT then
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'description', 'type')) =>*json
 
 # Close the database
 close database
 end
 
 [i]
-insert into note( task_id, description, creator ) values ( ?, ?, ? ) ;
+insert into note( task_id, description, creator, type ) values ( ?, ?, ?, ? ) ;
 [/i]
 
 [last]
-select id, description from note where id = ( select max(id) from note );
+select id, description, type from note where id = ( select max(id) from note );
 [/last]

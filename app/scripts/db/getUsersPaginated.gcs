@@ -16,10 +16,19 @@ if $DIFFERENT then
 
 query select_all with q with *prepared_vars
 
+SetVar *json LASTLIST
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'username', 'profile_pic', 'email', 'active')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from user where id > ? limit 20 ;
+select id, username, profile_pic, email, active from user where active = 1 limit 20 offset ?;
 [/q]
+
+constants: consts.ch

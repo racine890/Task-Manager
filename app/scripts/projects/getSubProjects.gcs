@@ -1,15 +1,15 @@
 SetVar *result evaluate(None)
 
+if evaluate(not hasRight('read_project', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
 GetTableElement id of API_PARAMS
 SetVar *arg_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/getProjectsByProjectId.gcs
 
-SetVar *result LASTLIST
+SetVar *result *json
 
 end

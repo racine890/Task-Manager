@@ -20,6 +20,16 @@ if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
 execute query i with *prepared_vars
+
+evaluate [ {*arg_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+switch *arg_status
+if 2 then
+	execute query u with *prepared_vars
+if 5 then
+	execute query u2 with *prepared_vars
+
 commit
 
 SetVar *result *prepared_vars
@@ -31,3 +41,11 @@ end
 [i]
 update project set status = ? where id = ?;
 [/i]
+
+[u]
+update project set effective_start = CURRENT_TIMESTAMP where id = ?;
+[/u]
+
+[u2]
+update project set effective_end = CURRENT_TIMESTAMP where id = ?;
+[/u2]

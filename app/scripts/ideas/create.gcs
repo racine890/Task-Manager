@@ -1,19 +1,27 @@
 SetVar *result evaluate(None)
 
+if evaluate(not hasRight('create_idea', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
 GetTableElement name of API_DATA
 SetVar *arg_name LASTRESULT
 
 GetTableElement description of API_DATA
 SetVar *arg_description LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
+GetTableElement username of API_TOKEN
+SetVar *trace_author LASTRESULT
 
-GetTableElement 0 of *session_user
+GetTableElement id of API_TOKEN
 SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/insertIdea.gcs
+
+SetVar *result evaluate({'msg': 'Idea created successfully'})
+
+evaluate {*trace_author} + ' created the idea:' + {*arg_name} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

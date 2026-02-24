@@ -6,29 +6,30 @@ const VALIDATORS = {
     PASSWORD_MEDIUM: 4,
     PASSWORD_STRONG: 5,
     NO_XSS: 6,
-    TEXT_ONLY: 7
+    TEXT_ONLY: 7,
+    PATH: 8
 }
 
-class Form{
-	constructor(fields={}){
+class Form {
+    constructor(fields = []) {
         this.fields = fields;
         this.invalids = [];
         this.errormsg = '';
-	}
+    }
 
-    preload(){
+    preload() {
         this.fields.forEach(field => {
             const fieldObj = document.getElementById(field[0]);
             const fieldDefaultValue = field[1];
-            if(fieldDefaultValue != null){
+            if (fieldDefaultValue != null) {
                 fieldObj.value = fieldDefaultValue;
             }
         });
     }
 
-    testValidity(value, validator=VALIDATORS.NONE){
+    testValidity(value, validator = VALIDATORS.NONE) {
 
-        switch(validator){
+        switch (validator) {
             case VALIDATORS.EMAIL:
                 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 return emailRegex.test(value);
@@ -36,9 +37,9 @@ class Form{
             case VALIDATORS.NO_XSS:
                 const xssRegex = /<(|\/|[^>\/bi]|\/[^>bi]|[^\/>][^>]+|\/[^>][^>]+)>/g;
                 return !xssRegex.test(value);
-            
+
             case VALIDATORS.PASSWORD_LOW:
-                const passwordLowRegex = /^[a-zA-Z0-9]{6,}$/;
+                const passwordLowRegex = /^.{6,}$/;
                 return passwordLowRegex.test(value);
 
             case VALIDATORS.PASSWORD_MEDIUM:
@@ -56,12 +57,16 @@ class Form{
                 const textRegex = /^[a-zA-Z\s]+$/;
                 return textRegex.test(value);
 
+            case VALIDATORS.PATH:
+                const pathRegex = /^[a-zA-Z0-9._\-\/\\:]+$/;
+                return pathRegex.test(value);
+
             default:
                 return true;
         }
     }
 
-    isValid(){
+    isValid() {
         for (let i = 0; i < this.fields.length; i++) {
             const field = this.fields[i];
 
@@ -76,10 +81,10 @@ class Form{
         return true;
     }
 
-    set(fieldId, fieldValue){
+    set(fieldId, fieldValue) {
         for (let i = 0; i < this.fields.length; i++) {
             const field = this.fields[i];
-            if(field[0] == fieldId){
+            if (field[0] == fieldId) {
                 field[1] = fieldValue;
                 const fieldObj = document.getElementById(fieldId);
                 fieldObj.value = fieldValue;
@@ -88,10 +93,10 @@ class Form{
         };
     }
 
-    setAll(fieldValues){
+    setAll(fieldValues) {
         for (let i = 0; i < this.fields.length; i++) {
             const field = this.fields[i];
-            if(fieldValues.hasOwnProperty(field[0])){
+            if (fieldValues.hasOwnProperty(field[0])) {
                 field[1] = fieldValues[field[0]];
                 const fieldObj = document.getElementById(field[0]);
                 fieldObj.value = fieldValues[field[0]];
@@ -99,17 +104,17 @@ class Form{
         };
     }
 
-    get(fieldId){
+    get(fieldId) {
         for (let i = 0; i < this.fields.length; i++) {
             const field = this.fields[i];
-            if(field[0] == fieldId){
+            if (field[0] == fieldId) {
                 const fieldObj = document.getElementById(fieldId);
                 return fieldObj.value;
             }
         };
     }
 
-    getAll(){
+    getAll() {
         let data = {};
         for (let i = 0; i < this.fields.length; i++) {
             const field = this.fields[i];
@@ -119,10 +124,10 @@ class Form{
         return data;
     }
 
-    reset(fieldId){
+    reset(fieldId) {
         for (let i = 0; i < this.fields.length; i++) {
             const field = this.fields[i];
-            if(field[0] == fieldId){
+            if (field[0] == fieldId) {
                 const fieldObj = document.getElementById(fieldId);
                 field[1] = null;
                 fieldObj.value = '';
@@ -131,7 +136,7 @@ class Form{
         };
     }
 
-    resetAll(){
+    resetAll() {
         for (let i = 0; i < this.fields.length; i++) {
             const field = this.fields[i];
             const fieldObj = document.getElementById(field[0]);

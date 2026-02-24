@@ -1,15 +1,12 @@
-let project_id = null;
-let lastUploadedFile = null;
+let current_setting_id = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
 
-    if(appDataManager.checkvar("form.setting.key")){
-        getSetting(appDataManager.getvar("form.setting.key")).then((setting)=>{
+    const params = new URLSearchParams(window.location.search);
+    current_setting_id = params.get('no');
+
+    if (current_setting_id) {
+        getSetting(current_setting_id).then((setting) => {
             document.getElementById("key").value = setting.key;
             document.getElementById("value").value = setting.value;
             document.getElementById("submission").innerHTML = "Update";
@@ -19,12 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('my-form').addEventListener('submit', (event) => {
         event.preventDefault();
 
-        if(appDataManager.checkvar("form.setting.key")){
+        if (current_setting_id) {
             const key = document.getElementById('key').value;
             const value = document.getElementById('value').value;
 
             updateSetting(key, value);
-            appDataManager.remvar("form.setting.key");
         }
     });
 });

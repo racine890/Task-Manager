@@ -7,20 +7,24 @@
  * Please take a look at fetchAResource method to see how it works.
  * */
 class searchService extends Service {
-    constructor(){
+    constructor() {
         super();
         this.initConfig('../core/app.config.json');
     }
 
-    async searchUser(term){
+    async searchUser(term) {
         return super.fetchAResource(`/api/search/user/${term}`, "GET");
     }
-    
-	async searchProject(term){
+
+    async searchProject(term) {
         return super.fetchAResource(`/api/search/project/${term}`, "GET");
     }
 
-	async searchTask(term){
+    async searchTask(term) {
         return super.fetchAResource(`/api/search/task/${term}`, "GET");
+    }
+
+    async searchRight(term) {
+        return super.fetchAResource(`/api/search/right/${term}`, "GET");
     }
 }

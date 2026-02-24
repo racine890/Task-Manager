@@ -1,73 +1,51 @@
-let lastDisplayed = 0;
-let allTasks = [];
-let loadedPages = [];
+const filters = {
+    0: false,
+    1: false,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+};
 
-function fillArray(tasks, taskList){
-    taskList.innerHTML = '';
-    tasks.forEach(task => {
+// Updated. Those are just the actions for the table component
+function onLoadColumns() { return ["Id", "Label", "Description"]; }
 
-        const row = `<tr>
-            <td>${task.id}</td>
-            <td>${task.name}</td>
-            <td>${task.description}</td>
-            <td>
-                <button onclick="viewTask(${task.id})">See</button>
-                <button onclick="editTask(${task.id})">Edit</button>
-                <button onclick="deleteTask(${task.id})">Delete</button>
-            </td>
-        </tr>`;
-        lastDisplayed = task.id;
-        taskList.innerHTML += row;
-    });
-}
+function onLoadData(category) { return [category.id, category.name, category.description]; }
 
-function displayTasks(forward=true) {
-    const taskList = document.getElementById('my-table');
-
-    if(forward == true){
-        getTasks(lastDisplayed).then((tasks)=>{
-            if(tasks.length > 0){
-                allTasks = tasks;
-                fillArray(tasks, taskList);
-            } else if(loadedPages.length != 0) {
-                loadedPages.pop();
-                alert("No more data behind!");
-            }
-        });
-    } else if(loadedPages.length > 0) {
-        allTasks = loadedPages.pop();
-        fillArray(allTasks, taskList);
-    } else {
-        alert("No more data before!");
-    }
-
+function onLoadAction(category) {
+    return [
+        { name: "View", func: "viewTask", arg: category.id },
+        { name: "Edit", func: "editTask", arg: category.id },
+        { name: "Delete", func: "deleteTask", arg: category.id, color: "danger" }
+    ];
 }
 
 function editTask(id) {
-    appDataManager.setvar("form.task.id", id);
-    redirect("taskForm.html");
-}
-
-function viewTask(id) {
-    appDataManager.setvar("form.task.id", id);
-    redirect("taskDetails.html");
+    redirect("taskForm.html", false, [["no", id]]);
 }
 
 function deleteTask(id) {
     const confirme = confirm("Do you want to remove that Task ?");
-	if (confirme) {
+    if (confirme) {
         removeTask(id).then(() => {
-            displayTasks();
+            alert("Task removed !");
+            location.reload();
         });
-	}
+    }
 }
 
-function openRandomTask(){
-    viewTask(allTasks[Math.floor(Math.random() * allTasks.length)].id);
+function viewTask(id) {
+    redirect("taskDetails.html", false, [["no", id]]);
 }
 
-function printTasks(){
-    setTimeout(function() {
+// Header buttons
+function openRandomTask() {
+    viewTask(tableMap.get("taskTable").allTasks[Math.floor(Math.random() * tableMap.get("taskTable").allTasks.length)].id);
+}
+
+function printTasks() {
+    setTimeout(function () {
         const options = {
             filename: 'tasks-list.pdf',
             margin: 1,
@@ -77,26 +55,23 @@ function printTasks(){
         };
 
         var element = document.getElementById("to-print");
-        var worker = html2pdf().set(options).from(element).save();
+        html2pdf().set(options).from(element).save();
     }, 2000);
 }
 
-document.getElementById('next').onclick = () => {
-    loadedPages.push(allTasks);
-    displayTasks();
-};
+function filterTasks() {
+    const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', (event) => {
+            filters[event.target.value] = event.target.checked;
+            tableMap.get("taskTable").display(true);
+        });
+    });
+}
 
-document.getElementById('prev').onclick = () => {
-    displayTasks(false);
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
-    
-    appDataManager.remvar("form.task.id");
-    displayTasks();
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.checked = false;
+    });
+    filterTasks();
 });

@@ -16,10 +16,14 @@ if $DIFFERENT then
 
 query select_one with q with *prepared_vars
 
+compare LASTTUPLE None
+if $DIFFERENT then
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'username', 'profile_pic', 'email')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from user where id = ? ;
+select id, username, profile_pic, email from user where id = ? ;
 [/q]

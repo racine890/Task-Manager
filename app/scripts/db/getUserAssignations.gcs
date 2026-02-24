@@ -1,0 +1,39 @@
+# Check that all params are set
+check var *arg_user_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_user_id
+	end
+
+evaluate [ {*arg_user_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+query select_all with q with *prepared_vars
+
+SetVar *json evaluate([])
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('worker', 'worker_email', 'task', 'project', 'status', 'progression', 'effective_start', 'end_date')) =>*json
+	SetVar API_RESPONSE 200
+
+# Close the database
+close database
+end
+
+# Get A User Status
+[q]
+select user.username, user.email, task.name, project.name, task.status, task.progression, task.effective_start, task.end_date
+from user, task, project, user_task
+where user.id = user_task.user_id
+and task.id = user_task.task_id
+and project.id = task.project_id
+and user.id = ? and task.active = 1
+[/q]

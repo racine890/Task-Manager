@@ -1,18 +1,19 @@
 compare $DATABASE_TYPE sqlite
-if 0 then
+if $EQUAL then
 	# Test database existence
 	check file $DATA_DIR/$DATABASE_NAME
 	if 0 then
 		# Create the database if it doesn't exists
 		execute app/scripts/db/initDatabase.gcs
-		end
+
 	if 1 then
 		execute app/scripts/db/migrate_sqlite.gcs
-		end
 
-# And for Mysql ...
-try @initMySQL else @mySQLError
+if $DIFFERENT then
+	# And for Mysql ...
+	try @initMySQL else @mySQLError
 
+execute app/scripts/system/serve.gcs
 end
 
 # Just try to connect

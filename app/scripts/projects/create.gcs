@@ -13,16 +13,19 @@ GetTableElement end_date of API_DATA
 SetVar *arg_end_date LASTRESULT
 
 GetTableElement category_id of API_DATA
-SetVar *arg_category_id LASTRESULT
+SetVar *arg_category_id 
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
-GetTableElement 0 of *session_user
+GetTableElement username of API_TOKEN
 SetVar *arg_author LASTRESULT
 
+GetTableElement id of API_TOKEN
+SetVar *arg_author_id LASTRESULT
+
 execute app/scripts/db/insertProject.gcs
+
+SetVar *result evaluate({'msg': 'Project created successfully'})
+
+evaluate {*arg_author} + 'created the project:' + {*arg_name} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

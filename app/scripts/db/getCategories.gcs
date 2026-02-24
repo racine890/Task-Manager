@@ -7,10 +7,17 @@ if $DIFFERENT then
 
 query select_all with q
 
+SetVar *json LASTLIST
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'name', 'description')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from category where active = 1;
+select id, name, description from category where active = 1;
 [/q]

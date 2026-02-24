@@ -1,6 +1,14 @@
 [
 	{
-	  "name" : "admin",
-	  "active" : 1
+		"name": "admin",
+		"active": 1
+	},
+	{
+		"name": "worker",
+		"active": 1
+	},
+	{
+		"name": "manager",
+		"active": 1
 	}
 ]

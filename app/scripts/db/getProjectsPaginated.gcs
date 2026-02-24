@@ -4,7 +4,12 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_start
 	end
 
-evaluate [ {*arg_start} ]
+check var *arg_author
+if $MISSING then
+	print Error ------- Missing argument : *arg_author
+	end
+
+evaluate [ {*arg_author}, {*arg_start} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -14,12 +19,13 @@ if $EQUAL then
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
-query select_all with q with *prepared_vars
+evaluate run_sql_query_with_filters(self.connect, {*prepared_vars}, {*arg_filters})
+
+SetVar *json LASTRESULT
+
+if evaluate(len({*json}) > 0) then
+	evaluate list_to_dict({*json}, ('id', 'name', 'description', 'creator', 'status', 'start_date', 'end_date', 'effective_start', 'effective_end', 'parent', 'category_id', 'create_date', 'active')) =>*json
 
 # Close the database
 close database
 end
-
-[q]
-select * from project where id > ? and active = 1 limit 20 ;
-[/q]

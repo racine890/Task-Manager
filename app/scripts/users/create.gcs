@@ -7,17 +7,25 @@ GetTableElement password of API_DATA
 SetVar *arg_password LASTRESULT
 
 GetTableElement pic of API_DATA
-evaluate persistFile({LASTRESULT}, "profiles")
+evaluate {LASTRESULT}[{LASTRESULT}.rindex('/'):]
 SetVar *arg_pic LASTRESULT
 
 GetTableElement email of API_DATA
 SetVar *arg_email LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
+GetTableElement role of API_DATA
+SetVar *arg_role LASTRESULT
+
+GetTableElement username of API_TOKEN
+SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/insertUser.gcs
+
+compare API_RESPONSE 200
+if 0 then
+	SetVar *result evaluate({'msg': 'User created successfully'})
+
+evaluate {*arg_author} + 'created the user:' + {*arg_username} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

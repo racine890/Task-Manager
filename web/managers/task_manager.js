@@ -1,211 +1,177 @@
-async function getTasks(lastDisplayed){
-    
-    try{
-        let response = await appTaskService.get_paginated(lastDisplayed);
+async function getTasks(lastDisplayed, filters = []) {
 
-        if(response != null){
-            let gotTasks = [];
-			response.forEach((gotTask)=>{
-				let tmpTask = new task();
-				tmpTask.map(gotTask);
-				gotTasks.push(
-					tmpTask
-				)
-			})
+    let response = await appTaskService.get_paginated(lastDisplayed, filters);
 
-			return gotTasks;
-        }
-
-    } catch(Error){
-        alert("An error occured!");
+    if (response != null) {
+        return response;
     }
 }
 
-async function removeTask(id){
-    
-    try{
+async function removeTask(id) {
+
+    try {
         await appTaskService.delete(id);
 
-    } catch(Error){
+    } catch (Error) {
         alert("An error occured!");
     }
 }
 
-async function dropTaskResource(id, rid){
-    
-    try{
+async function dropTaskResource(id, rid) {
+
+    try {
         await appTaskService.deleteResource(id, rid);
 
-    } catch(Error){
+    } catch (Error) {
         alert("An error occured!");
     }
 }
 
-async function dropNote(id, nid){
-    
-    try{
+async function dropNote(id, nid) {
+
+    try {
         await appTaskService.deleteNote(id, nid);
 
-    } catch(Error){
+    } catch (Error) {
         alert("An error occured!");
     }
 }
 
-async function saveTask(title, description, category_id, mother_idea = null, project_id = null) {
+async function saveTask(title, description, category_id, start_date, end_date, mother_idea = null, project_id = null) {
 
-    try{
+    try {
         let response = await appTaskService.save({
             name: title,
             description: description,
             mother_idea: mother_idea,
             project_id: project_id,
-            category_id: category_id
+            category_id: category_id,
+            start_date: start_date,
+            end_date: end_date
         });
 
-        if(response != null){
-            let newTask = new task();
-            newTask.mapLite(response);
-			alert("Task "+newTask.name+" has been saved !");
+        if ('msg' in response) {
+            alert(response.msg);
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getTask(id){
-    try{
+async function getTask(id) {
+    try {
         let response = await appTaskService.getByID(id);
 
-        if(response != null){
-            let nproject = new task();
-            nproject.map(response);
-            return nproject;
-        }
+        return response;
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function updateTask(id, title, description, category_id){
-    
-    try{
+async function updateTask(id, title, description, category_id, start_date, end_date) {
+
+    try {
         let response = await appTaskService.update(id, {
             name: title,
             description: description,
-            category_id: category_id
+            category_id: category_id,
+            start_date: start_date,
+            end_date: end_date
         });
 
-        if(response != null){
-            let newTask = new task();
-            newTask.mapLite(response);
-			alert("Project "+newTask.name+" has been updated !");
+        if ('msg' in response) {
+            alert(response.msg);
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getWorkersByTask(id){
-    try{
+async function getWorkersByTask(id) {
+    try {
         let response = await appTaskService.get_workers(id);
 
-        if(response != null){
-            let workers = [];
-            response.forEach(element => {
-                let newUser = new search();
-                newUser.map(element);
-                workers.push(newUser);
-            });
-            return workers;
-        }
-    } catch(Error){
+        return response;
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getNotesByTask(id){
-    try{
+async function getNotesByTask(id) {
+    try {
         let response = await appTaskService.get_notes(id);
-        
-        if(response != null){
-            let notes = [];
-            response.forEach(element => {
-                let newNote = new search();
-                newNote.map(element);
-                notes.push(newNote);
-            });
-            return notes;
-        }
-    } catch(Error){
+
+        return response;
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getResourcesByTask(id){
-    try{
+async function getResourcesByTask(id) {
+    try {
         let response = await appTaskService.get_resources(id);
-        
-        if(response != null){
-            let notes = [];
-            response.forEach(element => {
-                let newNote = new search();
-                newNote.map(element);
-                notes.push(newNote);
-            });
-            return notes;
-        }
-    } catch(Error){
+
+        return response;
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function affectWorkerToTask(id, tid){
-    try{
+async function affectWorkerToTask(id, tid) {
+    try {
         await appTaskService.add_worker(id, tid);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function addNoteToTask(tid, note) {
-    try{
+async function addNoteToTask(tid, note, ntype = 0) {
+    try {
         let response = await appTaskService.add_note(tid, {
-            note: note
+            note: note,
+            type: ntype
         });
-        if(response != null){
-            let tmpTask = new search();
-            tmpTask.map(response);
-            return tmpTask;
+        if (response != null) {
+            return response;
         }
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function changeTaskStatus(id, status){
-    try{
+async function changeTaskStatus(id, status) {
+    try {
         await appTaskService.change_status(id, status);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function assignLastResourceToTask(id){
-    try{
+async function changeTaskProgress(id, progress) {
+    try {
+        await appTaskService.change_progress(id, progress);
+    } catch (Error) {
+        console.log(Error);
+        alert("An error occured!");
+    }
+}
+
+async function assignLastResourceToTask(id) {
+    try {
         await appTaskService.assign_last_resource(id);
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }

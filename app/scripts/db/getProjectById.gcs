@@ -4,8 +4,14 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_id
 	end
 
-evaluate [ {*arg_id} ]
+check var *arg_user_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_user_id
+	end
+
+evaluate [ {*arg_id}, {*arg_user_id} ]
 SetVar . *prepared_vars LASTRESULT
+
 
 # Connect to the database
 compare $DATABASE_TYPE sqlite
@@ -16,10 +22,21 @@ if $DIFFERENT then
 
 query select_one with q with *prepared_vars
 
+SetVar *json {'msg': 'Project not found'}
+SetVar API_RESPONSE 404
+
+compare LASTTUPLE None
+if $DIFFERENT then
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'name', 'description', 'creator', 'status', 'start_date', 'end_date', 'effective_start', 'effective_end', 'parent', 'category_id', 'create_date', 'active')) =>*json
+	SetVar API_RESPONSE 200
+
 # Close the database
 close database
 end
 
 [q]
-select * from project where id = ? ;
+select id, name, description, creator, status, start_date,
+end_date, effective_start, effective_end, parent, category_id,
+create_date, active from project where id = ? and id in
+(select project_id from user_project where user_id = ?);
 [/q]

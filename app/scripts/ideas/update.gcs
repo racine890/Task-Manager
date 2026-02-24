@@ -1,5 +1,10 @@
 SetVar *result evaluate(None)
 
+if evaluate(not hasRight('update_idea', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
 GetTableElement name of API_DATA
 SetVar *arg_name LASTRESULT
 
@@ -9,11 +14,7 @@ SetVar *arg_description LASTRESULT
 GetTableElement id of API_PARAMS
 SetVar *arg_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/updateIdea.gcs
+SetVar *result evaluate({'msg': 'Idea updated successfully'})
 
 end

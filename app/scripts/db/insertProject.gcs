@@ -1,32 +1,37 @@
 # Check that all params are set
 check var *arg_name
 if $MISSING then
-	print Error ------- Missing argument : *arg_password
+	print val Error ------- Missing argument : *arg_password
 	end
 
 check var *arg_description
 if $MISSING then
-	print Error ------- Missing argument : *arg_username
+	print val Error ------- Missing argument : *arg_username
 	end
 
 check var *arg_start_date
 if $MISSING then
-	print Error ------- Missing argument : *arg_start_date
+	print val Error ------- Missing argument : *arg_start_date
 	end
 
 check var *arg_end_date
 if $MISSING then
-	print Error ------- Missing argument : *arg_end_date
+	print val Error ------- Missing argument : *arg_end_date
 	end
 
 check var *arg_author
 if $MISSING then
-	print Error ------- Missing argument : *arg_author
+	print val Error ------- Missing argument : *arg_author
+	end
+
+check var *arg_author_id
+if $MISSING then
+	print val Error ------- Missing argument : *arg_author_id
 	end
 
 check var *arg_category_id
 if $MISSING then
-	print Error ------- Missing argument : *arg_category_id
+	print val Error ------- Missing argument : *arg_category_id
 	end
 
 evaluate [ {*arg_name}, {*arg_description}, {*arg_start_date}, {*arg_end_date}, {*arg_author}, {*arg_category_id} ]
@@ -41,9 +46,12 @@ if $DIFFERENT then
 
 execute query i with *prepared_vars
 
-commit
+evaluate [ {*arg_author_id} ]
+SetVar . *prepared_vars LASTRESULT
 
-SetVar *result *prepared_vars
+execute query i2 with *prepared_vars
+
+commit
 
 # Close the database
 close database
@@ -52,3 +60,9 @@ end
 [i]
 insert into project( name, description, start_date, end_date, creator, category_id ) values ( ?, ?, ?, ?, ?, ?) ;
 [/i]
+
+[i2]
+insert into user_project( user_id, project_id ) values ( ?, (select last_insert_rowid()) ) ;
+[/i2]
+
+constants: consts.ch

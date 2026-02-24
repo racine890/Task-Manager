@@ -1,36 +1,23 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Settings</title>
     <link rel="stylesheet" href="../assets/style/dashboard.css">
 </head>
-<body>
-    <NavBarComponent title="Users"></NavBarComponent>
-    <div class="container">
-        <button onclick="printSettings()">Print</button>
-        <table id="to-print">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Value</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="my-table">
-                <!-- Les projets seront ajoutés ici par JavaScript -->
-            </tbody>
 
-        </table>
-        <div class="pagination">
-            <button id="prev">Précédent</button>
-            <button id="next">Suivant</button>
-        </div>
+<body>
+    <NavBarComponent title="Settings"></NavBarComponent>
+    <div class="container">
+        <button onclick="printSettings()" id="createBtn">Print</button>
+        <TableComponent id="settingTable" onLoadColumns="onLoadColumns" onLoadData="onLoadData"
+            onLoadAction="onLoadAction" paginationMethod="getSettings" createPermission="create_settings">
+        </TableComponent>
     </div>
     <!-- Core scripts -->
-	<script src="../core/Service.js"></script>
+    <script src="../core/Service.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>
@@ -53,6 +40,8 @@
     <!-- Specific scripts -->
     <script src="../actions/dashboard-settings.js"></script>
     <script src="../components/navbar.js"></script>
+    <script src="../components/table.js"></script>
 
 </body>
+
 </html>

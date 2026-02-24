@@ -1,13 +1,12 @@
+let current_idea_id = null;
+
 document.addEventListener('DOMContentLoaded', () => {
 
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
+    const params = new URLSearchParams(window.location.search);
+    current_idea_id = params.get('idea');
 
-    if(appDataManager.checkvar("form.idea.id")){
-        getIdea(appDataManager.getvar("form.idea.id")).then((idea)=>{
+    if (current_idea_id) {
+        getIdea(current_idea_id).then((idea) => {
             document.getElementById("title").value = idea.name;
             document.getElementById("description").value = idea.description;
             document.getElementById("submission").innerHTML = "Update";
@@ -18,9 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('ideaForm').addEventListener('submit', (event) => {
         event.preventDefault();
 
-        if(appDataManager.checkvar("form.idea.id")){
-            updateIdea(appDataManager.getvar("form.idea.id"));
-            appDataManager.remvar("form.idea.id");
+        if (current_idea_id) {
+            updateIdea(current_idea_id);
         } else {
             saveIdea();
         }

@@ -1,92 +1,73 @@
 async function saveIdea() {
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
-    
-    try{
+
+    try {
         let response = await appIdeaService.save({
             name: title,
             description: description
         });
 
-        if(response != null){
-            let newIdea = new idea();
-            newIdea.mapLite(response);
-			alert("Idea "+newIdea.name+" has been saved !");
+        if (response != null) {
+            alert("Idea has been saved !");
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getIdea(id){
-    try{
+async function getIdea(id) {
+    try {
         let response = await appIdeaService.getByID(id);
 
-        if(response != null){
-            let nidea = new idea();
-            nidea.map(response);
-            return nidea;
-        }
+        return response;
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function updateIdea(id){
+async function updateIdea(id) {
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
-    
-    try{
+
+    try {
         let response = await appIdeaService.update(id, {
             name: title,
             description: description
         });
 
-        if(response != null){
+        if (response != null) {
             let newIdea = new idea();
             newIdea.mapLite(response);
-			alert("Idea "+newIdea.name+" has been updated !");
+            alert("Idea " + newIdea.name + " has been updated !");
         }
 
-    } catch(Error){
+    } catch (Error) {
         console.log(Error);
         alert("An error occured!");
     }
 }
 
-async function getIdeas(lastDisplayed){
-    
-    try{
-        let response = await appIdeaService.get_paginated(lastDisplayed);
+async function getIdeas(lastDisplayed) {
 
-        if(response != null){
-            let gotIdeas = [];
-			response.forEach((gotIdea)=>{
-				let tmpIdea = new idea();
-				tmpIdea.map(gotIdea);
-				gotIdeas.push(
-					tmpIdea
-				)
-			})
+    let response = await appIdeaService.get_paginated(lastDisplayed);
 
-			return gotIdeas;
-        }
-
-    } catch(Error){
-        alert("An error occured!");
+    if (response != null) {
+        return response;
     }
+
 }
 
-async function removeIdea(id){
-    
-    try{
+async function removeIdea(id) {
+
+    try {
         await appIdeaService.delete(id);
 
-    } catch(Error){
+    } catch (Error) {
         alert("An error occured!");
     }
 }

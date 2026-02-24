@@ -1,24 +1,25 @@
-class SelectionComponent extends Component{
-	
-	constructor(id = null, args = {}){
+class SelectionComponent extends Component {
+
+	constructor(id = null, args = {}) {
 		super('SelectionComponent', id, args);
 
 		this.object = this.getArgValue('object');
 		this.id = this.getArgValue('id');
 		this.title = this.getArgValue('title');
 		this.container = this.getArgValue('container');
-		this.editAction = this.getArgValue('editAction');
-		this.deleteAction = this.getArgValue('deleteAction');
-		this.searchAction = this.getArgValue('searchAction');
 		this.validateAction = this.getArgValue('validateAction');
+		this.createPermission = this.getArgValue('createPermission');
 		this.selectedItem = null;
 		this.selectedValue = null;
 		this.popup = null;
 		this.searchInput = null;
 		this.resultList = null;
-		
-		this.html = `
-					<i class="fas fa-plus icon" title="add" id="openPopup"></i>
+
+		this.html = '';
+		if (hasRight(this.createPermission)) {
+			this.html += `<i class="fas fa-plus icon" title="add" id="openPopup"></i>`;
+		}
+		this.html += `
 					<div id="popup" class="popup">
 						<div class="popup-content">
 							<span class="close" id="closePopup">&times;</span>
@@ -32,7 +33,7 @@ class SelectionComponent extends Component{
 		`;
 	}
 
-	render(){
+	render() {
 		super.render();
 
 		const openPopup = this.getChild('openPopup');
@@ -41,7 +42,7 @@ class SelectionComponent extends Component{
 		this.searchInput = this.getChild('searchInput');
 		this.resultList = this.getChild('resultList');
 		const validateSelection = this.getChild('validateSelection');
-	
+
 		closePopup.addEventListener('click', () => {
 			this.popup.style.display = 'none';
 		});
@@ -49,20 +50,20 @@ class SelectionComponent extends Component{
 		openPopup.addEventListener('click', () => {
 			this.popup.style.display = 'block';
 		});
-	
+
 		window.addEventListener('click', (event) => {
 			if (event.target === this.popup) {
 				this.popup.style.display = 'none';
 			}
 		});
-	
+
 		this.searchInput.addEventListener('input', () => {
-			
+
 			const query = this.searchInput.value.toLowerCase();
 			this.resultList.innerHTML = '';
-	
+
 			if (query) {
-				selectionSearch(this.object, query).then((filteredItems)=>{
+				selectionSearch(this.object, query).then((filteredItems) => {
 					filteredItems.forEach(item => {
 						const li = document.createElement('li');
 						li.textContent = item.value;
@@ -78,7 +79,7 @@ class SelectionComponent extends Component{
 				});
 			}
 		});
-	
+
 		validateSelection.addEventListener('click', () => {
 			const func = window[this.validateAction];
 
@@ -92,9 +93,9 @@ class SelectionComponent extends Component{
 document.addEventListener('DOMContentLoaded', () => {
 	const containers = document.querySelectorAll('SelectionComponent');
 
-    containers.forEach(container => {
+	containers.forEach(container => {
 		const selection = new SelectionComponent(container.id);
-        selection.render();
-    });
+		selection.render();
+	});
 
 });

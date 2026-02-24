@@ -1,0 +1,54 @@
+# Check that all params are set
+check var *arg_id
+if $MISSING then
+	print val Error ------- Missing argument : *arg_id
+	end
+
+check var *arg_rights
+if $MISSING then
+	print val Error ------- Missing argument : *arg_rights
+	end
+
+evaluate [ {*arg_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+execute query d with *prepared_vars
+
+ForEach *right of *rights run
+
+commit
+
+SetVar *result *prepared_vars
+
+# Close the database
+close database
+end
+
+[run]
+GetTableElement id of *right
+evaluate [ {*arg_id}, {LASTRESULT} ]
+execute query i with LASTRESULT
+[/run]
+
+[d]
+delete from user_right where user_id = ? ;
+[/d]
+
+[i]
+insert into user_right( name, description ) values ( ?, ? ) ;
+[/i]
+
+
+[link]
+insert into user_right (user_id, right_id)
+select (select max(id) from user), right_id
+from right_role
+where role_id = 2;
+[/link]

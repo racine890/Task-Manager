@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Categories</title>
     <link rel="stylesheet" href="../assets/style/dashboard.css">
 </head>
+
 <body>
     <NavBarComponent title="Categories"></NavBarComponent>
     <div class="container">
-        <button onclick="redirect('categoryForm.html')">Add</button>
-        
-        <TableComponent id="categoryTable" onLoadColumns="onLoadColumns" onLoadData="onLoadData" onLoadAction="onLoadAction"></TableComponent>
+        <button onclick="redirect('categoryForm.html')" id="createBtn">Add</button>
+
+        <TableComponent id="categoryTable" onLoadColumns="onLoadColumns" onLoadData="onLoadData"
+            onLoadAction="onLoadAction" paginationMethod="getCategories"></TableComponent>
 
     </div>
 
     <!-- Core scripts -->
-	<script src="../core/Service.js"></script>
+    <script src="../core/Service.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>
@@ -43,4 +46,5 @@
     <script src="../components/navbar.js"></script>
 
 </body>
+
 </html>

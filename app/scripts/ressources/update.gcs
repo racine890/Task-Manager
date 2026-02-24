@@ -1,20 +1,21 @@
 SetVar *result evaluate(None)
 
+if evaluate(not hasRight('update_resource', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
 GetTableElement name of API_DATA
 SetVar *arg_name LASTRESULT
 
 GetTableElement path of API_DATA
-evaluate persistFile({LASTRESULT}, "ressources")
+evaluate {LASTRESULT}[{LASTRESULT}.rindex('/'):]
 SetVar *arg_path LASTRESULT
 
 GetTableElement id of API_PARAMS
 SetVar *arg_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/updateRessource.gcs
 
+SetVar *result evaluate({'msg': 'Resource updated successfully'})
 end

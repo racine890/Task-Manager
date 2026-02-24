@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea Form</title>
+    <link rel="stylesheet" href="../assets/style/forms.css">
+    <link rel="stylesheet" href="../assets/style/dashboard.css">
+</head>
+
+<body>
+    <NavBarComponent title="Manage My Account"></NavBarComponent>
+    <div class="form-container">
+        <h1>Manage My Account</h1>
+        <form id="accountForm">
+            <div class="form-group">
+                <label for="username">Username :</label>
+                <input class="form-field" type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email :</label>
+                <input type="email" class="form-field" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="profile-photo">Profile pic :</label>
+                <input type="file" class="form-field" id="profile-photo" name="profile-photo" accept="image/*">
+                <p class="file-instruction">Click to select an image file (jpg, jpeg, png, gif)</p>
+                <img id="img-preview" src="" alt="Image Preview"
+                    style="display:none; width: 150px; height: 150px; object-fit: cover; margin-top: 10px;">
+            </div>
+            <button type="submit" id="submission">Save</button>
+        </form>
+
+        <form id="passwdForm">
+            <div class="form-group">
+                <label for="old-password">Old Password :</label>
+                <input class="form-field" type="password" id="old-password" name="old-password" required>
+            </div>
+            <div class="form-group">
+                <label for="new-password">New Password :</label>
+                <input class="form-field" type="password" id="new-password" name="new-password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password :</label>
+                <input class="form-field" type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+            <button type="submit" id="changePassword">Change Password</button>
+        </form>
+    </div>
+    <!-- Core scripts -->
+    <script src="../core/Service.js"></script>
+    <script src="../core/Model.js"></script>
+    <script src="../core/DataManager.js"></script>
+    <script src="../core/Component.js"></script>
+    <script src="../core/Action.js"></script>
+    <script src="../core/Form.js"></script>
+
+    <!-- User objects -->
+    <script src="../services/userService.js"></script>
+    <script src="../models/user.js"></script>
+
+    <!-- Initializers -->
+    <script src="../actions/utils.js"></script>
+    <script src="../actions/init_global.js"></script>
+
+    <!-- Specific scripts -->
+    <script src="../managers/user_manager.js"></script>
+    <script src="../services/ressourceService.js"></script>
+    <script src="../managers/ressource_manager.js"></script>
+    <script src="../actions/account.js"></script>
+    <script src="../components/navbar.js"></script>
+</body>
+
+</html>

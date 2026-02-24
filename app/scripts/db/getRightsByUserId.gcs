@@ -1,0 +1,32 @@
+# Check that all params are set
+check var *arg_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_id
+	end
+
+evaluate [ {*arg_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+query select_all with q with *prepared_vars
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'name')) =>*json
+
+# Close the database
+close database
+end
+
+[q]
+select r.id, r.name from right r join user_right ur on r.id = ur.right_id where ur.user_id = ?;
+[/q]
+
+constants: consts.ch

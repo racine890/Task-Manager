@@ -1,30 +1,34 @@
 [
 	{
-	  "name" : "New",
-	  "description" : "A project category for all your new projects !"
+		"name": "App Development",
+		"description": "A category for all your app development projects !"
 	},
 	{
-	  "name" : "Update",
-	  "description" : "Shall be used for a project wich already has a version"
+		"name": "Agile Sprint",
+		"description": "A category for all your agile sprints !"
 	},
 	{
-	  "name" : "Promote",
-	  "description" : "A no-code project wich consists in promoting a working project"
+		"name": "App Promotion",
+		"description": "A no-code project wich consists in promoting a working project"
 	},
 	{
-	  "name" : "Other",
-	  "description" : "All other kinds of no-code projects"
+		"name": "Other",
+		"description": "All other kinds of no-code projects"
 	},
 	{
-	  "name" : "Feature",
-	  "description" : "A new feature to implement"
+		"name": "Feature",
+		"description": "A new feature to implement"
 	},
 	{
-	  "name" : "Bug",
-	  "description" : "A constated bug"
+		"name": "Issue",
+		"description": "A constated bug or Issue or Optimization suggestion"
 	},
 	{
-	  "name" : "Meeting",
-	  "description" : "A no-code task for meetings"
+		"name": "Meeting",
+		"description": "A no-code task for meetings"
+	},
+	{
+		"name": "Forum",
+		"description": "A no-code task for Issues Resolutions and other forum topics"
 	}
 ]

@@ -6,14 +6,17 @@ SetVar *arg_task_id LASTRESULT
 GetTableElement note of API_DATA
 SetVar *arg_note LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
+GetTableElement type of API_DATA
+SetVar *arg_type LASTRESULT
 
-GetTableElement 0 of *session_user
+GetTableElement username of API_TOKEN
 SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/insertNote.gcs
+
+SetVar *result *json
+
+evaluate {*arg_author} + 'added a note to task:' + {*arg_task_id} =>*log_text
+execute app/scripts/system/writeLog.gcs
 
 end

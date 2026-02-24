@@ -1,12 +1,34 @@
+# Authentication
 SetVar *result evaluate(None)
 
+# Get Form Data
 GetTableElement username of API_DATA
 SetVar *arg_username LASTRESULT
+
 GetTableElement password of API_DATA
 SetVar *arg_password LASTRESULT
 
+# Execute the request
 execute app/scripts/db/getUserByCredentials.gcs
+compare LASTTUPLE None
+if $EQUAL then
+	SetVar API_RESPONSE 401
+	SetVar *result evaluate({'msg': 'Unauthorized'})
+	end
 
-SetVar *result LASTTUPLE
-SetVar *session_user LASTTUPLE
+SetVar *userData *json
+
+evaluate {*userData}['id'] =>*arg_id
+execute app/scripts/db/getRightsByUserId.gcs
+
+SetVar *jsonData evaluate({"rights": self.vars.getvar('*json')})
+evaluate {*userData}.update({*jsonData})
+
+# Generate a token
+generate token from *userData
+SetVar *token LASTRESULT
+
+SetVar *result evaluate(dict())
+evaluate {*result}.__setitem__('token', {*token})
+evaluate {*result}.update({*jsonData})
 end

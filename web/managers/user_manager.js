@@ -1,16 +1,7 @@
 async function logout() {
-	response = await appUserService.logout();
-	redirect('auth.html');
-}
-
-async function check_auth() {
-    try{
-        response = await appUserService.check_auth();
-        return response;
-    } catch(Error){
-		console.error(Error);
-        return null;
-    }
+    response = await appUserService.logout();
+    appDataManager.setvar("token", null);
+    redirect('auth.html');
 }
 
 async function authenticate(username, password) {
@@ -19,8 +10,8 @@ async function authenticate(username, password) {
     const newUser = new user();
     newUser.username = username;
     newUser.password = password;
-    
-    try{
+
+    try {
         // And let the service save the constructed user.
         // It's asynchronous, so you have to await it.
         let response = await appUserService.auth({
@@ -28,114 +19,175 @@ async function authenticate(username, password) {
             password: password
         });
 
-        if(response != null){
-            let newUser = new user();
-            newUser.map(response);
-            return newUser;
+        if (response != null) {
+            appDataManager.setvar("token", response.token);
+            appDataManager.setvar("rights", response.rights);
+            return response;
+        } else {
+            console.warn("Token not found in auth response");
+            return null;
         }
 
-    } catch(Error){
-        console.log(Error);
-        return null;
+    } catch (error) {
+        alert(error);
     }
 }
 
-async function getUsers(lastDisplayed){
-    
-    try{
+async function getUsers(lastDisplayed) {
+    try {
         let response = await appUserService.get_paginated(lastDisplayed);
-
-        if(response != null){
-            let gotTasks = [];
-			response.forEach((gotTask)=>{
-				let tmpTask = new user();
-				tmpTask.map(gotTask);
-				gotTasks.push(
-					tmpTask
-				)
-			})
-
-			return gotTasks;
-        }
-
-    } catch(Error){
-        alert("An error occured!");
+        return response;
+    } catch (error) {
+        alert(error);
     }
 }
 
-async function getUser(id){
-    try{
+async function getUserAssignations(id) {
+    try {
+        let response = await appUserService.getAssignations(id);
+        return response;
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function getUser(id) {
+    try {
         let response = await appUserService.getByID(id);
-        if(response != null){
-            let nproject = new user();
-            nproject.map(response);
-            return nproject;
-        }
+        return response;
 
-    } catch(Error){
-        console.log(Error);
-        alert("An error occured!");
+    } catch (error) {
+        alert(error);
     }
 }
 
-async function saveUser(username, email, password, pic) {
+async function getUserRights(id) {
+    try {
+        let response = await appUserService.getRightsByID(id);
+        return response;
 
-    try{
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function saveUser(username, email, password, role, pic) {
+
+    try {
         let response = await appUserService.save({
             username: username,
             email: email,
             password: password,
-            pic: pic
+            pic: pic,
+            role: role
         });
-        if(response != null){
-            let newuser = new user();
-            newuser.mapLite(response);
-			alert("User "+newuser.username+" has been saved !");
+        if (response != null) {
+            alert("User has been saved !");
         }
 
-    } catch(Error){
-        console.log(Error);
-        alert("An error occured!");
+    } catch (error) {
+        alert(error);
     }
 }
 
-async function updateUser(id, username, email, pic){
-    
-    try{
+async function updateUser(id, username, email, pic) {
+    try {
         let response = await appUserService.update(id, {
             username: username,
             email: email,
             pic: pic
         });
 
-        if(response != null){
-            let newTask = new user();
-            newTask.mapLite(response);
-			alert("User "+newTask.username+" has been updated !");
+        if (response != null) {
+            alert("User has been updated !");
         }
 
-    } catch(Error){
-        console.log(Error);
-        alert("An error occured!");
+    } catch (error) {
+        alert(error);
     }
 }
 
-async function disableUserAccount(id){
-    
-    try{
+async function disableUserAccount(id) {
+
+    try {
         await appUserService.delete(id);
 
-    } catch(Error){
-        alert("An error occured!");
+    } catch (error) {
+        alert(error);
     }
 }
 
-async function enableUserAccount(id){
-    
-    try{
-        await appUserService.enable(id);
+async function enableUserAccount(id) {
 
-    } catch(Error){
-        alert("An error occured!");
+    try {
+        const response = await appUserService.enable(id);
+        if ('msg' in response) {
+            alert(response.msg);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function dropUserRight(id, rightId) {
+    try {
+        let response = await appUserService.dropRight(id, rightId);
+        if ('msg' in response) {
+            alert(response.msg);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function addUserRight(id, rightId) {
+    try {
+        let response = await appUserService.addRight(id, rightId);
+        if ('msg' in response) {
+            alert(response.msg);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function getMe() {
+    try {
+        let response = await appUserService.getMe();
+        if ('msg' in response) {
+            alert(response.msg);
+        }
+        return response;
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function updateMe(username, email, pic) {
+    try {
+        const response = await appUserService.updateMe({
+            username: username,
+            email: email,
+            pic: pic
+        });
+        if ('msg' in response) {
+            alert(response.msg);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function updatePassword(oldPassword, newPassword) {
+    try {
+        const response = await appUserService.updatePassword({
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        });
+        if ('msg' in response) {
+            alert(response.msg);
+        }
+    } catch (errorResponse) {
+        alert(errorResponse);
     }
 }

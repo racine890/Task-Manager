@@ -4,7 +4,7 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_start
 	end
 
-evaluate [ {*arg_start} ]
+evaluate [ {*arg_creator}, {*arg_start} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -16,10 +16,19 @@ if $DIFFERENT then
 
 query select_all with q with *prepared_vars
 
+SetVar *json LASTLIST
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'name', 'description', 'create_date', 'creator.username', 'creator.profile_pic', 'creator.email')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from idea where id > ? and active = 1 limit 20 ;
+select idea.id, idea.name, idea.description, idea.create_date, user.username, user.profile_pic, user.email from idea, user where idea.creator = user.id and idea.active = 1 and idea.creator = ? limit 20 offset ?;
 [/q]
+
+constants: consts.ch

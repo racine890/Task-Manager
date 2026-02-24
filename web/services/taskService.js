@@ -1,66 +1,70 @@
 class taskService extends Service {
-    constructor(){
+    constructor() {
         super();
         this.initConfig('../core/app.config.json');
     }
 
-    async get(){
+    async get() {
         return super.fetchAResource("/api/task", "GET");
     }
-    
-    async getByID(id){
+
+    async getByID(id) {
         return super.fetchAResource(`/api/task/get/${id}`, "GET");
     }
-    
-    async save(payload){
+
+    async save(payload) {
         return super.fetchAResource(`/api/task`, "POST", {}, payload);
     }
 
-    async update(id, payload){
+    async update(id, payload) {
         return super.fetchAResource(`/api/task/${id}`, "PATCH", {}, payload);
     }
-    
-    async delete(id){
+
+    async delete(id) {
         return super.fetchAResource(`/api/task/${id}`, "DELETE");
     }
 
-    async get_paginated(last){
-        return super.fetchAResource(`/api/task/${last}`, "GET");
+    async get_paginated(last, filters) {
+        return super.fetchAResource(`/api/task/${last}`, "POST", {}, { 'filters': filters });
     }
 
-    async get_workers(id){
+    async get_workers(id) {
         return super.fetchAResource(`/api/task/workers/${id}`, "GET");
     }
 
-    async add_worker(pid, tid){
+    async add_worker(pid, tid) {
         return super.fetchAResource(`/api/task/workers/${pid}/${tid}`, "POST");
     }
 
-    async add_note(tid, payload){
+    async add_note(tid, payload) {
         return super.fetchAResource(`/api/task/notes/${tid}`, "POST", {}, payload);
     }
 
-    async get_notes(id){
+    async get_notes(id) {
         return super.fetchAResource(`/api/task/notes/${id}`, "GET");
     }
 
-    async change_status(id, status){
+    async change_status(id, status) {
         return super.fetchAResource(`/api/task/status/${id}/${status}`, "POST");
     }
 
-    async assign_last_resource(id){
+    async change_progress(id, progress) {
+        return super.fetchAResource(`/api/task/progress/${id}/${progress}`, "POST");
+    }
+
+    async assign_last_resource(id) {
         return super.fetchAResource(`/api/task/assign-last/${id}`, "POST");
     }
 
-    async get_resources(id){
+    async get_resources(id) {
         return super.fetchAResource(`/api/task/resources/${id}`, "GET");
     }
 
-    async deleteResource(id, rid){
+    async deleteResource(id, rid) {
         return super.fetchAResource(`/api/task/resources/${id}/${rid}`, "DELETE");
     }
-    
-    async deleteNote(id, nid){
+
+    async deleteNote(id, nid) {
         return super.fetchAResource(`/api/task/notes/${id}/${nid}`, "DELETE");
     }
 }

@@ -1,16 +1,20 @@
 SetVar *result evaluate(None)
 
+GetTableElement rid of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+execute app/scripts/ressources/getById.gcs
+GetTableElement path of *json
+
+evaluate delete_file({LASTRESULT})
+
 GetTableElement id of API_PARAMS
 SetVar *arg_id LASTRESULT
 
 GetTableElement rid of API_PARAMS
 SetVar *arg_resource_id LASTRESULT
 
-count *session_user
-compare LASTRESULT 0
-if $EQUAL then
-	end
-
 execute app/scripts/db/dropResourceByTask.gcs
 
+SetVar *result evaluate({'msg': 'Resource deleted successfully!'})
 end

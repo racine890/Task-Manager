@@ -1,39 +1,39 @@
 class ressourceService extends Service {
-    constructor(){
+    constructor() {
         super();
         this.initConfig('../core/app.config.json');
     }
 
-    async get(){
+    async get() {
         return super.fetchAResource("/api/ressource", "GET");
     }
-    
-    async getByID(id){
+
+    async getByID(id) {
         return super.fetchAResource(`/api/ressource/get/${id}`, "GET");
     }
-    
-    async save(payload){
+
+    async save(payload) {
         return super.fetchAResource(`/api/ressource`, "POST", {}, payload);
     }
 
-    async update(id, payload){
+    async update(id, payload) {
         return super.fetchAResource(`/api/ressource/${id}`, "PATCH", {}, payload);
     }
-    
-    async delete(id){
+
+    async delete(id) {
         return super.fetchAResource(`/api/ressource/${id}`, "DELETE");
     }
 
-    async get_paginated(last){
+    async get_paginated(last) {
         return super.fetchAResource(`/api/ressource/${last}`, "GET");
     }
 
-    async upload(payload){
-        return super.fetchAResource(`/api/ressource/upload`, "POST", {'Content-Type': 'application/octet-stream'}, payload);
+    async upload(payload) {
+        return super.fetchAResource(`/api/ressource/upload`, "POST", {}, payload);
     }
 
-    async download(){
-        return super.fetchAResource(`/api/ressource/download`, "GET");
+    async download(filename) {
+        return super.fetchAResource(`/api/ressource/download/${filename}`, "GET");
     }
 
 }

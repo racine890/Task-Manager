@@ -1,14 +1,15 @@
+let current_project_id = null;
+let parent_idea_id = null;
+
 document.addEventListener('DOMContentLoaded', () => {
 
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
-    }
+    const params = new URLSearchParams(window.location.search);
+    current_project_id = params.get('no');
+    parent_idea_id = params.get('idea');
 
-    getAllCategories().then((categories)=>{
+    getAllCategories().then((categories) => {
         let select = document.getElementById("category");
-        categories.forEach((category)=>{
+        categories.forEach((category) => {
             let option = document.createElement("option");
             option.value = category.id;
             option.textContent = category.name;
@@ -16,18 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     })
 
-    if(appDataManager.checkvar("form.project.id")){
-        getProject(appDataManager.getvar("form.project.id")).then((project)=>{
+    if (current_project_id) {
+        getProject(current_project_id).then((project) => {
             document.getElementById("title").value = project.name;
             document.getElementById("description").value = project.description;
-            document.getElementById("start-date").value = project.start_date.toISOString().slice(0, 19);
-            document.getElementById("end-date").value = project.end_date.toISOString().slice(0, 19);
+            document.getElementById("start-date").value = project.start_date;
+            document.getElementById("end-date").value = project.end_date;
             document.getElementById("submission").innerHTML = "Update";
         });
+    } else {
+        const now = new Date();
+
+        const formattedNow = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0') + 'T' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0');
+
+        document.getElementById("start-date").value = formattedNow;
+        document.getElementById("end-date").value = formattedNow;
     }
 
-    if(appDataManager.checkvar("form.idea.id")){
-        getIdea(appDataManager.getvar("form.idea.id")).then((idea)=>{
+    if (parent_idea_id) {
+        getIdea(parent_idea_id).then((idea) => {
             document.getElementById("title").value = idea.name;
             document.getElementById("description").value = idea.description;
         });
@@ -37,16 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('my-form').addEventListener('submit', (event) => {
         event.preventDefault();
 
-        if(appDataManager.checkvar("form.project.id")){
+        if (current_project_id) {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const start_date = document.getElementById('start-date').value;
             const end_date = document.getElementById('end-date').value;
             const category_id = document.getElementById('category').value;
 
-            updateProject(appDataManager.getvar("form.project.id"), title, description, start_date, end_date, category_id);
-            appDataManager.remvar("form.project.id");
-        }  else {
+            updateProject(current_project_id, title, description, start_date, end_date, category_id);
+        } else {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const start_date = document.getElementById('start-date').value;
@@ -54,7 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const category_id = document.getElementById('category').value;
 
             saveProject(title, description, start_date, end_date, category_id);
-            if(appDataManager.checkvar("form.idea.id")) appDataManager.remvar("form.idea.id");
+            if (parent_idea_id) {
+                removeIdea(parent_idea_id);
+            };
         }
     });
 });

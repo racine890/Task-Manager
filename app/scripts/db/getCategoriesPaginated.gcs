@@ -16,10 +16,19 @@ if $DIFFERENT then
 
 query select_all with q with *prepared_vars
 
+SetVar *json LASTLIST
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'name', 'description')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from category where id > ? and active = 1 limit 20 ;
+select id, name, description from category where active = 1 limit 20 offset ?;
 [/q]
+
+constants: consts.ch

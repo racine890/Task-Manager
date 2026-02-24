@@ -1,4 +1,6 @@
-free var *session_user
-free var *result
-
+# Authentication
+SetVar *result evaluate(None)
+GetTableElement user of API_TOKEN
+# Later, use it if i want to add a logged_in field to the user object
+SetVar *result evaluate({'msg': 'User logged out successfully'})
 end

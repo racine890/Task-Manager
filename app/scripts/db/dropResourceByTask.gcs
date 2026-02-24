@@ -22,8 +22,6 @@ if $DIFFERENT then
 
 execute query q pass *prepared_vars
 
-SetVar *result *prepared_vars
-
 # Close the database
 close database
 end

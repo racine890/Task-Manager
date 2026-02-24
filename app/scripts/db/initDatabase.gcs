@@ -156,6 +156,11 @@ create table task (
 	project_id integer,
 	name varchar(20),
 	description text,
+	start_date timestamp,
+	end_date timestamp,
+	effective_start timestamp,
+	effective_end timestamp,
+	progression integer default(0),
 	status integer(1) default(0),
 	category_id integer,
 	create_date timestamp default(CURRENT_TIMESTAMP),
@@ -185,11 +190,12 @@ create table note (
 	description text,
 	creator integer,
 	task_id integer,
+	type varchar(100),
 	create_date timestamp default(CURRENT_TIMESTAMP),
 	active integer(1) default(1),
 	foreign key(creator) references user(id),
 	foreign key(task_id) references task(id)
-)
+);
 [/n]
 
 [re]

@@ -1,0 +1,14 @@
+# Authentication
+SetVar *result evaluate(None)
+
+# Get Form Data
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+GetTableElement rightId of API_PARAMS
+SetVar *arg_rightId LASTRESULT
+
+execute app/scripts/db/dropUserRight.gcs
+
+SetVar *result evaluate({"msg":"User right deleted successfully"})
+end

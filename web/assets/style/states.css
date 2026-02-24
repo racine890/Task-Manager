@@ -1,0 +1,242 @@
+body {
+	font-family: 'Segoe UI', sans-serif;
+	background: #f4f6f9;
+	margin: 0;
+	padding: 40px;
+}
+
+h1 {
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse !important;
+	background: white;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+	margin-top: 30px;
+}
+
+thead {
+	background: linear-gradient(90deg, #4e73df, #224abe);
+	color: white;
+}
+
+th,
+td {
+	padding: 14px 16px;
+	text-align: left;
+}
+
+th {
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+tr:nth-child(even) {
+	background-color: #f8f9fc;
+}
+
+tr:hover {
+	background-color: #eef2ff;
+	transition: 0.2s;
+}
+
+.status {
+	padding: 6px 10px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: bold;
+	display: inline-block;
+}
+
+.en-cours {
+	background: #d1ecf1;
+	color: #0c5460;
+}
+
+.termine {
+	background: #d4edda;
+	color: #155724;
+}
+
+.retard {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+.planifie {
+	background: #fff3cd;
+	color: #856404;
+}
+
+.progress-container {
+	background: #e9ecef;
+	border-radius: 20px;
+	height: 8px;
+	width: 100%;
+}
+
+.progress-bar {
+	height: 8px;
+	border-radius: 20px;
+}
+
+.high {
+	color: #dc3545;
+	font-weight: bold;
+}
+
+.medium {
+	color: #ffc107;
+	font-weight: bold;
+}
+
+.low {
+	color: #28a745;
+	font-weight: bold;
+}
+
+.expired-row {
+	border-left: 6px solid #dc3545;
+}
+
+.active-row {
+	border-left: 6px solid #A120FA;
+}
+
+.paused-row {
+	border-left: 6px solid #BAA440;
+}
+
+footer {
+	margin-top: 30px;
+	text-align: right;
+	font-size: 13px;
+	color: #6c757d;
+}
+
+
+body {
+	font-family: 'Segoe UI', sans-serif;
+	background: linear-gradient(135deg, #eef2f7, #d9e2f3);
+	margin: 0;
+	padding: 40px;
+}
+
+.container {
+	max-width: 1100px;
+	margin: auto;
+	background: white;
+	border-radius: 16px;
+	box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+	padding: 40px;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 30px;
+}
+
+.profile {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.avatar {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	background: #4e73df;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.stats {
+	display: flex;
+	gap: 20px;
+}
+
+.card {
+	background: #f8f9fc;
+	padding: 15px 20px;
+	border-radius: 12px;
+	text-align: center;
+	min-width: 120px;
+}
+
+.card h3 {
+	margin: 0;
+	font-size: 22px;
+}
+
+.card span {
+	font-size: 13px;
+	color: #6c757d;
+}
+
+thead {
+	background: #4e73df;
+	color: white;
+}
+
+th,
+td {
+	padding: 14px;
+	text-align: left;
+}
+
+tr:nth-child(even) {
+	background: #f8f9fc;
+}
+
+.status {
+	padding: 6px 10px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.en-cours {
+	background: #d1ecf1;
+	color: #0c5460;
+}
+
+.termine {
+	background: #d4edda;
+	color: #155724;
+}
+
+.retard {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+.progress-container {
+	background: #e9ecef;
+	border-radius: 20px;
+	height: 8px;
+}
+
+.progress-bar {
+	height: 8px;
+	border-radius: 20px;
+}
+
+footer {
+	margin-top: 30px;
+	text-align: right;
+	font-size: 13px;
+	color: #6c757d;
+}

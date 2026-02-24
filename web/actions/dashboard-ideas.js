@@ -1,72 +1,32 @@
-let lastDisplayed = 0;
-let allIdeas = [];
-let loadedPages = [];
+// Updated. Those are just the actions for the table component
+function onLoadColumns() { return ["Id", "Label", "Description"]; }
 
-function fillArray(ideas, ideaList){
-    ideaList.innerHTML = '';
-    ideas.forEach(idea => {
+function onLoadData(idea) { return [idea.id, idea.name, idea.description]; }
 
-        const row = `<tr>
-            <td>${idea.id}</td>
-            <td>${idea.name}</td>
-            <td>${idea.description}</td>
-            <td>
-                <button onclick="editIdea(${idea.id})">Edit</button>
-                <button onclick="deleteIdea(${idea.id})">Delete</button>
-                <button onclick="validate(${idea.id})">Create Project</button>
-            </td>
-        </tr>`;
-        lastDisplayed = idea.id;
-        ideaList.innerHTML += row;
-    });
-}
-
-function displayIdeas(forward=true) {
-    const ideaList = document.getElementById('my-table');
-
-    if(forward == true){
-        getIdeas(lastDisplayed).then((ideas)=>{
-            if(ideas.length > 0){
-                allIdeas = ideas;
-                fillArray(ideas, ideaList);
-            }  else if(loadedPages.length != 0) {
-                loadedPages.pop();
-                alert("No more data behind!");
-            }
-        });
-    } else if(loadedPages.length > 0) {
-        allIdeas = loadedPages.pop();
-        fillArray(allIdeas, ideaList);
-    } else {
-        alert("No more data before!");
-    }
-
+function onLoadAction(idea) {
+    return [
+        { name: "Edit", func: "editIdea", arg: idea.id, right: "update_idea" },
+        { name: "Delete", func: "deleteIdea", arg: idea.id, color: "danger", right: "delete_idea" },
+        { name: "Create Project", func: "validate", arg: idea.id, color: "success", right: "create_project" }
+    ];
 }
 
 function editIdea(id) {
-    appDataManager.setvar("form.idea.id", id);
-    redirect("ideaForm.html");
+    redirect("ideaForm.html", false, [["idea", id]]);
 }
 
 function deleteIdea(id) {
     const confirme = confirm("Do you want to remove that Idea ?");
-	if (confirme) {
+    if (confirme) {
         removeIdea(id).then(() => {
-            displayIdeas();
+            alert("Idea removed !");
+            location.reload();
         });
-	}
+    }
 }
 
-function validate(id) {
-    const confirme = confirm("Do you want to create a project from this idea ?");
-	if (confirme) {
-        appDataManager.setvar("form.idea.id", id);
-        redirect("projectForm.html");
-	}
-}
-
-function printIdeas(){
-    setTimeout(function() {
+function printIdeas() {
+    setTimeout(function () {
         const options = {
             filename: 'ideas-list.pdf',
             margin: 1,
@@ -76,24 +36,13 @@ function printIdeas(){
         };
 
         var element = document.getElementById("to-print");
-        var worker = html2pdf().set(options).from(element).save();
+        html2pdf().set(options).from(element).save();
     }, 2000);
 }
 
-document.getElementById('next').onclick = () => {
-    loadedPages.push(allIdeas);
-    displayIdeas();
-};
-
-document.getElementById('prev').onclick = () => {
-    displayIdeas(false);
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    try{
-        check_auth();
-    } catch {
-        redirect("auth.html");
+function validate(id) {
+    const confirme = confirm("Do you want to create a project from this idea ?");
+    if (confirme) {
+        redirect("projectForm.html", false, [["idea", id]]);
     }
-    displayIdeas();
-});
+}

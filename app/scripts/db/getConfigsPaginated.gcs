@@ -16,10 +16,19 @@ if $DIFFERENT then
 
 query select_all with q with *prepared_vars
 
+SetVar *json LASTLIST
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'key', 'value')) =>*json
+
 # Close the database
 close database
 end
 
 [q]
-select * from config where id > ? limit 20 ;
+select id, key, value from config limit 20 offset ?;
 [/q]
+
+constants: consts.ch

@@ -1,77 +1,96 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails de la tâche</title>
+    <title>Task Details</title>
     <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
-    <link rel="preload" href="../assets/style/project.css" as="style"onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="../assets/style/project.css"></noscript>
+    <link rel="preload" href="../assets/style/project.css" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="../assets/style/project.css">
+    </noscript>
     <link rel="stylesheet" href="../assets/style/selection.css">
     <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <link rel="stylesheet" href="../tools/prism/prism.css">
 </head>
+
 <body>
     <NavBarComponent title="Task details"></NavBarComponent>
-<div class="project-container" id="to-print">
-    <h1 id="title">Title</h1>
-    
-    <div class="details">
-        <p><strong>Category : </strong><span class="label" id="category"></span></p>
-        <p><strong>Description :</strong></p>
-        <p id="description">Description</p>
-        <span class="label" id="status">Status</span>
-        <p class="line">
-            <button id="todo" style="display: none">mark as todo</button>
-            <button id="start" style="display: none">start</button>
-            <button id="pause" style="display: none">pause</button>
-            <button id="test" style="display: none">test</button>
-            <button id="finish" style="display: none">finish</button>
-            <button id="abandon" style="display: none">abandon</button>
-        </p>
-        <a href="#"><span id="parent-project">See Parent Project</span></a>
-    </div>
+    <div class="project-container" id="to-print">
+        <h1 id="title">Title</h1>
 
-    <div class="assignments">
-        <strong>Assignated on this task</strong>
-        <SelectionComponent id="user-search" title="Search a user" object="user" editAction="editUser" deleteAction="removeUser" validateAction="validateUser"></SelectionComponent>
-        <ul id="users-list">
-        </ul>
-    </div>
+        <div class="details">
+            <p><strong>Category : </strong><span class="label" id="category"></span></p>
+            <p><strong>Description :</strong></p>
+            <pre>
+                <code class="language-markdown" id="description">
+                    Description
+                </code>
+            </pre>
+            <span class="label" id="status">Status</span>
+            <p class="line">
+                <button id="todo" style="display: none">mark as todo</button>
+                <button id="start" style="display: none">start</button>
+                <button id="pause" style="display: none">pause</button>
+                <button id="test" style="display: none">test</button>
+                <button id="finish" style="display: none">finish</button>
+                <button id="abandon" style="display: none">abandon</button>
+            </p>
+            <a href="#"><span id="parent-project">See Parent Project</span></a>
+            <div class="progress-section">
+                <p><strong>Progression :</strong> <span id="progress-value">0%</span></p>
 
-    <div class="assignments">
-        <strong>Ressources</strong>
-        <ul id="ressources-list">
-        </ul>
-    </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
 
-    <div class="assignments">
-        <strong>Notes</strong>
-        <ul id="notes-list">
-        </ul>
-    </div>
+                <input type="range" id="progress-input" min="0" max="100" value="0">
+            </div>
+        </div>
 
-    <button type="button" onclick="createNote()">Create a note</button>
-    <input type="file" id="fileInput" style="display:none;">
-    <button type="button" onclick="uploadFileAsResource()">Upload a file</button>
-    <button onclick="printTask()">Print</button>
+        <div class="assignments">
+            <strong>Assignated on this task</strong>
+            <SelectionComponent id="user-search" title="Search a user" object="user" validateAction="validateUser"
+                createPermission="update_task"></SelectionComponent>
+            <ul id="users-list">
+            </ul>
+        </div>
 
-    <div id="noteCreation">
-        <textarea id="newNote" rows="10"></textarea>
-        <button onclick="saveNote()">Create</button>
+        <div class="assignments">
+            <strong>Ressources</strong>
+            <ul id="ressources-list">
+            </ul>
+        </div>
+
+        <div class="assignments">
+            <strong>Notes</strong>
+            <ul id="notes-list">
+            </ul>
+        </div>
+
+        <div id="noteCreation">
+            <select id="noteType">
+            </select>
+            <textarea id="newNote" rows="10"></textarea>
+            <button onclick="saveNote()">Create</button>
+        </div>
+
+        <button type="button" onclick="createNote()">Create a note</button>
+        <input type="file" id="fileInput" style="display:none;">
+        <button type="button" onclick="uploadFileAsResource()">Upload a file</button>
+        <button onclick="printTask()">Print</button>
     </div>
-</div>
     <!-- Core scripts -->
-	<script src="../core/Service.js"></script>
+    <script src="../core/Service.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>
 
     <!-- Pdf Tool -->
     <script src="../tools/pdf.js"></script>
-    <script src="../tools/prism/prism.min.js"></script>
-    <script src="../tools/prism/components/prism-javascript.js"></script>
     <script src="../tools/html2pdf/html2pdf.bundle.min.js"></script>
-    
+
     <!-- User objects -->
     <script src="../services/userService.js"></script>
     <script src="../models/user.js"></script>
@@ -105,5 +124,8 @@
     <script src="../managers/selection_manager.js"></script>
     <script src="../components/navbar.js"></script>
     <script src="../components/selection.js"></script>
+    <script src="../assets/scripts/common.js"></script>
+    <script src="../tools/prism/prism.js"></script>
 </body>
+
 </html>
