@@ -30,6 +30,7 @@ expose /api/task/workers/{id} using *result from app/scripts/tasks/getWorkers.gc
 expose /api/task/workers/{tid}/{wid} using *result from app/scripts/tasks/deleteWorkers.gcs with DELETE
 expose /api/task/workers/{tid}/{wid} using *result from app/scripts/tasks/assignWorkers.gcs with POST
 expose /api/task/notes/{tid} using *result from app/scripts/tasks/addNote.gcs with POST
+expose /api/task/notes/{nid} using *result from app/scripts/tasks/updateNote.gcs with PATCH
 expose /api/task/notes/{id} using *result from app/scripts/tasks/getNotes.gcs with GET
 expose /api/task/ressources/{id} using *result from app/scripts/tasks/getRessources.gcs with GET
 expose /api/task/status/{id}/{status} using *result from app/scripts/tasks/changeStatus.gcs with POST

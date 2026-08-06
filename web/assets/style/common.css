@@ -1,4 +1,4 @@
-/* STYLE SPÉCIFIQUE POUR L’IMPRESSION */
+/* STYLE SPÉCIFIQUE POUR L'IMPRESSION */
 @media print {
 	body * {
 		visibility: hidden;
@@ -14,5 +14,18 @@
 		left: 0;
 		top: 0;
 		width: 100%;
+	}
+
+	#to-print pre,
+	#to-print .code-toolbar,
+	#to-print .note-code {
+		max-height: none !important;
+		overflow: visible !important;
+		white-space: pre-wrap !important;
+		word-wrap: break-word !important;
+	}
+
+	#to-print .assignments li {
+		break-inside: avoid;
 	}
 }

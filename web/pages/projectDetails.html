@@ -56,6 +56,8 @@
             <ul id="projects-list">
             </ul>
         </div>
+        
+        <button id="random" onclick="openRandom()">Open random</button>
 
         <div class="tasks">
             <strong>Tasks list</strong>
@@ -71,7 +73,7 @@
             </ul>
         </div>
 
-        <button type="button" onclick="createTask()">Create a task</button>
+        <button type="button" onclick="createTask()" id="task-creation" style="display: none">Create a task</button>
         <input type="file" id="fileInput" style="display:none;">
         <button type="button" onclick="uploadFileAsResource()">Upload a file</button>
         <button onclick="printProject()">Print</button>

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
+	
+<LoaderComponent></LoaderComponent>
 
 <head>
     <meta charset="UTF-8">
@@ -13,12 +15,14 @@
     <link rel="stylesheet" href="../assets/style/selection.css">
     <link rel="stylesheet" href="../assets/style/dashboard.css">
     <link rel="stylesheet" href="../tools/prism/prism.css">
+    <link rel="stylesheet" href="../assets/style/loader.css">
 </head>
 
 <body>
     <NavBarComponent title="Task details"></NavBarComponent>
     <div class="project-container" id="to-print">
         <h1 id="title">Title</h1>
+        <i class="fas fa-copy icon" title="Copy" onclick="copyTask()"></i>
 
         <div class="details">
             <p><strong>Category : </strong><span class="label" id="category"></span></p>
@@ -38,7 +42,7 @@
                 <button id="abandon" style="display: none">abandon</button>
             </p>
             <a href="#"><span id="parent-project">See Parent Project</span></a>
-            <div class="progress-section">
+            <div class="progress-section" id="progress-section">
                 <p><strong>Progression :</strong> <span id="progress-value">0%</span></p>
 
                 <div class="progress-container">
@@ -73,13 +77,15 @@
             <select id="noteType">
             </select>
             <textarea id="newNote" rows="10"></textarea>
-            <button onclick="saveNote()">Create</button>
+            <button onclick="saveNote()" id="createNoteButton">Create</button>
         </div>
 
-        <button type="button" onclick="createNote()">Create a note</button>
-        <input type="file" id="fileInput" style="display:none;">
-        <button type="button" onclick="uploadFileAsResource()">Upload a file</button>
-        <button onclick="printTask()">Print</button>
+		<div id="action_bar">
+			<button type="button" onclick="createNote()">Create a note</button>
+			<input type="file" id="fileInput" style="display:none;">
+			<button type="button" onclick="uploadFileAsResource()">Upload a file</button>
+			<button onclick="printTask()">Print</button>
+        </div>
     </div>
     <!-- Core scripts -->
     <script src="../core/Service.js"></script>
@@ -119,6 +125,7 @@
     <script src="../actions/init_global.js"></script>
 
     <!-- specific scripts -->
+    <script src="../components/loader.js"></script>
     <script src="../actions/taskDetails.js"></script>
     <script src="../managers/task_manager.js"></script>
     <script src="../managers/selection_manager.js"></script>

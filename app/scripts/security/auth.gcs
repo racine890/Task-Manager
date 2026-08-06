@@ -31,4 +31,5 @@ SetVar *token LASTRESULT
 SetVar *result evaluate(dict())
 evaluate {*result}.__setitem__('token', {*token})
 evaluate {*result}.update({*jsonData})
+
 end

@@ -41,7 +41,7 @@ function viewTask(id) {
 
 // Header buttons
 function openRandomTask() {
-    viewTask(tableMap.get("taskTable").allTasks[Math.floor(Math.random() * tableMap.get("taskTable").allTasks.length)].id);
+    viewTask(tableMap.get("taskTable").allItems[Math.floor(Math.random() * tableMap.get("taskTable").allItems.length)].id);
 }
 
 function printTasks() {

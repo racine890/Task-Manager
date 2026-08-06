@@ -21,7 +21,7 @@ SetVar *json evaluate([])
 count LASTLIST
 compare LASTRESULT 0
 if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('worker', 'worker_email', 'task', 'project', 'status', 'progression', 'effective_start', 'end_date')) =>*json
+	evaluate list_to_dict({LASTLIST}, ('worker', 'worker_email', 'task_id', 'task', 'task_description', 'project_id', 'project', 'project_status', 'status', 'progression', 'effective_start', 'end_date', 'task_start_date')) =>*json
 	SetVar API_RESPONSE 200
 
 # Close the database
@@ -30,10 +30,25 @@ end
 
 # Get A User Status
 [q]
-select user.username, user.email, task.name, project.name, task.status, task.progression, task.effective_start, task.end_date
+select 
+    user.username, 
+    user.email, 
+    task.id as task_id,
+    task.name as task_name, 
+    task.description as task_description,
+    project.id as project_id,
+    project.name as project_name,
+    project.status as project_status,
+    task.status, 
+    task.progression, 
+    task.effective_start, 
+    task.end_date,
+    task.start_date as task_start_date
 from user, task, project, user_task
 where user.id = user_task.user_id
 and task.id = user_task.task_id
 and project.id = task.project_id
-and user.id = ? and task.active = 1
+and user.id = ? 
+and task.active = 1
+and task.status IN (2, 3, 4)
 [/q]

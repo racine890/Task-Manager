@@ -17,33 +17,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		let active_tasks = 0;
 		let delayed_tasks = 0;
+		let running_projects = new Set();
 
 		rows_html = '';
 		progression = 0;
 		let progression_count = 0;
 
 		response.forEach((assignation) => {
+			active_tasks++;
 
-			if (assignation.status == 2) {
-				active_tasks++;
-			} else if (assignation.status == 0 || assignation.status == 1) {
-				delayed_tasks++;
-			}
-
-			let css_class = '';
-
-			if (assignation.effective_start != null && assignation.end_date != null && new Date(assignation.end_date) < new Date()) {
-				css_class = 'class="expired-row"';
-			} else if (assignation.status == 2) {
-				css_class = 'class="active-row"';
-			} else if (assignation.status == 3) {
-				css_class = 'class="paused-row"';
+			if (assignation.project_status == 2) {
+				running_projects.add(assignation.project);
 			}
 
 			const statuses = ["New", "Todo", "Started", "Paused", "Testing", "Finished", "Abandoned"];
-			rows_html += `<tr ${css_class}>
-					<td>${assignation.task}</td>
-					<td>${assignation.project}</td>
+			rows_html += `<tr>
+					<td>${assignation.task_id}</td>
+					<td><a href="taskDetails.html?no=${assignation.task_id}">${assignation.task}</a></td>
+					<td><a href="projectDetails.html?no=${assignation.project_id}">${assignation.project}</a></td>
+					<td>${toDisplayDate(assignation.task_start_date)}</td>
 					<td>${toDisplayDate(assignation.effective_start)}</td>
 					<td>${toDisplayDate(assignation.end_date)}</td>
 					<td>
@@ -54,10 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
 					<td><span class="status en-cours">${statuses[assignation.status]}</span></td>
 				</tr>`;
 
-			if (assignation.status === 2) {
-				progression += (assignation.progression || 0);
-				progression_count++;
-			}
+			progression += (assignation.progression || 0);
+			progression_count++;
 		});
 
 		progression = Math.round(progression / progression_count);
@@ -70,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.getElementById('job').innerHTML = 'Worker';
 		document.getElementById('active_tasks').innerHTML = active_tasks;
 		document.getElementById('delayed').innerHTML = delayed_tasks;
+		document.getElementById('running_projects').innerHTML = running_projects.size;
 
 		document.getElementById('activeTasks').innerHTML = rows_html;
 

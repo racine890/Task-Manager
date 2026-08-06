@@ -38,9 +38,17 @@ body {
 }
 
 .note-code {
-    max-height: 50%;
-    overflow: auto;
+    overflow-x: auto;
     border-radius: 6px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    font-family: 'Courier New', Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #212529;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .note-code::-webkit-scrollbar {
@@ -51,22 +59,25 @@ body {
     position: relative;
 }
 
-.icon {
+#notes-list li .icon {
     z-index: 2;
+    order: -1;
+    align-self: flex-end;
+    margin-bottom: 8px;
 }
 
 .code-toolbar {
     position: relative;
-    max-width: 80%;
+    max-width: 100%;
 }
 
 .code-toolbar>pre {
-    max-height: 400px;
-    overflow: auto;
+    overflow-x: auto;
 }
 
 pre[class*="language-"] {
     background: unset !important;
+    overflow-x: auto;
 }
 
 .progress-section {

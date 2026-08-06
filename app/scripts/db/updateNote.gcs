@@ -1,0 +1,43 @@
+# Check that all params are set
+check var *arg_note_id
+if $MISSING then
+	print val Error ------- Missing argument : *arg_note_id
+	end
+
+check var *arg_note
+if $MISSING then
+	print val Error ------- Missing argument : *arg_note
+	end
+
+evaluate [ {*arg_note}, {*arg_note_id} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+execute query i with *prepared_vars
+commit
+
+evaluate [ {*arg_note_id} ]
+SetVar . *prepared_vars LASTRESULT
+query select_one with gn with *prepared_vars
+
+compare LASTTUPLE None
+if $DIFFERENT then
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'description', 'type')) =>*json
+
+# Close the database
+close database
+end
+
+[i]
+update note set description = ? where id = ?;
+[/i]
+
+[gn]
+select id, description, type from note where id = ?;
+[/gn]

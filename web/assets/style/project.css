@@ -60,13 +60,30 @@ h1 {
 .assignments li,
 .subprojects li,
 .tasks li {
-	padding: 10px;
-	background: #e9ecef;
-	border-radius: 4px;
-	margin-bottom: 10px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#notes-list li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+#notes-list li .note-code {
+    width: 100%;
+    order: 1;
+}
+
+#notes-list li .icon {
+    order: 0;
+    align-self: flex-end;
 }
 
 .icon {
@@ -80,31 +97,45 @@ h1 {
 }
 
 .New {
-	background-color: #ca950a;
+	background-color: #acaa21;
+	border-left: 8px solid #acaa21;
+	padding-left: 12px;
 }
 
 .Todo {
-	background-color: #caa120;
+	background-color: #0caded;
+	border-left: 8px solid #0caded;
+	padding-left: 12px;
 }
 
 .Started {
-	background-color: #ba3305;
+	background-color: #a810f0;
+	border-left: 8px solid #a810f0;
+	padding-left: 12px;
 }
 
 .Paused {
-	background-color: #60a910;
+	background-color: #0eacec;
+	border-left: 8px solid #0eacec;
+	padding-left: 12px;
 }
 
 .Testing {
-	background-color: #560330;
+	background-color: #ceaaad;
+	border-left: 8px solid #ceaaad;
+	padding-left: 12px;
 }
 
 .Finished {
-	background-color: #acaa12;
+	background-color: #0ada91;
+	border-left: 8px solid #0ada91;
+	padding-left: 12px;
 }
 
 .Abandoned {
-	background-color: #0ca950;
+	background-color: #900010;
+	border-left: 8px solid #900010;
+	padding-left: 12px;
 }
 
 i {

@@ -150,6 +150,18 @@ async function addNoteToTask(tid, note, ntype = 0) {
     }
 }
 
+async function updateNote(nid, note) {
+    try {
+        let response = await appTaskService.update_note(nid, note);
+        if (response != null) {
+            return response;
+        }
+    } catch (Error) {
+        console.log(Error);
+        alert("An error occured!");
+    }
+}
+
 async function changeTaskStatus(id, status) {
     try {
         await appTaskService.change_status(id, status);

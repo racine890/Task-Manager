@@ -72,10 +72,8 @@ class Service {
             if (!appDataManager.checkvar('token') || appDataManager.getvar('token') == null) {
                 if (response.status == 401) {
                     appDataManager.setvar('token', null);
-                    redirect('auth.html');
                 }
             }
-
             if (response.status == 403) {
                 const errorBody = await response.json();
                 throw new Error(errorBody.msg || 'Forbidden');
@@ -89,6 +87,7 @@ class Service {
             const object = await response.json();
             return object;
         } catch (error) {
+			console.log("error");
             throw error;
         }
     }

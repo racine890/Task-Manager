@@ -1,0 +1,18 @@
+SetVar *result evaluate(None)
+
+GetTableElement nid of API_PARAMS
+SetVar *arg_note_id LASTRESULT
+
+SetVar *arg_note API_DATA
+
+GetTableElement username of API_TOKEN
+SetVar *arg_author LASTRESULT
+
+execute app/scripts/db/updateNote.gcs
+
+SetVar *result *json
+
+evaluate {*arg_author} + 'updated a note on task:' + {*arg_task_id} =>*log_text
+execute app/scripts/system/writeLog.gcs
+
+end

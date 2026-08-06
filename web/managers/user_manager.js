@@ -19,14 +19,17 @@ async function authenticate(username, password) {
             password: password
         });
 
+		if ('msg' in response) {
+			alert(response.msg);
+		}
+
         if (response != null) {
             appDataManager.setvar("token", response.token);
             appDataManager.setvar("rights", response.rights);
             return response;
         } else {
-            console.warn("Token not found in auth response");
-            return null;
-        }
+			redirect('auth.html');
+		}
 
     } catch (error) {
         alert(error);

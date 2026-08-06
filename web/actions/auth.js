@@ -16,10 +16,6 @@ class authAction extends Action {
 				alert("Welcome !");
 				redirect("dashboard-projects.html");
 			}
-			else {
-				// Just notify
-				alert("Incorrect credentials!");
-			}
 		});
 	}
 

@@ -41,7 +41,7 @@ function viewProject(id) {
 
 // Header buttons
 function openRandomProject() {
-    viewProject(tableMap.get("projectTable").allProjects[Math.floor(Math.random() * tableMap.get("projectTable").allProjects.length)].id);
+    viewProject(tableMap.get("projectTable").allItems[Math.floor(Math.random() * tableMap.get("projectTable").allItems.length)].id);
 }
 
 function printProjects() {

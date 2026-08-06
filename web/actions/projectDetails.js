@@ -1,4 +1,5 @@
 current_project_id = null;
+project_taks = [];
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             getTasksByProject(current_project_id).then((tasks) => {
+				project_taks = tasks;
                 tasks.forEach(task => {
                     preloadTask(task);
                 });
@@ -62,9 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 start_btn.style.display = 'block';
             } else if (project.status == STATUS.STARTED) {
                 pause_btn.style.display = 'block';
-                start_btn.style.display = 'block';
                 abandon_btn.style.display = 'block';
                 finish_btn.style.display = 'block';
+                document.getElementById('task-creation').style.display = 'block';
             } else if (project.status == STATUS.TESTING) {
                 start_btn.style.display = 'block';
                 finish_btn.style.display = 'block';
@@ -107,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     location.reload();
                 })
             });
-
         });
     }
 });
@@ -233,11 +234,13 @@ function removeResource(element) {
 
 function preloadProject(project) {
     const li = document.createElement('li');
+    const statuses = ["New", "Todo", "Started", "Paused", "Testing", "Finished", "Abandoned"];
+    li.setAttribute('class', statuses[project.status]);
     li.setAttribute('data-id', project.id);
     const editp = `<i class="fas fa-edit icon" title="Edit" onclick="editProject(this.parentElement)"></i>`;
     const delp = `<i class="fas fa-trash icon" title="Delete" onclick="removeProject(this.parentElement)"></i>`;
     li.innerHTML = `
-        ${project.name}
+        <a href="#" onclick="openProject(${project.id})">${project.name}</a>
         ${hasRight('update_project') ? editp : ''}
         ${hasRight('delete_project') ? delp : ''}
     `;
@@ -245,8 +248,17 @@ function preloadProject(project) {
     projectList.appendChild(li);
 }
 
+function openRandom() {
+	const openable = project_taks.filter(t => t.status < 5);
+	if (openable.length == 0) return;
+	const ind = Math.floor(Math.random() * openable.length);
+	openTask(openable[ind].id);
+}
+
 function preloadTask(task) {
     const li = document.createElement('li');
+    const statuses = ["New", "Todo", "Started", "Paused", "Testing", "Finished", "Abandoned"];
+    li.setAttribute('class', statuses[task.status]);
     li.setAttribute('data-id', task.id);
     const editp = `<i class="fas fa-edit icon" title="Edit" onclick="editTask(this.parentElement)"></i>`;
     const delp = `<i class="fas fa-trash icon" title="Delete" onclick="removeTask(this.parentElement)"></i>`;
@@ -380,6 +392,10 @@ function createTask() {
 
 function openTask(taskId) {
     redirect("taskDetails.html", true, [["no", taskId]]);
+}
+
+function openProject(projectId) {
+    redirect("projectDetails.html", true, [["no", projectId]]);
 }
 
 function uploadFileAsResource() {

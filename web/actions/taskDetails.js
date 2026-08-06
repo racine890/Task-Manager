@@ -1,4 +1,5 @@
 current_task_id = null;
+edited_note_id = null;
 
 const langagesList = [
     "DFS",
@@ -407,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
     current_task_id = params.get('no');
 
     if (current_task_id) {
+		globalLoaderComponent.render(true);
         getTask(current_task_id).then((task) => {
             const statuses = ["New", "Todo", "Started", "Paused", "Testing", "Finished", "Abandoned"];
 
@@ -414,7 +416,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("description").innerText = task.description;
             document.getElementById("status").innerText = statuses[task.status];
             document.getElementById("status").classList.add(statuses[task.status]);
-            updateProgress(task.progress || 0);
+
+			if (task.status == 2) {
+				document.getElementById('progress-section').hidden = false;
+				document.getElementById('action_bar').hidden = false;
+				updateProgress(task.progress || 0);
+			} else {
+				document.getElementById('progress-section').hidden = true;
+				document.getElementById('action_bar').hidden = true;
+			}
             getCategory(task.category_id).then((category) => {
                 document.getElementById("category").innerText = category.name;
             })
@@ -434,6 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     preloadNote(note);
                 });
                 refreshPrismStyles();
+                globalLoaderComponent.render(false);
             });
 
             getResourcesByTask(current_task_id).then((resources) => {
@@ -456,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 start_btn.style.display = 'block';
             } else if (task.status == STATUS.STARTED) {
                 pause_btn.style.display = 'block';
-                start_btn.style.display = 'block';
                 abandon_btn.style.display = 'block';
                 finish_btn.style.display = 'block';
             } else if (task.status == STATUS.TESTING) {
@@ -534,6 +544,23 @@ function preloadUser(user) {
     userList.appendChild(li);
 }
 
+function copyTask(){
+	getTask(current_task_id).then((task) => {
+		let text = `----------\n Task name : `;
+		text += task.name;
+		text += `\n----------\n Description : `;
+		text += task.description;
+		text += `\n----------\n`;
+	  navigator.clipboard.writeText(text)
+		.then(() => {
+		  alert('Task copied successfully!');
+		})
+		.catch(err => {
+		  alert('Failed to copy task: ', err);
+		});
+	});
+}
+
 function editUser(element) {
     let userId = element.getAttribute('data-id');
 }
@@ -583,9 +610,12 @@ function openProject(id) {
 }
 
 function preloadNote(note) {
+	console.log(note);
     const li = document.createElement('li');
     li.setAttribute('data-id', note.id);
     const deln = `<i class="fas fa-trash icon" title="Delete" onclick="removeNote(this.parentElement)"></i>`;
+    console.log('Note:', note);
+    const updn = `<i class="fas fa-edit icon" title="Update" onclick="createNoteWithId(${note.id})"></i>`;
     li.innerHTML = `
         <pre class="note-code">
             <code class="language-${note.type}">
@@ -593,9 +623,11 @@ function preloadNote(note) {
             </code>
         </pre>
         ${hasRight('delete_note') ? deln : ''}
+        ${hasRight('update_note') ? updn : ''}
     `;
     let list = document.getElementById("notes-list");
     list.appendChild(li);
+    return li;
 }
 
 function preloadResource(resource) {
@@ -632,24 +664,62 @@ function download(path) {
     downloadRessource(path);
 }
 
+function changeNote(note) {
+    const li = document.querySelector(`li[data-id="${note.id}"]`);
+    console.log(li.outerHTML);
+
+    const code = li.querySelector("code");
+
+    code.className = `language-${note.type}`;
+    code.textContent = note.description;
+
+    Prism.highlightElement(code);
+
+    return li;
+}
+
 function saveNote() {
     let note = document.getElementById("newNote").value;
     let noteType = document.getElementById("noteType").value;
 
     document.getElementById("newNote").value = '';
     document.getElementById("noteCreation").style.display = 'none';
-    addNoteToTask(current_task_id, note, noteType).then((note) => {
-        preloadNote(note);
-        refreshPrismStyles();
-    });
+    globalLoaderComponent.render(true);
+    
+    if (edited_note_id == null) {
+		addNoteToTask(current_task_id, note, noteType).then((note) => {
+			const noteElement = preloadNote(note);
+			const codeBlocks = noteElement.querySelectorAll("code");
+
+			codeBlocks.forEach(code => {
+				Prism.highlightElement(code);
+				code.classList.add("my-class");
+			});
+			globalLoaderComponent.render(false);
+		});
+	} else {
+		updateNote(edited_note_id, note).then((note) => {
+			globalLoaderComponent.render(false);
+            location.reload();
+			/*const noteElement = changeNote(note);
+			const codeBlocks = noteElement.querySelectorAll("code");
+
+			codeBlocks.forEach(code => {
+				Prism.highlightElement(code);
+				code.classList.add("my-class");
+			});*/
+		});
+	}
 }
 
 function seeResource(element) {
     let resId = element.getAttribute('data-id');
 
+	globalLoaderComponent.render(true);
     getRessource(resId).then((resource) => {
         path = resource.path;
         getRessourceUrl(path).then((url) => {
+			globalLoaderComponent.render(false);
             const popup = window.open('', 'popup', 'width=600,height=400,scrollbars=yes');
             if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.gif') || path.endsWith('.webp')) {
                 const img = document.createElement('img');
@@ -730,6 +800,15 @@ function removeResource(element) {
 
 function createNote() {
     document.getElementById("noteCreation").style.display = 'block';
+    document.getElementById("createNoteButton").text = 'Create Note';
+    redirect('#noteCreation');
+}
+
+function createNoteWithId(noteId) {
+	edited_note_id = noteId;
+    document.getElementById("noteCreation").style.display = 'block';
+    document.getElementById("createNoteButton").textContent = 'Update Note';
+    redirect('#noteCreation');
 }
 
 function uploadFileAsResource() {
@@ -739,19 +818,28 @@ function uploadFileAsResource() {
 document.getElementById('fileInput').addEventListener('change', (event) => {
     const file = event.target.files[0];
 
+	globalLoaderComponent.render(true);
     uploadRessource(file).then((path) => {
-        saveRessource('tr-' + current_task_id, path).then(() => {
-            assignLastResourceToTask(current_task_id).then(() => {
-                alert("Resource successfully added !");
-                location.reload();
-            })
+        saveRessource('tr-' + current_task_id, path).then((response) => {
+			if (response != null) {
+				assignLastResourceToTask(current_task_id).then(() => {
+					globalLoaderComponent.render(false);
+					alert("Resource successfully added !");
+					location.reload();
+				})
+			}
+			else {
+				alert("Resource upload failed !");
+			}
         })
     })
 });
 
 function refreshPrismStyles() {
     // To highlight all elements with the 'language-' class
+    console.time("Prism");
     Prism.highlightAll();
+    console.timeEnd("Prism");
 
     const codeElements = document.querySelectorAll('.language-javascript');
 

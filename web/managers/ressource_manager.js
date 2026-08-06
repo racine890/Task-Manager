@@ -35,9 +35,7 @@ async function saveRessource(name, path) {
             path: path
         });
 
-        if (response != null) {
-            alert("Ressource has been saved !");
-        }
+        return response;
 
     } catch (Error) {
         console.log(Error);
@@ -56,7 +54,6 @@ async function updateRessource(id, name, path) {
         if (response != null) {
             let newIdea = new ressource();
             newIdea.mapLite(response);
-            alert("Category " + newIdea.title + " has been updated !");
         }
 
     } catch (Error) {

@@ -39,6 +39,10 @@ class taskService extends Service {
     async add_note(tid, payload) {
         return super.fetchAResource(`/api/task/notes/${tid}`, "POST", {}, payload);
     }
+    
+    async update_note(nid, note) {
+		return super.fetchAResource(`/api/task/notes/${nid}`, "PATCH", {}, note);
+	}
 
     async get_notes(id) {
         return super.fetchAResource(`/api/task/notes/${id}`, "GET");
