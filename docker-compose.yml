@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  task-manager:
+    build: .
+    ports:
+      - "6102:6102"
+    volumes:
+      # Mount the data directory to persist database and uploads
+      - ./data:/app/data
+    environment:
+      # SQLite configuration (default)
+      - DATABASE_TYPE=sqlite
+      - DATABASE_NAME=data.db
+      - DATA_DIR=./data
+      - LOGS_DIR=./logs
+      
+      # Uncomment below to use MySQL instead of SQLite:
+      # - DATABASE_TYPE=mysql
+      # - DATABASE_HOST=mysql
+      # - DATABASE_USER=root
+      # - DATABASE_PASSWORD=your_password
+      # - DATABASE_NAME=taskmanager
+    restart: unless-stopped
+
+  # Uncomment the service below to use MySQL
+  # mysql:
+  #   image: mysql:8.0
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=your_password
+  #     - MYSQL_DATABASE=taskmanager
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   restart: unless-stopped
+
+# volumes:
+#   mysql_data:

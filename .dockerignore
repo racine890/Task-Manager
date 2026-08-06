@@ -1,0 +1,11 @@
+.git
+.gitignore
+trash/
+logs/
+.vscode/
+*.db
+*.model
+dist/
+node_modules/
+README.md
+readme.txt
