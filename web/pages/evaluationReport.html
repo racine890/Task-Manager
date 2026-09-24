@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprint Economic Report</title>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="preload" href="../assets/style/project.css" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="../assets/style/project.css">
+    </noscript>
+    <link rel="stylesheet" href="../assets/style/selection.css">
+    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <style>
+        .eval-report-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1000px;
+        }
+
+        .eval-report-container h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #16213e;
+        }
+
+        .eval-project-info {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .eval-project-info p {
+            margin: 5px 0;
+        }
+
+        .eval-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .eval-stat-box {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .eval-stat-box .number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .eval-stat-box .label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        .eval-stat-box.total {
+            background: linear-gradient(135deg, #0ada91 0%, #0f3460 100%);
+        }
+
+        .eval-stat-box.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #a810f0 100%);
+        }
+
+        .eval-stat-box.pending {
+            background: linear-gradient(135deg, #6366f1 0%, #0f3460 100%);
+        }
+
+        .eval-section {
+            margin-bottom: 30px;
+        }
+
+        .eval-section h2 {
+            font-size: 20px;
+            color: #16213e;
+            border-bottom: 3px solid #0f3460;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .eval-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        .eval-table th {
+            background: #0f3460;
+            color: white;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .eval-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .eval-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .eval-table td:first-child,
+        .eval-table th:first-child {
+            text-align: left;
+        }
+
+        .eval-status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .eval-validated-yes {
+            background: #0ada91;
+        }
+
+        .eval-validated-no {
+            background: #ef4444;
+        }
+
+        .eval-validated-na {
+            background: #666;
+        }
+
+        .eval-actions {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .eval-actions button {
+            padding: 12px 30px;
+            background: #0f3460;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin: 0 5px;
+        }
+
+        .eval-actions button:hover {
+            background: #16213e;
+        }
+
+        .eval-actions button.print {
+            background: #0ada91;
+        }
+
+        .eval-actions button.print:hover {
+            background: #0a8c5e;
+        }
+
+        @media print {
+            .eval-actions {
+                display: none;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <NavBarComponent title="Sprint Economic Report"></NavBarComponent>
+    <div class="eval-report-container" id="eval-report">
+        <h1 id="eval-title">Sprint Economic Report</h1>
+
+        <div class="eval-project-info" id="eval-project-info">
+            <p><strong>Project:</strong> <span id="eval-project-name">Loading...</span></p>
+            <p><strong>Hourly Rate:</strong> <span id="eval-hourly-rate">N/A</span></p>
+            <p><strong>External Project:</strong> <span id="eval-external">No</span></p>
+            <p><strong>Period:</strong> <span id="eval-period">N/A</span></p>
+            <p><strong>Project Status:</strong> <span id="eval-project-status" class="label">N/A</span></p>
+        </div>
+
+        <div class="eval-summary-grid" id="eval-summary-grid">
+            <div class="eval-stat-box total">
+                <div class="number" id="eval-total-amount">0.00</div>
+                <div class="label">Total Validated Amount</div>
+            </div>
+            <div class="eval-stat-box">
+                <div class="number" id="eval-total-hours">0.00</div>
+                <div class="label">Total Evaluated Hours</div>
+            </div>
+            <div class="eval-stat-box warning">
+                <div class="number" id="eval-validated-count">0</div>
+                <div class="label">Validated Tasks</div>
+            </div>
+            <div class="eval-stat-box pending">
+                <div class="number" id="eval-pending-count">0</div>
+                <div class="label">Pending Evaluations</div>
+            </div>
+        </div>
+
+        <div class="eval-actions">
+            <button onclick="generateEvalReport()">Generate Economic Report PDF</button>
+            <button class="print" onclick="window.print()">Print</button>
+        </div>
+
+        <div class="eval-section">
+            <h2>Evaluated Tasks Breakdown</h2>
+            <table class="eval-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Task Name</th>
+                        <th>Project</th>
+                        <th>Evaluated Hours</th>
+                        <th>Hourly Rate</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Evaluation Validated</th>
+                    </tr>
+                </thead>
+                <tbody id="eval-tasks-tbody">
+                    <tr><td colspan="8" style="text-align:center;">Loading tasks...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="eval-section">
+            <h2>Sub-Projects Economic Summary</h2>
+            <table class="eval-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Sub-Project</th>
+                        <th>Hourly Rate</th>
+                        <th>Evaluated Hours</th>
+                        <th>Validated Hours</th>
+                        <th>Estimated Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="eval-subprojects-tbody">
+                    <tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="eval-section">
+            <h2>Notes</h2>
+            <div id="eval-notes">
+                <p>The total validated amount is calculated as the sum of (evaluated_hours x hourly_rate) for all tasks with a validated evaluation.</p>
+                <p>Pending evaluations represent tasks that have been evaluated but not yet validated by a project manager.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core scripts -->
+    <script src="../core/Service.js"></script>
+    <script src="../core/Model.js"></script>
+    <script src="../core/DataManager.js"></script>
+    <script src="../core/Component.js">
+    </script>
+
+    <!-- Pdf Tool -->
+    <script src="../tools/html2pdf/html2pdf.bundle.min.js"></script>
+
+    <!-- Category objects -->
+    <script src="../services/categoryService.js"></script>
+    <script src="../models/category.js"></script>
+    <script src="../managers/category_manager.js"></script>
+
+    <!-- Project objects -->
+    <script src="../services/projectService.js"></script>
+    <script src="../models/project.js"></script>
+    <script src="../managers/project_manager.js"></script>
+
+    <!-- Task objects -->
+    <script src="../services/taskService.js"></script>
+    <script src="../models/task.js"></script>
+    <script src="../managers/task_manager.js"></script>
+
+    <!-- Initializers -->
+    <script src="../actions/utils.js"></script>
+    <script src="../actions/init_global.js"></script>
+
+    <!-- Specific scripts -->
+    <script src="../actions/evaluationReport.js"></script>
+    <script src="../components/navbar.js"></script>
+</body>
+
+</html>

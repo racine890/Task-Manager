@@ -36,4 +36,8 @@ class ideaService extends Service {
         return super.fetchAResource(`/api/idea/${last}`, "GET");
     }
 
+    async getByProject(projectId){
+        return super.fetchAResource(`/api/idea/project/${projectId}`, "GET");
+    }
+
 }

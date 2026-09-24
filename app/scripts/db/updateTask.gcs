@@ -19,7 +19,17 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_category_id
 	end
 
-evaluate [ {*arg_name}, {*arg_description}, {*arg_category_id}, {*arg_id} ]
+check var *arg_project_id
+if $MISSING then
+	SetVar *arg_project_id None
+	end
+
+check var *arg_evaluated_hours
+if $MISSING then
+	SetVar *arg_evaluated_hours None
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_category_id}, {*arg_project_id}, {*arg_evaluated_hours}, {*arg_id} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -39,5 +49,5 @@ close database
 end
 
 [i]
-update task set name=?, description=?, category_id=? where id=? ;
+update task set name=?, description=?, category_id=?, project_id=?, evaluated_hours=? where id=? ;
 [/i]

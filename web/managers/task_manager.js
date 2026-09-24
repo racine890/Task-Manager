@@ -37,7 +37,7 @@ async function dropNote(id, nid) {
     }
 }
 
-async function saveTask(title, description, category_id, start_date, end_date, mother_idea = null, project_id = null) {
+async function saveTask(title, description, category_id, start_date, end_date, mother_idea = null, project_id = null, evaluated_hours = null) {
 
     try {
         let response = await appTaskService.save({
@@ -47,7 +47,8 @@ async function saveTask(title, description, category_id, start_date, end_date, m
             project_id: project_id,
             category_id: category_id,
             start_date: start_date,
-            end_date: end_date
+            end_date: end_date,
+            evaluated_hours: evaluated_hours
         });
 
         if ('msg' in response) {
@@ -72,7 +73,7 @@ async function getTask(id) {
     }
 }
 
-async function updateTask(id, title, description, category_id, start_date, end_date) {
+async function updateTask(id, title, description, category_id, start_date, end_date, project_id = null, evaluated_hours = null) {
 
     try {
         let response = await appTaskService.update(id, {
@@ -80,7 +81,9 @@ async function updateTask(id, title, description, category_id, start_date, end_d
             description: description,
             category_id: category_id,
             start_date: start_date,
-            end_date: end_date
+            end_date: end_date,
+            project_id: project_id || null,
+            evaluated_hours: evaluated_hours
         });
 
         if ('msg' in response) {
@@ -167,7 +170,7 @@ async function changeTaskStatus(id, status) {
         await appTaskService.change_status(id, status);
     } catch (Error) {
         console.log(Error);
-        alert("An error occured!");
+        alert(Error.message);
     }
 }
 
@@ -186,5 +189,15 @@ async function assignLastResourceToTask(id) {
     } catch (Error) {
         console.log(Error);
         alert("An error occured!");
+    }
+}
+
+async function validateTaskEvaluation(id) {
+    try {
+        await appTaskService.validateEvaluation(id);
+        alert("Évaluation validée avec succès !");
+    } catch (Error) {
+        console.log(Error);
+        alert(Error.message);
     }
 }

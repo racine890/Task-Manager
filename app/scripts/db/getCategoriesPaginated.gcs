@@ -18,17 +18,17 @@ query select_all with q with *prepared_vars
 
 SetVar *json LASTLIST
 
-count LASTLIST
-compare LASTRESULT 0
-if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('id', 'name', 'description')) =>*json
+	count LASTLIST
+	compare LASTRESULT 0
+	if $DIFFERENT then
+		evaluate list_to_dict({LASTLIST}, ('id', 'name', 'description', 'target', 'active', 'initial_status', 'allowed_statuses')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select id, name, description from category where active = 1 limit 20 offset ?;
+select id, name, description, target, active, initial_status, allowed_statuses from category where active = 1 limit 20 offset ?;
 [/q]
 
 constants: consts.ch

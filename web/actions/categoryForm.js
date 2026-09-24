@@ -15,7 +15,14 @@ class categoryFormAction extends Action {
                 // SetAll sets each control of the form object with corresponding value
                 this.form.setAll({
                     title: category.name,
-                    description: category.description
+                    description: category.description,
+                    target: category.target,
+                    initial_status: category.initial_status
+                });
+
+                // Update checkboxes
+                document.querySelectorAll('input[name="allowed_statuses"]').forEach(cb => {
+                    cb.checked = category.allowed_statuses.includes(parseInt(cb.value));
                 });
 
                 // Updates submission button style
@@ -29,14 +36,24 @@ class categoryFormAction extends Action {
             // Form get method allows to get a control value using its id
             const title = this.form.get('title');
             const description = this.form.get('description');
+            const target = this.form.get('target');
+            const initial_status = this.form.get('initial_status');
+            const allowed_statuses = Array.from(document.querySelectorAll('input[name="allowed_statuses"]:checked'))
+                .map(cb => cb.value)
+                .join(',');
 
             // this requires the category service and the category manager
-            updateCategory(current_category_id, title, description);
+            updateCategory(current_category_id, title, description, target, initial_status, allowed_statuses);
         } else {
             const title = this.form.get('title');
             const description = this.form.get('description');
+            const target = this.form.get('target');
+            const initial_status = this.form.get('initial_status');
+            const allowed_statuses = Array.from(document.querySelectorAll('input[name="allowed_statuses"]:checked'))
+                .map(cb => cb.value)
+                .join(',');
 
-            saveCategory(title, description);
+            saveCategory(title, description, target, initial_status, allowed_statuses);
         }
     }
 
@@ -52,6 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
         new Form([
             ['title', null, VALIDATORS.NO_XSS, "Title should not contain xss strings."],
             ['description', null, VALIDATORS.NO_XSS, "Description should not contain xss strings."],
+            ['target', 'both', VALIDATORS.REQUIRED, "Target is required."],
+            ['initial_status', '0', VALIDATORS.REQUIRED, "Initial status is required."]
         ])
     );
 

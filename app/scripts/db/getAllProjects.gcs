@@ -1,0 +1,23 @@
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+query select_all with q
+
+SetVar *json LASTLIST
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('id', 'name')) =>*json
+
+# Close the database
+close database
+end
+
+[q]
+select id, name from project where active = 1 order by name ;
+[/q]

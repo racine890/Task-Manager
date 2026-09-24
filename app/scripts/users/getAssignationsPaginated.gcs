@@ -1,0 +1,24 @@
+SetVar *result evaluate(None)
+
+if evaluate(not hasRight('read_user', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
+GetTableElement id of API_PARAMS
+SetVar *arg_user_id LASTRESULT
+
+GetTableElement start of API_PARAMS
+SetVar *arg_start LASTRESULT
+
+GetTableElement id of API_TOKEN
+SetVar *arg_viewer_id LASTRESULT
+
+execute app/scripts/db/getUserAssignationsPaginated.gcs
+
+evaluate {API_TOKEN}['username'] + ' displayed the assignations of user ' + str({*arg_user_id}) + '.' =>*log_text
+execute app/scripts/system/writeLog.gcs
+
+SetVar *result *json
+
+end

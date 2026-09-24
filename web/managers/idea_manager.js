@@ -1,11 +1,12 @@
-async function saveIdea() {
+async function saveIdea(projectId) {
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
 
     try {
         let response = await appIdeaService.save({
             name: title,
-            description: description
+            description: description,
+            project_id: projectId
         });
 
         if (response != null) {
@@ -44,6 +45,20 @@ async function updateIdea(id) {
             let newIdea = new idea();
             newIdea.mapLite(response);
             alert("Idea " + newIdea.name + " has been updated !");
+        }
+
+    } catch (Error) {
+        console.log(Error);
+        alert("An error occured!");
+    }
+}
+
+async function getIdeasByProject(projectId) {
+    try {
+        let response = await appIdeaService.getByProject(projectId);
+
+        if (response != null) {
+            return response;
         }
 
     } catch (Error) {

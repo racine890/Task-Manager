@@ -21,12 +21,12 @@ SetVar *json LASTLIST
 count LASTLIST
 compare LASTRESULT 0
 if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('id', 'name', 'status')) =>*json
+	evaluate list_to_dict({LASTLIST}, ('id', 'name', 'status', 'start_date', 'end_date', 'effective_start', 'effective_end', 'category_id', 'category_name', 'create_date', 'active', 'hourly_rate', 'external')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select project.id, project.name, project.status from project where parent = ? and active = 1 ;
+select project.id, project.name, project.status, project.start_date, project.end_date, project.effective_start, project.effective_end, project.category_id, category.name as category_name, project.create_date, project.active, project.hourly_rate, project.external from project left join category on category.id = project.category_id where project.parent = ? and project.active = 1 ;
 [/q]

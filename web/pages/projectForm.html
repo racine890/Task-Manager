@@ -21,6 +21,13 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="parent-project">Parent Project :</label>
+                <input type="text" id="parent-project-search" placeholder="Search a project...">
+                <select id="parent-project">
+                    <option value="">-- No parent --</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="title">Label :</label>
                 <input class="form-field" type="text" id="title" name="title" required>
             </div>
@@ -36,6 +43,16 @@
             <div class="form-group">
                 <label for="description">End date :</label>
                 <input type="datetime-local" class="form-field" id="end-date" name="end-date" required>
+            </div>
+            <div class="form-group">
+                <label for="hourly-rate">Tarif horaire :</label>
+                <input class="form-field" type="number" id="hourly-rate" name="hourly-rate" step="0.01" placeholder="Optionnel">
+            </div>
+            <div class="form-group">
+                <label for="external">
+                    <input type="checkbox" id="external" name="external" value="1">
+                    Projet externe
+                </label>
             </div>
             <button type="submit" id="submission">Save</button>
         </form>
@@ -55,10 +72,6 @@
     <script src="../services/userService.js"></script>
     <script src="../models/user.js"></script>
 
-    <!-- Idea objects -->
-    <script src="../services/ideaService.js"></script>
-    <script src="../models/idea.js"></script>
-
     <!-- Project objects -->
     <script src="../services/projectService.js"></script>
     <script src="../models/project.js"></script>
@@ -70,7 +83,6 @@
     <!-- Specific scripts -->
     <script src="../managers/user_manager.js"></script>
     <script src="../actions/projectForm.js"></script>
-    <script src="../managers/idea_manager.js"></script>
     <script src="../managers/project_manager.js"></script>
     <script src="../components/navbar.js"></script>
 </body>

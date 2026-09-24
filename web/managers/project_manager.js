@@ -1,4 +1,4 @@
-async function saveProject(title, description, start_date, end_date, category_id) {
+async function saveProject(title, description, start_date, end_date, category_id, parent = null, hourly_rate = null, external = 0) {
 
     try {
         let response = await appProjectService.save({
@@ -6,7 +6,10 @@ async function saveProject(title, description, start_date, end_date, category_id
             description: description,
             start_date: start_date,
             end_date: end_date,
-            category_id: category_id
+            category_id: category_id,
+            parent: parent || null,
+            hourly_rate: hourly_rate,
+            external: external
         });
 
         if ('msg' in response) {
@@ -35,7 +38,7 @@ async function getProjects(lastDisplayed, filters = []) {
 
 }
 
-async function updateProject(id, title, description, start_date, end_date, category_id) {
+async function updateProject(id, title, description, start_date, end_date, category_id, parent = null, hourly_rate = null, external = null) {
 
     try {
         let response = await appProjectService.update(id, {
@@ -43,7 +46,10 @@ async function updateProject(id, title, description, start_date, end_date, categ
             description: description,
             start_date: start_date,
             end_date: end_date,
-            category_id: category_id
+            category_id: category_id,
+            parent: parent || null,
+            hourly_rate: hourly_rate,
+            external: external
         });
 
         if ('msg' in response) {
@@ -132,6 +138,37 @@ async function getTasksByProject(id) {
         console.log(Error);
         alert("An error occured!");
     }
+}
+
+async function getAllTasksByProject(projectId, visited = new Set()) {
+    if (visited.has(projectId)) return [];
+    visited.add(projectId);
+
+    const tasks = await getTasksByProject(projectId);
+    const subProjects = await getProjectsByProject(projectId);
+
+    for (const subProject of subProjects) {
+        const subTasks = await getAllTasksByProject(subProject.id, visited);
+        tasks.push(...subTasks);
+    }
+
+    return tasks;
+}
+
+async function getAllSubProjectsByProject(projectId, visited = new Set()) {
+    if (visited.has(projectId)) return [];
+    visited.add(projectId);
+
+    const subProjects = await getProjectsByProject(projectId);
+    const result = [];
+
+    for (const subProject of subProjects) {
+        result.push(subProject);
+        const nested = await getAllSubProjectsByProject(subProject.id, visited);
+        result.push(...nested);
+    }
+
+    return result;
 }
 
 async function affectTask(id, tid) {

@@ -21,12 +21,12 @@ SetVar *json LASTLIST
 count LASTLIST
 compare LASTRESULT 0
 if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('id', 'description', 'type')) =>*json
+	evaluate list_to_dict({LASTLIST}, ('id', 'description', 'type', 'creator', 'create_date', 'edit_date')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select note.id, note.description, note.type from note where task_id = ? and active = 1 ;
+select note.id, note.description, note.type, note.creator, note.create_date, note.edit_date from note where task_id = ? and active = 1 ;
 [/q]

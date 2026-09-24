@@ -27,6 +27,9 @@ SetVar *arg_start_date LASTRESULT
 GetTableElement end_date of API_DATA
 SetVar *arg_end_date LASTRESULT
 
+GetTableElement evaluated_hours of API_DATA
+SetVar *arg_evaluated_hours LASTRESULT
+
 GetTableElement username of API_TOKEN
 SetVar *trace_author LASTRESULT
 

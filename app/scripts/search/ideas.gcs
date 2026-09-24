@@ -1,0 +1,8 @@
+SetVar *result evaluate(None)
+
+GetTableElement term of API_PARAMS
+SetVar *arg_term LASTRESULT
+
+execute app/scripts/db/searchIdeas.gcs
+SetVar *result *json
+end

@@ -28,16 +28,16 @@ query select_one with gn with *prepared_vars
 
 compare LASTTUPLE None
 if $DIFFERENT then
-	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'description', 'type')) =>*json
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'description', 'type', 'creator', 'create_date', 'edit_date')) =>*json
 
 # Close the database
 close database
 end
 
 [i]
-update note set description = ? where id = ?;
+update note set description = ?, edit_date = CURRENT_TIMESTAMP where id = ?;
 [/i]
 
 [gn]
-select id, description, type from note where id = ?;
+select id, description, type, creator, create_date, edit_date from note where id = ?;
 [/gn]

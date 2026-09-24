@@ -11,6 +11,25 @@ SetVar *arg_name LASTRESULT
 GetTableElement description of API_DATA
 SetVar *arg_description LASTRESULT
 
+GetTableElement target of API_DATA
+SetVar *arg_target LASTRESULT
+
+GetTableElement initial_status of API_DATA
+SetVar *arg_initial_status LASTRESULT
+
+compare *arg_initial_status None
+if $EQUAL then
+	SetVar *arg_initial_status 0
+	end
+
+GetTableElement allowed_statuses of API_DATA
+SetVar *arg_allowed_statuses LASTRESULT
+
+compare *arg_allowed_statuses None
+if $EQUAL then
+	SetVar *arg_allowed_statuses '0,1,2,3,4,5,6,7,8'
+	end
+
 GetTableElement id of API_PARAMS
 SetVar *arg_id LASTRESULT
 

@@ -16,6 +16,10 @@ class projectService extends Service {
         return super.fetchAResource("/api/project", "GET");
     }
 
+    async getAll() {
+        return super.fetchAResource("/api/project/all", "GET");
+    }
+
     async getByID(id) {
         return super.fetchAResource(`/api/project/get/${id}`, "GET");
     }

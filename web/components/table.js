@@ -4,10 +4,15 @@ class TableComponent extends Component {
 		super('TableComponent', id, args);
 
 		this.rows = [];
-		this.lastDisplayed = 0;
-		this.loadedPages = [];
-		this.forward = true;
+		this.allItems = [];
+		this.currentPage = [];
+		this.backwardStack = [];
+		this.forwardStack = [];
+		this.offset = 0;
+		this.pageSize = 20;
+		this.loading = false;
 		this.serviceManager = null;
+		this.filters = [];
 		this.onLoadColumns = this.getArgValue('onLoadColumns');
 		this.createBtn = this.getArgValue('createBtn') || 'createBtn';
 		this.createPermission = this.getArgValue('createPermission');
@@ -27,14 +32,13 @@ class TableComponent extends Component {
             </tbody>
         </table>
 		<div class="pagination">
-            <button id="prev">Précédent</button>
-            <button id="next">Suivant</button>
+            <button id="prev">Previous</button>
+            <button id="next">Next</button>
         </div>
 		`;
 	}
 
 	showColumns() {
-		// onLoadColumns shall return a value with format ["Username", "E-Mail", "..."]
 		const columns = window[this.onLoadColumns]();
 
 		let result = "";
@@ -48,7 +52,6 @@ class TableComponent extends Component {
 
 	fillActions(row) {
 		let html = "";
-		// allActions shall take an index of an object and return an object with function, param, and text
 		row.forEach((action) => {
 			let color = 'primary';
 
@@ -68,7 +71,9 @@ class TableComponent extends Component {
 	fillRow(row) {
 		let html = '';
 		row.forEach((col) => {
-			html += `<td>${col.toString().substr(0, 100)}${col.length > 100 ? '...' : ''}</td>`;
+			const str = (col !== null && col !== undefined) ? col.toString() : '';
+			const truncated = str.length > 100 ? str.slice(0, 100) + '...' : str;
+			html += `<td>${truncated}</td>`;
 		});
 
 		return html;
@@ -76,6 +81,8 @@ class TableComponent extends Component {
 
 	fillArray(elements, list) {
 		list.innerHTML = '';
+		this.allItems = elements;
+		this.currentPage = elements;
 		elements.forEach(element => {
 
 			const row = `<tr>
@@ -84,35 +91,86 @@ class TableComponent extends Component {
 				${this.fillActions(window[this.onLoadAction](element))}
 				</td>
 			</tr>`;
-			this.lastDisplayed = element.id;
 			list.innerHTML += row;
 		});
 	}
 
+	setFilters(filters) {
+		this.filters = filters;
+		this.resetPagination();
+	}
+
+	resetPagination() {
+		this.backwardStack = [];
+		this.forwardStack = [];
+		this.currentPage = [];
+		this.allItems = [];
+		this.offset = 0;
+		this.loading = false;
+	}
+
 	display(restartPagination = false) {
+		if (this.loading)
+			return;
+
 		const list = this.getChild('my-table');
 
-		if (this.forward) {
-			// filters might be undefined...
-			if (restartPagination) {
-				this.lastDisplayed = 0;
-			}
+		if (restartPagination)
+			this.resetPagination();
 
-			window[this.paginationMethod](this.lastDisplayed, filters).then((items) => {
-				if (items.length > 0) {
-					this.allItems = items;
-					this.fillArray(items, list);
-				} else if (this.loadedPages.length != 0) {
-					this.loadedPages.pop();
-					alert("No more data behind!");
-				} else {
-					this.allItems = [];
-					this.fillArray(this.allItems, list);
-				}
+		if (this.forwardStack.length > 0) {
+			const entry = this.forwardStack.pop();
+			this.offset = entry.offset + entry.items.length;
+			this.fillArray(entry.items, list);
+			return;
+		}
+
+		if (this.currentPage.length > 0) {
+			this.backwardStack.push({
+				items: this.currentPage,
+				offset: this.offset - this.currentPage.length
 			});
-		} else if (this.loadedPages.length > 0) {
-			this.allItems = this.loadedPages.pop();
-			fillArray(this.allItems, list);
+		}
+
+		this.loading = true;
+		window[this.paginationMethod](this.offset, this.filters)
+			.then((items) => {
+				this.loading = false;
+
+				if (Array.isArray(items) && items.length > 0) {
+					this.offset += items.length;
+					this.fillArray(items, list);
+				} else if (this.backwardStack.length > 0) {
+					this.backwardStack.pop();
+					alert("No more data ahead!");
+				} else {
+					this.fillArray([], list);
+				}
+			})
+			.catch((error) => {
+				this.loading = false;
+				if (this.backwardStack.length > 0)
+					this.backwardStack.pop();
+				console.error('Pagination error:', error);
+				alert("An error occurred while loading data.");
+			});
+	}
+
+	goBack() {
+		if (this.loading)
+			return;
+
+		const list = this.getChild('my-table');
+
+		this.forwardStack.push({
+			items: this.currentPage,
+			offset: this.offset - this.currentPage.length
+		});
+
+		if (this.backwardStack.length > 0) {
+			const entry = this.backwardStack.pop();
+			this.offset = entry.offset;
+			this.fillArray(entry.items, list);
 		} else {
 			alert("No more data before!");
 		}
@@ -132,12 +190,10 @@ class TableComponent extends Component {
 		const next = this.getChild('next');
 
 		prev.onclick = () => {
-			this.forward = false;
-			this.display();
+			this.goBack();
 		};
 
 		next.onclick = () => {
-			this.loadedPages.push(this.allItems);
 			this.display();
 		};
 

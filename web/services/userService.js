@@ -68,4 +68,8 @@ class userService extends Service {
         return super.fetchAResource(`/api/user/assignations/${id}`, "GET");
     }
 
+    async getAssignationsPaginated(id, start) {
+        return super.fetchAResource(`/api/user/assignations/${id}/${start}`, "POST");
+    }
+
 }

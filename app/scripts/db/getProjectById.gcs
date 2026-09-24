@@ -27,7 +27,7 @@ SetVar API_RESPONSE 404
 
 compare LASTTUPLE None
 if $DIFFERENT then
-	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'name', 'description', 'creator', 'status', 'start_date', 'end_date', 'effective_start', 'effective_end', 'parent', 'category_id', 'create_date', 'active')) =>*json
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'name', 'description', 'creator', 'status', 'start_date', 'end_date', 'effective_start', 'effective_end', 'parent', 'category_id', 'category_name', 'create_date', 'active', 'hourly_rate', 'external')) =>*json
 	SetVar API_RESPONSE 200
 
 # Close the database
@@ -35,8 +35,8 @@ close database
 end
 
 [q]
-select id, name, description, creator, status, start_date,
-end_date, effective_start, effective_end, parent, category_id,
-create_date, active from project where id = ? and id in
+select project.id, project.name, project.description, project.creator, project.status, project.start_date,
+project.end_date, project.effective_start, project.effective_end, project.parent, project.category_id, category.name as category_name,
+project.create_date, project.active, project.hourly_rate, project.external from project left join category on category.id = project.category_id where project.id = ? and project.id in
 (select project_id from user_project where user_id = ?);
 [/q]

@@ -15,19 +15,14 @@ if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
 query select_one with q with *prepared_vars
-
 compare LASTTUPLE None
 if $DIFFERENT then
-	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'name', 'description')) =>*json
-
-compare LASTTUPLE None
-if $DIFFERENT then
-	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'name', 'description')) =>*json
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'name', 'description', 'target', 'active', 'initial_status', 'allowed_statuses')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select id, name, description from category where id = ? ;
+select id, name, description, target, active, initial_status, allowed_statuses from category where id = ? ;
 [/q]

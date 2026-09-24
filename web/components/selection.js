@@ -47,9 +47,11 @@ class SelectionComponent extends Component {
 			this.popup.style.display = 'none';
 		});
 
-		openPopup.addEventListener('click', () => {
-			this.popup.style.display = 'block';
-		});
+        if (openPopup) {
+            openPopup.addEventListener('click', () => {
+                this.popup.style.display = 'block';
+            });
+        }
 
 		window.addEventListener('click', (event) => {
 			if (event.target === this.popup) {

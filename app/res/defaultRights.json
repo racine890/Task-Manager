@@ -106,5 +106,9 @@
 	{
 		"name": "delete_task",
 		"active": 1
+	},
+	{
+		"name": "validate_task_evaluation",
+		"active": 1
 	}
 ]

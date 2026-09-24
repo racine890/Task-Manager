@@ -16,6 +16,9 @@ async function selectionSearch(object, term) {
         if (object == 'task')
             response = await appSearchService.searchTask(term);
 
+        if (object == 'idea')
+            response = await appSearchService.searchIdea(term);
+
         if (object == 'right')
             response = await appSearchService.searchRight(term);
 

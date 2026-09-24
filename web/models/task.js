@@ -5,7 +5,9 @@ const STATUS = {
     PAUSED: 3,
     TESTING: 4,
     FINISHED: 5,
-    ABANDONED: 6
+    FEEDBACK: 6,
+    DELIVERED: 7,
+    ABANDONED: 8
 }
 
 class task extends Model {
@@ -21,6 +23,8 @@ class task extends Model {
         this.category_id = null;
         this.create_date = new Date();
         this.active = 1;
+        this.evaluated_hours = null;
+        this.evaluation_validated = 0;
     }
     
     map(jsonObject){
@@ -51,7 +55,8 @@ class task extends Model {
             description: this.description,
             create_date: this.create_date.toISOString().split('T')[0],
             mother_idea: this.mother_idea,
-            project_id: this.project_id
+            project_id: this.project_id,
+            evaluated_hours: this.evaluated_hours
         }
     }
 }

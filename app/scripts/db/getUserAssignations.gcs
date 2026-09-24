@@ -50,5 +50,4 @@ and task.id = user_task.task_id
 and project.id = task.project_id
 and user.id = ? 
 and task.active = 1
-and task.status IN (2, 3, 4)
 [/q]

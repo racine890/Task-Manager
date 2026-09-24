@@ -21,12 +21,12 @@ SetVar *json LASTLIST
 count LASTLIST
 compare LASTRESULT 0
 if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('id', 'path')) =>*json
+	evaluate list_to_dict({LASTLIST}, ('id', 'title', 'path', 'create_date')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select resource.id, resource.path from resource, project_resource where project_resource.resource_id = resource.id and project_resource.project_id = ? and project_resource.active = 1 ;
+select resource.id, resource.title, resource.path, resource.create_date from resource, project_resource where project_resource.resource_id = resource.id and project_resource.project_id = ? and project_resource.active = 1 ;
 [/q]

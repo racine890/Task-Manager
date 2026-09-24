@@ -39,6 +39,11 @@ if $MISSING then
 	print val Error ------- Missing argument : *arg_end_date
 	end
 
+check var *arg_evaluated_hours
+if $MISSING then
+	SetVar *arg_evaluated_hours None
+	end
+
 evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id}, {*arg_start_date}, {*arg_end_date} ]
 SetVar . *prepared_vars LASTRESULT
 
@@ -56,6 +61,27 @@ query select_one with test pass *prepared_vars_2
 compare LASTTUPLE None
 if 5 then
 	end
+
+evaluate [ {*arg_category_id} ]
+SetVar . *prepared_vars_3 LASTRESULT
+
+query select_one with category_status pass *prepared_vars_3
+compare LASTTUPLE None
+if $DIFFERENT then
+	GetTableElement 5 of LASTTUPLE
+	SetVar *arg_default_status LASTRESULT
+if $EQUAL then
+	SetVar *arg_default_status 0
+	end
+
+compare *arg_idea_id None
+if $DIFFERENT then
+	evaluate [ {*arg_idea_id} ]
+	SetVar . *prepared_vars_del LASTRESULT
+	execute query del with *prepared_vars_del
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id}, {*arg_default_status}, {*arg_start_date}, {*arg_end_date}, {*arg_evaluated_hours} ]
+SetVar . *prepared_vars LASTRESULT
 
 execute query i with *prepared_vars
 
@@ -76,10 +102,18 @@ end
 select id from task where name = ? and description = ? and project_id = ? ;
 [/test]
 
+[category_status]
+select id, name, description, target, active, initial_status, allowed_statuses from category where id = ? ;
+[/category_status]
+
 [i]
-insert into task( name, description, creator, project_id, mother_idea, category_id, start_date, end_date ) values ( ?, ?, ?, ?, ?, ?, ?, ?) ;
+insert into task( name, description, creator, project_id, mother_idea, category_id, status, start_date, end_date, evaluated_hours ) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ;
 [/i]
 
 [i2]
 insert into user_task( user_id, task_id ) values ( ?, (select last_insert_rowid()) ) ;
 [/i2]
+
+[del]
+delete from idea where id = ?;
+[/del]

@@ -1,0 +1,18 @@
+SetVar *result evaluate(None)
+
+if evaluate(not hasRight('read_idea', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
+GetTableElement id of API_PARAMS
+SetVar *arg_project_id LASTRESULT
+
+execute app/scripts/db/ideasByProjectId.gcs
+
+evaluate {API_TOKEN}['username'] + ' displayed the ideas for project ' + {*arg_project_id} + '.' =>*log_text
+execute app/scripts/system/writeLog.gcs
+
+SetVar *result *json
+
+end

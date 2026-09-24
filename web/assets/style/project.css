@@ -46,12 +46,14 @@ h1 {
 
 .assignments,
 .subprojects,
+.ideas,
 .tasks {
 	margin-bottom: 20px;
 }
 
 .assignments ul,
 .subprojects ul,
+.ideas ul,
 .tasks ul {
 	list-style-type: none;
 	padding: 0;
@@ -59,6 +61,7 @@ h1 {
 
 .assignments li,
 .subprojects li,
+.ideas li,
 .tasks li {
     padding: 10px;
     background: #e9ecef;
@@ -90,6 +93,10 @@ h1 {
 	cursor: pointer;
 	color: #007bff;
 	transition: color 0.3s;
+}
+
+.icon.pinned {
+	color: #f59e0b;
 }
 
 .icon:hover {
@@ -129,6 +136,18 @@ h1 {
 .Finished {
 	background-color: #0ada91;
 	border-left: 8px solid #0ada91;
+	padding-left: 12px;
+}
+
+.Feedback {
+	background-color: #f59e0b;
+	border-left: 8px solid #f59e0b;
+	padding-left: 12px;
+}
+
+.Delivered {
+	background-color: #6366f1;
+	border-left: 8px solid #6366f1;
 	padding-left: 12px;
 }
 
@@ -192,4 +211,27 @@ button:focus {
 .line {
 	display: flex;
 	justify-content: space-between;
+}
+
+#evaluation-section {
+	margin-top: 15px;
+	padding: 10px;
+	border-radius: 4px;
+	background-color: #f9f9f9;
+}
+
+#evaluation-blocked {
+	margin-top: 10px;
+	padding: 10px;
+	border-radius: 4px;
+	background-color: #fef2f2;
+}
+
+#evaluation-blocked p {
+	color: #dc2626;
+	margin-bottom: 8px;
+}
+
+#validate-evaluation {
+	background-color: #059669;
 }

@@ -16,15 +16,17 @@ if $DIFFERENT then
 
 query select_all with q pass *prepared_vars
 
+SetVar *json evaluate([])
+
 count LASTLIST
 compare LASTRESULT 0
 if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('id', 'username')) =>*json
+	evaluate list_to_dict({LASTLIST}, ('id', 'username', 'email', 'active')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select user.id, user.username from user, user_project where user_project.user_id = user.id and user_project.project_id = ? and user_project.active = 1 ;
+select user.id, user.username, user.email, user.active from user, user_project where user_project.user_id = user.id and user_project.project_id = ? and user_project.active = 1 ;
 [/q]

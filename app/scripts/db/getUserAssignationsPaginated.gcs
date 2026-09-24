@@ -1,0 +1,64 @@
+# Check that all params are set
+check var *arg_user_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_user_id
+	end
+
+check var *arg_start
+if $MISSING then
+	print Error ------- Missing argument : *arg_start
+	end
+
+check var *arg_viewer_id
+if $MISSING then
+	print Error ------- Missing argument : *arg_viewer_id
+	end
+
+evaluate [ {*arg_user_id}, {*arg_viewer_id}, {*arg_start} ]
+SetVar . *prepared_vars LASTRESULT
+
+# Connect to the database
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+query select_all with q with *prepared_vars
+
+SetVar *json evaluate([])
+
+count LASTLIST
+compare LASTRESULT 0
+if $DIFFERENT then
+	evaluate list_to_dict({LASTLIST}, ('worker', 'worker_email', 'task_id', 'task', 'task_description', 'project_id', 'project', 'project_status', 'status', 'progression', 'effective_start', 'end_date', 'task_start_date')) =>*json
+	SetVar API_RESPONSE 200
+
+# Close the database
+close database
+end
+
+[q]
+select 
+    user.username, 
+    user.email, 
+    task.id as task_id,
+    task.name as task_name, 
+    task.description as task_description,
+    project.id as project_id,
+    project.name as project_name,
+    project.status as project_status,
+    task.status, 
+    task.progression, 
+    task.effective_start, 
+    task.end_date,
+    task.start_date as task_start_date
+from user, task, project, user_task
+where user.id = user_task.user_id
+and task.id = user_task.task_id
+and project.id = task.project_id
+and user.id = ? 
+and project.id in (select project_id from user_project where user_id = ? and active = 1)
+and task.active = 1
+LIMIT 20 OFFSET ?
+[/q]

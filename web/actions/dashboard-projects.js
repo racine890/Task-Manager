@@ -7,6 +7,8 @@ const filters = {
     4: false,
     5: false,
     6: false,
+    7: false,
+    8: false,
 };
 
 function onLoadColumns() { return ["Id", "Label", "Description"]; }
@@ -64,7 +66,9 @@ function filterProjects() {
     checkboxes.forEach(cb => {
         cb.addEventListener('change', (event) => {
             filters[event.target.value] = event.target.checked;
-            tableMap.get("projectTable").display(true);
+            const table = tableMap.get("projectTable");
+            table.setFilters(filters);
+            table.display(true);
         });
     });
 }

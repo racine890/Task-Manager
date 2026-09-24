@@ -11,6 +11,9 @@ SetVar *arg_name LASTRESULT
 GetTableElement description of API_DATA
 SetVar *arg_description LASTRESULT
 
+GetTableElement project_id of API_DATA
+SetVar *arg_project_id LASTRESULT
+
 GetTableElement username of API_TOKEN
 SetVar *trace_author LASTRESULT
 

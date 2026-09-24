@@ -21,17 +21,15 @@ class NavBarComponent extends Component {
 			rnames.push(element.name);
 		});
 
-		let projectMenus = `<li>
-								<a href="#">Projects</a>
-								<ul class="submenu">`;
-		if (rnames.includes('read_idea'))
-			projectMenus += `<li id='ideas'><a href="dashboard-ideas.html">Ideas</a></li>`;
-		if (rnames.includes('read_project'))
-			projectMenus += `<li id='projects'><a href="dashboard-projects.html">Projects</a></li>`;
-		if (rnames.includes('read_task'))
-			projectMenus += `<li id='tasks'><a href="dashboard-tasks.html">Tasks</a></li>`;
-		projectMenus += `</ul>
-							</li>`;
+	let projectMenus = `<li>
+							<a href="#">Projects</a>
+							<ul class="submenu">`;
+	if (rnames.includes('read_project'))
+		projectMenus += `<li id='projects'><a href="dashboard-projects.html">Projects</a></li>`;
+	if (rnames.includes('read_task'))
+		projectMenus += `<li id='tasks'><a href="dashboard-tasks.html">Tasks</a></li>`;
+	projectMenus += `</ul>
+					</li>`;
 
 		let administrationMenus = `<li>
 								<a href="#">Administration</a>
@@ -47,13 +45,34 @@ class NavBarComponent extends Component {
 		administrationMenus += `</ul>
 							</li>`;
 
+		let pinnedTasks = [];
+		try {
+			pinnedTasks = JSON.parse(localStorage.getItem('pinnedTasks')) || [];
+		} catch(e) {
+			pinnedTasks = [];
+		}
+
+		let pinnedMenu = '';
+		if (pinnedTasks.length > 0) {
+			pinnedMenu += `<li>
+								<a href="#">Pinned</a>
+								<ul class="submenu">`;
+			pinnedTasks.forEach(task => {
+				pinnedMenu += `<li><a href="taskDetails.html?no=${task.id}">${task.name}</a></li>`;
+			});
+			pinnedMenu += `</ul>
+							</li>`;
+		}
+
 		this.html = `
 					<nav class="navbar">
 						<h1>${Title}</h1>
 						<ul class="menu">
 							<li><a href="#" onclick="redirect('dashboard-projects.html')">Home</a></li>
+							${pinnedMenu}
 							${rnames.includes('read_idea') || rnames.includes('read_project') || rnames.includes('read_task') ? projectMenus : ''}
 							${rnames.includes('read_user') || rnames.includes('read_category') || rnames.includes('read_ressource') || rnames.includes('read_setting') ? administrationMenus : ''}
+							${rnames.includes('read_project') || rnames.includes('read_task') || rnames.includes('read_idea') ? `<li><a href="search.html"><i class="fas fa-search"></i> Search</a></li>` : ''}
 							<li>
 								<a href="#">Account</a>
 								<ul class="submenu">
@@ -62,9 +81,9 @@ class NavBarComponent extends Component {
 								</ul>
 							</li>
 						</ul>
-                        <div class="search-container">
+                        <!--div class="search-container">
 						    <input type="text" id="search" placeholder="Search...">
-                        </div>
+                        </div-->
 					</nav>
 					`;
 
@@ -75,13 +94,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const navbar = new NavBarComponent();
 	navbar.render();
-
-	document.getElementById('search').oninput = (e) => {
-		const query = e.target.value.toLowerCase();
-		const filteredIdeas = allIdeas.filter(idea =>
-			idea.name.toLowerCase().includes(query) ||
-			idea.description.toLowerCase().includes(query)
-		);
-		fillArray(filteredIdeas, document.getElementById('my-table'));
-	};
 });

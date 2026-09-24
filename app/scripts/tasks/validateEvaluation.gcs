@@ -1,0 +1,19 @@
+SetVar *result evaluate(None)
+
+if evaluate(not hasRight('validate_task_evaluation', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	end
+
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+GetTableElement username of API_TOKEN
+SetVar *trace_author LASTRESULT
+
+execute app/scripts/db/validateTaskEvaluation.gcs
+
+evaluate {*trace_author} + ' validated the evaluation of task:' + {*arg_id} =>*log_text
+execute app/scripts/system/writeLog.gcs
+
+end

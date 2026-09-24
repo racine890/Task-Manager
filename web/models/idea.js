@@ -9,6 +9,7 @@ class idea extends Model {
         super();
         this.id = null;
         this.creator = null;
+        this.project_id = null;
         this.name = "";
         this.description = "";
         this.create_date = new Date();
@@ -17,11 +18,12 @@ class idea extends Model {
     
     map(jsonObject){
         this.id = jsonObject[0];
-        this.creator = jsonObject[1];
-        this.name = jsonObject[2];
-        this.description = jsonObject[3];
-        this.create_date = new Date(jsonObject[4]);
+        this.name = jsonObject[1];
+        this.description = jsonObject[2];
+        this.create_date = new Date(jsonObject[3]);
+        this.creator = jsonObject[4];
         this.active = jsonObject[5] == 1 ? true : false;
+        this.project_id = jsonObject[6];
     }
 
     mapLite(jsonObject){
@@ -35,6 +37,7 @@ class idea extends Model {
             name: this.name,
             description: this.description,
             create_date: this.create_date.toISOString().split('T')[0],
+            project_id: this.project_id,
         }
     }
 }

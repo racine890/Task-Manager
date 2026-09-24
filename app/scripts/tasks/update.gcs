@@ -12,6 +12,12 @@ SetVar *arg_id LASTRESULT
 GetTableElement category_id of API_DATA
 SetVar *arg_category_id LASTRESULT
 
+GetTableElement project_id of API_DATA
+SetVar *arg_project_id LASTRESULT
+
+GetTableElement evaluated_hours of API_DATA
+SetVar *arg_evaluated_hours LASTRESULT
+
 execute app/scripts/db/updateTask.gcs
 
 SetVar *result evaluate({'msg': 'Task updated successfully'})

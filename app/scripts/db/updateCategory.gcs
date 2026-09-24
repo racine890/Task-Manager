@@ -9,12 +9,17 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_description
 	end
 
+check var *arg_target
+if $MISSING then
+	print Error ------- Missing argument : *arg_target
+	end
+
 check var *arg_id
 if $MISSING then
 	print Error ------- Missing argument : *arg_id
 	end
 
-evaluate [ {*arg_name}, {*arg_description}, {*arg_id} ]
+evaluate [ {*arg_name}, {*arg_description}, {*arg_target}, {*arg_initial_status}, {*arg_allowed_statuses}, {*arg_id} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -34,5 +39,5 @@ close database
 end
 
 [i]
-update category set name=?, description=? where id=? ;
+update category set name=?, description=?, target=?, initial_status=?, allowed_statuses=? where id=? ;
 [/i]

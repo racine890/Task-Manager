@@ -5,7 +5,9 @@ const STATUS = {
     PAUSED: 3,
     TESTING: 4,
     FINISHED: 5,
-    ABANDONED: 6
+    FEEDBACK: 6,
+    DELIVERED: 7,
+    ABANDONED: 8
 }
 
 class project extends Model {
@@ -26,6 +28,8 @@ class project extends Model {
         this.effective_end = null;
         this.parent = null;
         this.category_id = null;
+        this.hourly_rate = null;
+        this.external = 0;
     }
     
     map(jsonObject){
@@ -42,8 +46,8 @@ class project extends Model {
         this.effective_start = new Date(jsonObject[7]);
         this.effective_end = new Date(jsonObject[8]);
 
-        this.parent = jsonObject[9];
-        this.category_id = jsonObject[10];
+         this.parent = jsonObject[9];
+         this.category_id = jsonObject[10];
     }
 
     mapLite(jsonObject){
@@ -63,8 +67,10 @@ class project extends Model {
             status: this.status,
             start_date: this.start_date.toISOString().split('T')[0],
             end_date: this.end_date.toISOString().split('T')[0],
-            effective_start: this.effective_start.toISOString().split('T')[0],
-            effective_end: this.effective_end.toISOString().split('T')[0],
+            effective_start: this.effective_start ? this.effective_start.toISOString().split('T')[0] : null,
+            effective_end: this.effective_end ? this.effective_end.toISOString().split('T')[0] : null,
+            hourly_rate: this.hourly_rate,
+            external: this.external
         }
     }
 }

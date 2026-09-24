@@ -71,4 +71,8 @@ class taskService extends Service {
     async deleteNote(id, nid) {
         return super.fetchAResource(`/api/task/notes/${id}/${nid}`, "DELETE");
     }
+
+    async validateEvaluation(id) {
+        return super.fetchAResource(`/api/task/validate-evaluation/${id}`, "POST");
+    }
 }

@@ -54,6 +54,15 @@ async function getUserAssignations(id) {
     }
 }
 
+async function getUserAssignationsPaginated(id, start) {
+    try {
+        let response = await appUserService.getAssignationsPaginated(id, start);
+        return response;
+    } catch (error) {
+        alert(error);
+    }
+}
+
 async function getUser(id) {
     try {
         let response = await appUserService.getByID(id);

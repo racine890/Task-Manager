@@ -1,0 +1,13 @@
+SetVar *result evaluate(None)
+
+GetTableElement id of API_TOKEN
+SetVar *arg_author LASTRESULT
+
+execute app/scripts/db/getAllProjects.gcs
+
+evaluate {API_TOKEN}['username'] + ' displayed all projects.' =>*log_text
+execute app/scripts/system/writeLog.gcs
+
+SetVar *result *json
+
+end

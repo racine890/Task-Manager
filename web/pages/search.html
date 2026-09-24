@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/dashboard.css">
+</head>
+
+<body>
+    <NavBarComponent title="Search"></NavBarComponent>
+    <div class="container">
+        <div class="search-bar-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search projects, tasks, ideas..." class="search-input">
+            <button id="searchBtn" class="btn btn-primary">Search</button>
+            <button id="clearSearch" class="btn btn-secondary">Clear</button>
+        </div>
+
+        <table id="search-results">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="my-table">
+            </tbody>
+        </table>
+    </div>
+    <!-- Core scripts -->
+    <script src="../core/Service.js"></script>
+    <script src="../core/Model.js"></script>
+    <script src="../core/DataManager.js"></script>
+    <script src="../core/Component.js"></script>
+
+    <!-- User objects -->
+    <script src="../services/userService.js"></script>
+    <script src="../models/user.js"></script>
+    <script src="../managers/user_manager.js"></script>
+
+    <!-- Search objects -->
+    <script src="../services/searchService.js"></script>
+    <script src="../models/search.js"></script>
+
+    <!-- Initializers -->
+    <script src="../actions/utils.js"></script>
+    <script src="../actions/init_global.js"></script>
+
+    <!-- Specific scripts -->
+    <script src="../actions/search.js"></script>
+    <script src="../components/navbar.js"></script>
+</body>
+
+</html>

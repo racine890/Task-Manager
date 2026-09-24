@@ -9,15 +9,49 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_status
 	end
 
-evaluate [ {*arg_status}, {*arg_id} ]
-SetVar . *prepared_vars LASTRESULT
-
 # Connect to the database
 compare $DATABASE_TYPE sqlite
 if $EQUAL then
 	connect database $DATA_DIR/$DATABASE_NAME
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+# Validate status is allowed for the task's category
+evaluate [ {*arg_id}, {*arg_status} ]
+SetVar . *prepared_vars LASTRESULT
+
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	query select_one with validation_sqlite with *prepared_vars
+if $DIFFERENT then
+	query select_one with validation_mysql with *prepared_vars
+
+compare LASTTUPLE None
+if $EQUAL then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'msg': 'This status change is not allowed for the task category'})
+	close database
+	end
+
+# Check if task evaluation must be validated for external projects
+evaluate [ {*arg_id} ]
+SetVar . *prepared_vars_eval LASTRESULT
+
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	query select_one with evaluation_check_sqlite with *prepared_vars_eval
+if $DIFFERENT then
+	query select_one with evaluation_check_mysql with *prepared_vars_eval
+
+compare LASTTUPLE None
+if $DIFFERENT then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'msg': 'Task evaluation must be validated before changing status'})
+	close database
+	end
+
+evaluate [ {*arg_status}, {*arg_id} ]
+SetVar . *prepared_vars LASTRESULT
 
 execute query i with *prepared_vars
 
@@ -36,6 +70,18 @@ commit
 close database
 end
 
+[validation_sqlite]
+SELECT 1 FROM task t
+LEFT JOIN category c ON t.category_id = c.id
+WHERE t.id = ? AND (c.allowed_statuses IS NULL OR ',' || c.allowed_statuses || ',' LIKE '%,' || ? || ',%');
+[/validation_sqlite]
+
+[validation_mysql]
+SELECT 1 FROM task t
+LEFT JOIN category c ON t.category_id = c.id
+WHERE t.id = ? AND (c.allowed_statuses IS NULL OR FIND_IN_SET(?, c.allowed_statuses));
+[/validation_mysql]
+
 [i]
 update task set status = ? where id = ?;
 [/i]
@@ -47,3 +93,15 @@ update task set effective_start = CURRENT_TIMESTAMP where id = ?;
 [u2]
 update task set effective_end = CURRENT_TIMESTAMP where id = ?;
 [/u2]
+
+[evaluation_check_sqlite]
+SELECT 1 FROM task t
+JOIN project p ON t.project_id = p.id
+WHERE t.id = ? AND p.external = 1 AND t.evaluated_hours IS NOT NULL AND t.evaluation_validated = 0;
+[/evaluation_check_sqlite]
+
+[evaluation_check_mysql]
+SELECT 1 FROM task t
+JOIN project p ON t.project_id = p.id
+WHERE t.id = ? AND p.external = 1 AND t.evaluated_hours IS NOT NULL AND t.evaluation_validated = 0;
+[/evaluation_check_mysql]

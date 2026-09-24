@@ -36,16 +36,16 @@ query select_one with last
 
 compare LASTTUPLE None
 if $DIFFERENT then
-	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'description', 'type')) =>*json
+	evaluate tuple_to_dict({LASTTUPLE}, ('id', 'description', 'type', 'creator', 'create_date', 'edit_date')) =>*json
 
 # Close the database
 close database
 end
 
 [i]
-insert into note( task_id, description, creator, type ) values ( ?, ?, ?, ? ) ;
+insert into note( task_id, description, creator, type, edit_date ) values ( ?, ?, ?, ?, CURRENT_TIMESTAMP ) ;
 [/i]
 
 [last]
-select id, description, type from note where id = ( select max(id) from note );
+select id, description, type, creator, create_date, edit_date from note where id = ( select max(id) from note );
 [/last]

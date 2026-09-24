@@ -21,6 +21,13 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="project">Project :</label>
+                <input type="text" id="project-search" placeholder="Search a project...">
+                <select id="project">
+                    <option value="">-- Select a project --</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="title">Label :</label>
                 <input class="form-field" type="text" id="title" name="title" required>
             </div>
@@ -36,6 +43,10 @@
             <div class="form-group">
                 <label for="end-date">End date :</label>
                 <input type="datetime-local" class="form-field" id="end-date" name="end-date" required>
+            </div>
+            <div class="form-group">
+                <label for="evaluated-hours">Nombre d'heures évalué :</label>
+                <input class="form-field" type="number" id="evaluated-hours" name="evaluated-hours" step="0.5" placeholder="Optionnel">
             </div>
             <button type="submit" id="submission">Save</button>
         </form>
@@ -55,6 +66,14 @@
     <script src="../services/userService.js"></script>
     <script src="../models/user.js"></script>
 
+    <!-- Project objects -->
+    <script src="../services/projectService.js"></script>
+    <script src="../models/project.js"></script>
+
+    <!-- Idea objects -->
+    <script src="../services/ideaService.js"></script>
+    <script src="../models/idea.js"></script>
+
     <!-- Task objects -->
     <script src="../services/taskService.js"></script>
     <script src="../models/task.js"></script>
@@ -66,6 +85,7 @@
     <!-- Specific scripts -->
     <script src="../managers/user_manager.js"></script>
     <script src="../managers/task_manager.js"></script>
+    <script src="../managers/idea_manager.js"></script>
     <script src="../components/navbar.js"></script>
     <script src="../actions/taskForm.js"></script>
 </body>

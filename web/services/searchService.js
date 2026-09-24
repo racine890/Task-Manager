@@ -24,6 +24,10 @@ class searchService extends Service {
         return super.fetchAResource(`/api/search/task/${term}`, "GET");
     }
 
+    async searchIdea(term) {
+        return super.fetchAResource(`/api/search/idea/${term}`, "GET");
+    }
+
     async searchRight(term) {
         return super.fetchAResource(`/api/search/right/${term}`, "GET");
     }

@@ -23,7 +23,8 @@ if evaluate({LASTTUPLE} != None) then
 	evaluate {*exported_category}.__setitem__('id', {*category}[0])
 	evaluate {*exported_category}.__setitem__('name', {*category}[1])
 	evaluate {*exported_category}.__setitem__('description', {*category}[2])
-	evaluate {*exported_category}.__setitem__('active', {*category}[3])
+	evaluate {*exported_category}.__setitem__('target', {*category}[3])
+	evaluate {*exported_category}.__setitem__('active', {*category}[4])
 
 GetTableElement 0 of *project
 SetVar *arg_id LASTRESULT

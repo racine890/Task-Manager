@@ -1,7 +1,7 @@
 // Updated. Those are just the actions for the table component
-function onLoadColumns() { return ["Id", "Label", "Description"]; }
+function onLoadColumns() { return ["Id", "Label", "Description", "Target"]; }
 
-function onLoadData(category) { return [category.id, category.name, category.description]; }
+function onLoadData(category) { return [category.id, category.name, category.description, category.target]; }
 
 function onLoadAction(category) {
     return [

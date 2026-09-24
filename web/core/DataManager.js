@@ -1,7 +1,7 @@
 class DataManager{
 
 	constructor(persistent = false){
-		this.dataHandler = persistent ? localStorage : sessionStorage;
+		this.dataHandler = localStorage;
 	}
 
 	setvar(varname, value){

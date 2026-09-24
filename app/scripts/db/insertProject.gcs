@@ -34,7 +34,22 @@ if $MISSING then
 	print val Error ------- Missing argument : *arg_category_id
 	end
 
-evaluate [ {*arg_name}, {*arg_description}, {*arg_start_date}, {*arg_end_date}, {*arg_author}, {*arg_category_id} ]
+check var *arg_parent
+if $MISSING then
+	SetVar *arg_parent None
+	end
+
+check var *arg_hourly_rate
+if $MISSING then
+	SetVar *arg_hourly_rate None
+	end
+
+check var *arg_external
+if $MISSING then
+	SetVar *arg_external 0
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_start_date}, {*arg_end_date}, {*arg_author}, {*arg_category_id}, {*arg_parent}, {*arg_hourly_rate}, {*arg_external} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -43,6 +58,21 @@ if $EQUAL then
 	connect database $DATA_DIR/$DATABASE_NAME
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+evaluate [ {*arg_category_id} ]
+SetVar . *prepared_vars_3 LASTRESULT
+
+query select_one with category_status pass *prepared_vars_3
+compare LASTTUPLE None
+if $DIFFERENT then
+	GetTableElement 5 of LASTTUPLE
+	SetVar *arg_default_status LASTRESULT
+if $EQUAL then
+	SetVar *arg_default_status 0
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_start_date}, {*arg_end_date}, {*arg_author}, {*arg_category_id}, {*arg_default_status}, {*arg_parent}, {*arg_hourly_rate}, {*arg_external} ]
+SetVar . *prepared_vars LASTRESULT
 
 execute query i with *prepared_vars
 
@@ -58,11 +88,15 @@ close database
 end
 
 [i]
-insert into project( name, description, start_date, end_date, creator, category_id ) values ( ?, ?, ?, ?, ?, ?) ;
+insert into project( name, description, start_date, end_date, creator, category_id, status, parent, hourly_rate, external ) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ;
 [/i]
 
 [i2]
 insert into user_project( user_id, project_id ) values ( ?, (select last_insert_rowid()) ) ;
 [/i2]
+
+[category_status]
+select id, name, description, target, active, initial_status, allowed_statuses from category where id = ? ;
+[/category_status]
 
 constants: consts.ch

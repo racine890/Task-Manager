@@ -20,6 +20,42 @@
                 <label for="description">Description :</label>
                 <textarea class="form-field" id="description" name="description" rows="4" required></textarea>
             </div>
+            <div class="form-group">
+                <label for="target">Target :</label>
+                <select class="form-field" id="target" name="target">
+                    <option value="project">Project</option>
+                    <option value="task">Task</option>
+                    <option value="both">Both</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="initial_status">Initial Status :</label>
+                <select class="form-field" id="initial_status" name="initial_status">
+                    <option value="0">New</option>
+                    <option value="1">Todo</option>
+                    <option value="2">Started</option>
+                    <option value="3">Paused</option>
+                    <option value="4">Testing</option>
+                    <option value="5">Finished</option>
+                    <option value="6">Feedback</option>
+                    <option value="7">Delivered</option>
+                    <option value="8">Abandoned</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Allowed Statuses :</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="allowed_statuses" value="0" checked> New</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="1"> Todo</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="2"> Started</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="3"> Paused</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="4"> Testing</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="5" checked> Finished</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="6"> Feedback</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="7"> Delivered</label>
+                    <label><input type="checkbox" name="allowed_statuses" value="8"> Abandoned</label>
+                </div>
+            </div>
             <button type="submit" id="submission">Save</button>
         </form>
     </div>

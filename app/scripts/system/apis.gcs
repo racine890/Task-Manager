@@ -15,11 +15,14 @@ expose /api/user/rights/{id}/{rightId} using *result from app/scripts/security/a
 expose /api/user/me/password using *result from app/scripts/users/updatePassword.gcs with PATCH
 expose /api/user/assignations/{id} using *result from app/scripts/users/getAssignations.gcs with GET
 
+expose /api/user/assignations/{id}/{start} using *result from app/scripts/users/getAssignationsPaginated.gcs with POST
+
 expose /api/idea/get/{id} using *result from app/scripts/ideas/getById.gcs with GET
 expose /api/idea using *result from app/scripts/ideas/create.gcs with POST
 expose /api/idea/{id} using *result from app/scripts/ideas/update.gcs with PATCH
 expose /api/idea/{id} using *result from app/scripts/ideas/delete.gcs with DELETE
 expose /api/idea/{start} using *result from app/scripts/ideas/getPagination.gcs with GET
+expose /api/idea/project/{id} using *result from app/scripts/ideas/getByProject.gcs with GET
 
 expose /api/task/get/{id} using *result from app/scripts/tasks/getById.gcs with GET
 expose /api/task using *result from app/scripts/tasks/create.gcs with POST
@@ -39,9 +42,11 @@ expose /api/task/resources/{id} using *result from app/scripts/tasks/getResource
 expose /api/task/resources/{id}/{rid} using *result from app/scripts/tasks/deleteResources.gcs with DELETE
 expose /api/task/notes/{id}/{nid} using *result from app/scripts/tasks/deleteNotes.gcs with DELETE
 expose /api/task/progress/{id}/{progress} using *result from app/scripts/tasks/updateProgress.gcs with POST
+expose /api/task/validate-evaluation/{id} using *result from app/scripts/tasks/validateEvaluation.gcs with POST
 
 expose /api/project/get/{id} using *result from app/scripts/projects/getById.gcs with GET
 expose /api/project using *result from app/scripts/projects/create.gcs with POST
+expose /api/project/all using *result from app/scripts/projects/getAll.gcs with GET
 expose /api/project/{id} using *result from app/scripts/projects/update.gcs with PATCH
 expose /api/project/{id} using *result from app/scripts/projects/delete.gcs with DELETE
 expose /api/project/{start} using *result from app/scripts/projects/getPagination.gcs with POST
@@ -64,6 +69,7 @@ expose /api/project/export/{id}/{format} using *result from app/scripts/projects
 expose /api/search/user/{term} using *result from app/scripts/search/users.gcs with GET
 expose /api/search/project/{term} using *result from app/scripts/search/projects.gcs with GET
 expose /api/search/task/{term} using *result from app/scripts/search/tasks.gcs with GET
+expose /api/search/idea/{term} using *result from app/scripts/search/ideas.gcs with GET
 expose /api/search/right/{term} using *result from app/scripts/search/rights.gcs with GET
 
 expose /api/category using *result from app/scripts/categories/get.gcs with GET

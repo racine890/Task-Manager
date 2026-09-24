@@ -6,6 +6,8 @@ const filters = {
     4: false,
     5: false,
     6: false,
+    7: false,
+    8: false,
 };
 
 // Updated. Those are just the actions for the table component
@@ -64,7 +66,9 @@ function filterTasks() {
     checkboxes.forEach(cb => {
         cb.addEventListener('change', (event) => {
             filters[event.target.value] = event.target.checked;
-            tableMap.get("taskTable").display(true);
+            const table = tableMap.get("taskTable");
+            table.setFilters(filters);
+            table.display(true);
         });
     });
 }

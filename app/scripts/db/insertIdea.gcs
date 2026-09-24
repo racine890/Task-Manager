@@ -14,7 +14,12 @@ if $MISSING then
 	print val Error ------- Missing argument : *arg_author
 	end
 
-evaluate [ {*arg_name}, {*arg_description}, {*arg_author} ]
+check var *arg_project_id
+if $MISSING then
+	print val Error ------- Missing argument : *arg_project_id
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -34,5 +39,5 @@ close database
 end
 
 [i]
-insert into idea( name, description, creator ) values ( ?, ?, ?) ;
+insert into idea( name, description, creator, project_id ) values ( ?, ?, ?, ?) ;
 [/i]

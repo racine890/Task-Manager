@@ -31,14 +31,26 @@
             <p><strong>Started the :</strong> <span id="start-date">2024-01-01</span></p>
             <p><strong>Should end the :</strong> <span id="end-date">2024-12-31</span></p>
             <span class="label" id="status">Status</span>
+            <div id="external-project" style="display: none">
+                <p><strong>Tarif horaire :</strong> <span id="hourly-rate"></span></p>
+            </div>
+            <div class="progress-section" id="progress-section">
+                <p><strong>Progression :</strong> <span id="progress-value">0%</span></p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
             <p>
                 <button id="todo" style="display: none">mark as todo</button>
                 <button id="start" style="display: none">start</button>
                 <button id="pause" style="display: none">pause</button>
                 <button id="test" style="display: none">test</button>
                 <button id="finish" style="display: none">finish</button>
+                <button id="feedback" style="display: none">feedback</button>
+                <button id="delivered" style="display: none">delivered</button>
                 <button id="abandon" style="display: none">abandon</button>
             </p>
+            <a href="#"><span id="parent-project" style="display: none">See Parent Project</span></a>
         </div>
 
         <div class="assignments">
@@ -56,7 +68,17 @@
             <ul id="projects-list">
             </ul>
         </div>
-        
+
+        <button type="button" onclick="createSubProject()" id="create-subproject-btn">Create sub-project</button>
+        <button type="button" onclick="createIdea()" id="create-idea-btn">Create idea</button>
+        <button type="button" onclick="createTask()" id="create-task-btn">Create task</button>
+
+        <div class="ideas">
+            <strong>Ideas</strong>
+            <ul id="ideas-list">
+            </ul>
+        </div>
+
         <button id="random" onclick="openRandom()">Open random</button>
 
         <div class="tasks">
@@ -73,10 +95,10 @@
             </ul>
         </div>
 
-        <button type="button" onclick="createTask()" id="task-creation" style="display: none">Create a task</button>
         <input type="file" id="fileInput" style="display:none;">
         <button type="button" onclick="uploadFileAsResource()">Upload a file</button>
-        <button onclick="printProject()">Print</button>
+        <button onclick="generateReport()">Generate Report</button>
+        <button type="button" onclick="openEvaluationReport()">Economic Report</button>
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="exportMenu" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false" onclick="exportMenu()">
@@ -118,6 +140,10 @@
     <script src="../services/projectService.js"></script>
     <script src="../models/project.js"></script>
 
+    <!-- Idea objects -->
+    <script src="../services/ideaService.js"></script>
+    <script src="../models/idea.js"></script>
+
     <!-- Search objects -->
     <script src="../services/searchService.js"></script>
     <script src="../models/search.js"></script>
@@ -129,6 +155,7 @@
     <!-- specific scripts -->
     <script src="../actions/projectDetails.js"></script>
     <script src="../managers/project_manager.js"></script>
+    <script src="../managers/idea_manager.js"></script>
     <script src="../managers/selection_manager.js"></script>
     <script src="../components/navbar.js"></script>
     <script src="../components/selection.js"></script>

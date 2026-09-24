@@ -31,6 +31,22 @@ ImportData from app/res/defaultUserRights.json to user_right
 ImportData from app/res/defaultRoles.json to role
 ImportData from app/res/defaultRightRoles.json to right_role
 ImportData from app/res/defaultCategories.json to category
+
+query update_category_targets_project with q
+[q]
+update category set target = 'project' where name in ('App Development', 'Agile Sprint', 'App Promotion', 'Forum');
+[/q]
+
+query update_category_targets_task with q
+[q]
+update category set target = 'task' where name in ('Feature', 'Issue', 'Meeting');
+[/q]
+
+query update_category_targets_other with q
+[q]
+update category set target = 'both' where name = 'Other';
+[/q]
+
 ImportData from app/res/defaultConfigs.json to config
 
 # Close the database
@@ -118,6 +134,8 @@ create table project (
 	category_id integer,
 	create_date timestamp default(CURRENT_TIMESTAMP),
 	active integer(1) default(1),
+	hourly_rate decimal(10,2),
+	external integer(1) default 0,
 	foreign key(creator) references user(id),
 	foreign key(category_id) references category(id),
 	foreign key(parent) references project(id)
@@ -165,6 +183,8 @@ create table task (
 	category_id integer,
 	create_date timestamp default(CURRENT_TIMESTAMP),
 	active integer(1) default(1),
+	evaluated_hours integer,
+	evaluation_validated integer(1) default 0,
 	foreign key(creator) references user(id),
 	foreign key(mother_idea) references idea(id),
 	foreign key(category_id) references category(id),

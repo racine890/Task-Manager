@@ -9,15 +9,32 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_status
 	end
 
-evaluate [ {*arg_status}, {*arg_id} ]
-SetVar . *prepared_vars LASTRESULT
-
 # Connect to the database
 compare $DATABASE_TYPE sqlite
 if $EQUAL then
 	connect database $DATA_DIR/$DATABASE_NAME
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
+
+# Validate status is allowed for the project's category
+evaluate [ {*arg_id}, {*arg_status} ]
+SetVar . *prepared_vars LASTRESULT
+
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	query select_one with validation_sqlite with *prepared_vars
+if $DIFFERENT then
+	query select_one with validation_mysql with *prepared_vars
+
+compare LASTTUPLE None
+if $EQUAL then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'msg': 'This status change is not allowed for the project category'})
+	close database
+	end
+
+evaluate [ {*arg_status}, {*arg_id} ]
+SetVar . *prepared_vars LASTRESULT
 
 execute query i with *prepared_vars
 
@@ -37,6 +54,18 @@ SetVar *result *prepared_vars
 # Close the database
 close database
 end
+
+[validation_sqlite]
+SELECT 1 FROM project p
+LEFT JOIN category c ON p.category_id = c.id
+WHERE p.id = ? AND (c.allowed_statuses IS NULL OR ',' || c.allowed_statuses || ',' LIKE '%,' || ? || ',%');
+[/validation_sqlite]
+
+[validation_mysql]
+SELECT 1 FROM project p
+LEFT JOIN category c ON p.category_id = c.id
+WHERE p.id = ? AND (c.allowed_statuses IS NULL OR FIND_IN_SET(?, c.allowed_statuses));
+[/validation_mysql]
 
 [i]
 update project set status = ? where id = ?;

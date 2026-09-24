@@ -72,6 +72,10 @@
 		"right_id": 27
 	},
 	{
+		"role_id": 2,
+		"right_id": 28
+	},
+	{
 		"role_id": 3,
 		"right_id": 2
 	},
@@ -158,5 +162,9 @@
 	{
 		"role_id": 3,
 		"right_id": 27
+	},
+	{
+		"role_id": 3,
+		"right_id": 28
 	}
 ]
