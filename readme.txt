@@ -1,4 +1,4 @@
-Task Manager V2
+Task Manager V3
 
 An app for task Management
 
@@ -24,11 +24,10 @@ For users :
 		http://localhost:6102
 
 	Default username : admin
-	Default password : 123456
+	Default password : Akatsuk1@dw!n
 
 For devs :
 
-	Yeah, a big part of the code is not finished yet. I'll come out with a fix.
 	Please help us build this app, fork it and make pull requests.
 	Thanks for your contribution !
 
