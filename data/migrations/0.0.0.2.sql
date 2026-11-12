@@ -83,3 +83,6 @@ ALTER TABLE user ADD COLUMN phone varchar(30) DEFAULT '';
 
 -- Add priority column to task table
 ALTER TABLE task ADD COLUMN priority INTEGER DEFAULT 0;
+
+alter table resource add column creator integer;
+alter table resource add column active integer(1) default(1);
