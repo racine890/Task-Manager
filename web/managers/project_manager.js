@@ -237,3 +237,11 @@ async function exportProject(id, format = 'tmpro') {
         alert("An error occured!");
     }
 }
+
+async function removeProject(id) {
+    try {
+        await appProjectService.delete(id);
+    } catch (Error) {
+        alert("An error occured!");
+    }
+}

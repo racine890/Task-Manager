@@ -1,6 +1,7 @@
 let current_user_id;
 let assignations = [];
 let start = 0;
+appLoader.enabled = false; // this page has its own inline loader
 let isLoading = false;
 let hasMore = true;
 

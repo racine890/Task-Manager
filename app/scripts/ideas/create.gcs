@@ -24,6 +24,12 @@ execute app/scripts/db/insertIdea.gcs
 
 SetVar *result evaluate({'msg': 'Idea created successfully'})
 
+SetVar *arg_id *arg_project_id
+SetVar *project_url 1
+evaluate 'An idea have been added on your project.' =>*arg_message_content
+
+execute app/scripts/projects/notifyProjectWorker.gcs
+
 evaluate {*trace_author} + ' created the idea:' + {*arg_name} =>*log_text
 execute app/scripts/system/writeLog.gcs
 

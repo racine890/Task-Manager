@@ -14,6 +14,9 @@ SetVar *arg_pic LASTRESULT
 GetTableElement email of API_DATA
 SetVar *arg_email LASTRESULT
 
+GetTableElement phone of API_DATA
+SetVar *arg_phone LASTRESULT
+
 # Persistence
 execute app/scripts/db/updateUser.gcs
 

@@ -44,6 +44,11 @@ if $MISSING then
 	SetVar *arg_evaluated_hours None
 	end
 
+check var *arg_priority
+if $MISSING then
+	SetVar *arg_priority 0
+	end
+
 evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id}, {*arg_start_date}, {*arg_end_date} ]
 SetVar . *prepared_vars LASTRESULT
 
@@ -80,7 +85,7 @@ if $DIFFERENT then
 	SetVar . *prepared_vars_del LASTRESULT
 	execute query del with *prepared_vars_del
 
-evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id}, {*arg_default_status}, {*arg_start_date}, {*arg_end_date}, {*arg_evaluated_hours} ]
+evaluate [ {*arg_name}, {*arg_description}, {*arg_author}, {*arg_project_id}, {*arg_idea_id}, {*arg_category_id}, {*arg_default_status}, {*arg_start_date}, {*arg_end_date}, {*arg_evaluated_hours}, {*arg_priority} ]
 SetVar . *prepared_vars LASTRESULT
 
 execute query i with *prepared_vars
@@ -91,6 +96,9 @@ SetVar . *prepared_vars LASTRESULT
 execute query i2 with *prepared_vars
 
 commit
+
+evaluate self.connect.cursor.lastrowid
+SetVar *arg_task_id LASTRESULT
 
 SetVar *result *prepared_vars
 
@@ -107,11 +115,14 @@ select id, name, description, target, active, initial_status, allowed_statuses f
 [/category_status]
 
 [i]
-insert into task( name, description, creator, project_id, mother_idea, category_id, status, start_date, end_date, evaluated_hours ) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ;
+insert into task( name, description, creator, project_id, mother_idea, category_id, status, start_date, end_date, evaluated_hours, priority ) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ;
 [/i]
 
 [i2]
-insert into user_task( user_id, task_id ) values ( ?, (select last_insert_rowid()) ) ;
+INSERT INTO user_task (user_id, task_id)
+SELECT user_id, last_insert_rowid()
+FROM user_project
+WHERE project_id = ?;
 [/i2]
 
 [del]

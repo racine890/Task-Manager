@@ -7,7 +7,7 @@ $DATABASE_NAME data.db
 # Works only for mysql
 $DATABASE_HOST 127.0.0.1
 $DATABASE_USER root
-$DATABASE_PASSWORD 
+$DATABASE_PASSWORD
 
 # Directory to store files in
 $DATA_DIR ./data
@@ -25,6 +25,9 @@ $API_PASSWORD @nq!
 
 # Logs directory
 $LOGS_DIR ./logs
+
+# Task Manager web URL (for notification links)
+$TM_WEB_URL: http://localhost:6102
 
 # Project Statuses
 $NEW 0 # -> $TODO , -> $STARTED

@@ -19,11 +19,17 @@ SetVar *arg_role LASTRESULT
 GetTableElement username of API_TOKEN
 SetVar *arg_author LASTRESULT
 
+GetTableElement phone of API_DATA
+SetVar *arg_phone LASTRESULT
+
 execute app/scripts/db/insertUser.gcs
 
 compare API_RESPONSE 200
 if 0 then
 	SetVar *result evaluate({'msg': 'User created successfully'})
+
+evaluate '$TM_WEB_URL'
+evaluate notify({*arg_phone}, "[Task Manager Notification]\n\nAn account have just been created for you on Task Manager.\nUsername: "+{*arg_username}+"\nPassword: 123456\nLogin now to use it : " + {LASTRESULT})
 
 evaluate {*arg_author} + 'created the user:' + {*arg_username} =>*log_text
 execute app/scripts/system/writeLog.gcs

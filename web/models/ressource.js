@@ -5,6 +5,7 @@ class ressource extends Model {
 		this.id = null;
 		this.title = "";
 		this.path = "";
+		this.creator = null;
 		this.create_date = null;
 	}
 	
@@ -12,7 +13,8 @@ class ressource extends Model {
 		this.id = jsonObject[0];
 		this.title = jsonObject[1];
 		this.path = jsonObject[2];
-		this.create_date = jsonObject[3];
+		this.creator = jsonObject[3];
+		this.create_date = jsonObject[4];
 	}
 
 	mapLite(jsonObject){

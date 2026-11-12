@@ -14,10 +14,13 @@ if $MISSING then
 	print Error ------- Missing argument : *arg_email
 	end
 
-evaluate [ {*arg_username}, {*arg_pic}, {*arg_email}, {*arg_id} ]
+GetTableElement phone of API_DATA
+SetVar *arg_phone LASTRESULT
+
+evaluate [ {*arg_username}, {*arg_pic}, {*arg_email}, {*arg_phone}, {*arg_id} ]
 SetVar . *prepared_vars LASTRESULT
 
-evaluate [ {*arg_username}, {*arg_email}, {*arg_id} ]
+evaluate [ {*arg_username}, {*arg_email}, {*arg_phone}, {*arg_id} ]
 SetVar . *prepared_vars_light LASTRESULT
 
 # Connect to the database
@@ -41,9 +44,9 @@ close database
 end
 
 [i]
-update user set username = ?, profile_pic = ?, email = ? where id = ? ;
+update user set username = ?, profile_pic = ?, email = ?, phone = ? where id = ? ;
 [/i]
 
 [il]
-update user set username = ?, email = ? where id = ? ;
+update user set username = ?, email = ?, phone = ? where id = ? ;
 [/il]

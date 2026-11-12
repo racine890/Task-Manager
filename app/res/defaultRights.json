@@ -110,5 +110,41 @@
 	{
 		"name": "validate_task_evaluation",
 		"active": 1
+	},
+	{
+		"name": "change_project_status",
+		"active": 1
+	},
+	{
+		"name": "change_task_status",
+		"active": 1
+	},
+	{
+		"name": "delete_my_idea",
+		"active": 1
+	},
+	{
+		"name": "delete_my_task",
+		"active": 1
+	},
+	{
+		"name": "update_my_idea",
+		"active": 1
+	},
+	{
+		"name": "update_my_task",
+		"active": 1
+	},
+	{
+		"name": "delete_my_resource",
+		"active": 1
+	},
+	{
+		"name": "update_my_resource",
+		"active": 1
+	},
+	{
+		"name": "print_report",
+		"active": 1
 	}
 ]

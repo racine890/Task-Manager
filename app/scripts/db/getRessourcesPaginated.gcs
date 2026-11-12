@@ -21,14 +21,14 @@ SetVar *json LASTLIST
 count LASTLIST
 compare LASTRESULT 0
 if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('id', 'title', 'path')) =>*json
+	evaluate list_to_dict({LASTLIST}, ('id', 'title', 'path', 'creator')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select id, title, path from resource limit 20 offset ?;
+select id, title, path, creator from resource limit 20 offset ?;
 [/q]
 
 constants: consts.ch

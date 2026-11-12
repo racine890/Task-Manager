@@ -1,0 +1,15 @@
+SetVar *result evaluate(None)
+
+check var *arg_contacts_list
+if $MISSING then
+	SetVar *result evaluate({'error': 'Missing argument: *arg_contacts_list'})
+	end
+
+check var *arg_message_content
+if $MISSING then
+	SetVar *result evaluate({'error': 'Missing argument: *arg_message_content'})
+	end
+
+evaluate notify({*arg_contacts_list}, {*arg_message_content}) =>*result
+
+end

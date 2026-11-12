@@ -1,0 +1,104 @@
+/* ===== THEME "NEON TERMINAL" — change juste ces 5 valeurs ===== */
+:root {
+	--hue: 285;          /* 0 rouge · 30 orange · 150 vert · 190 cyan · 285 violet · 330 rose */
+	--glow: 0.55;        /* intensité du halo néon (0 = aucun, 1 = fort) */
+	--r: 2px;            /* arrondi : 0px = brut, 14px = doux */
+	--font: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	--sidebar-w: 240px;
+}
+
+/* ===== Palette dérivée de --hue ===== */
+:root {
+	--bg: hsl(var(--hue) 40% 6%);
+	--surface: hsl(var(--hue) 35% 9%);
+	--surface-2: hsl(var(--hue) 35% 12%);
+	--surface-hover: hsl(var(--hue) 40% 15%);
+	--border: hsl(var(--hue) 35% 20%);
+	--border-strong: hsl(var(--hue) 45% 32%);
+	--text: hsl(var(--hue) 20% 94%);
+	--text-2: hsl(var(--hue) 15% 72%);
+	--text-3: hsl(var(--hue) 12% 52%);
+	--accent: hsl(var(--hue) 100% 68%);
+	--accent-hover: hsl(var(--hue) 100% 78%);
+	--accent-soft: hsl(var(--hue) 100% 68% / .12);
+	--accent-ring: hsl(var(--hue) 100% 68% / .4);
+	--on-accent: hsl(var(--hue) 60% 6%);
+	--side-bg: hsl(var(--hue) 50% 4%);
+	--side-bg-2: hsl(var(--hue) 50% 4%);
+	--side-active: hsl(var(--hue) 100% 68% / .16);
+	--side-active-text: hsl(var(--hue) 100% 78%);
+	--radius-sm: var(--r); --radius: var(--r); --radius-lg: var(--r);
+	--shadow-sm: none; --shadow: none;
+	--shadow-lg: 0 0 0 1px var(--border-strong), 0 0 40px hsl(var(--hue) 100% 60% / calc(var(--glow) * .35));
+	color-scheme: dark;
+}
+
+/* ===== Ambiance : grille + halo ===== */
+body {
+	background:
+		radial-gradient(900px 500px at 85% -10%, hsl(var(--hue) 100% 55% / calc(var(--glow) * .22)), transparent 60%),
+		linear-gradient(hsl(var(--hue) 60% 50% / .05) 1px, transparent 1px) 0 0 / 32px 32px,
+		linear-gradient(90deg, hsl(var(--hue) 60% 50% / .05) 1px, transparent 1px) 0 0 / 32px 32px,
+		var(--bg);
+	background-attachment: fixed;
+	letter-spacing: -.01em;
+}
+.topbar { background: hsl(var(--hue) 40% 6% / .8); }
+.topbar-title::before { content: "> "; color: var(--accent); }
+.topbar-title::after { content: "_"; color: var(--accent); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ===== Titres & texte ===== */
+h1 { text-transform: uppercase; letter-spacing: .06em; font-size: 1.4rem; text-shadow: 0 0 calc(18px * var(--glow)) var(--accent); }
+.page-header p::before { content: "// "; color: var(--accent); }
+thead th, .nav-label, label { text-transform: uppercase; letter-spacing: .1em; font-size: .7rem; }
+.sidebar-brand { text-transform: uppercase; letter-spacing: .14em; font-size: .9rem; }
+.sidebar-logo { border-radius: var(--r); box-shadow: 0 0 calc(24px * var(--glow)) var(--accent); background: var(--accent); color: var(--on-accent); }
+
+/* ===== Navigation ===== */
+.nav-link { border-radius: var(--r); border-left: 2px solid transparent; }
+.nav-link.active { border-left-color: var(--accent); box-shadow: inset 0 0 20px hsl(var(--hue) 100% 60% / calc(var(--glow) * .15)); }
+.nav-link.active .nav-text::before { content: "› "; }
+
+/* ===== Boutons : contour néon, remplissage au survol ===== */
+button, .btn { border-radius: var(--r); text-transform: uppercase; letter-spacing: .08em; font-size: .74rem; font-weight: 700;
+	background: transparent; color: var(--accent); border: 1px solid var(--accent); box-shadow: 0 0 calc(14px * var(--glow)) var(--accent-soft) inset; }
+button:hover, .btn:hover { background: var(--accent); color: var(--on-accent); box-shadow: 0 0 calc(22px * var(--glow)) var(--accent); }
+.btn-secondary, .pagination button { color: var(--text-2); border-color: var(--border-strong); box-shadow: none; background: transparent; }
+.btn-secondary:hover, .pagination button:hover { color: var(--text); border-color: var(--accent); background: var(--accent-soft); box-shadow: none; }
+.btn-danger { color: #ff5c7a; border-color: #ff5c7a; }
+.btn-danger:hover { background: #ff5c7a; color: #200; box-shadow: 0 0 20px #ff5c7a; }
+td .btn { background: transparent; }
+td .btn-primary { color: var(--accent); }
+
+/* ===== Cartes / tableaux : bords nets, coins "coupés" ===== */
+.form-container, .details, .assignments, .subprojects, .ideas, .tasks, .panel, .eval-report-container, .stat-card, .eval-stat-box, .feature, .status-section {
+	border: 1px solid var(--border-strong);
+	background: linear-gradient(180deg, var(--surface-2), var(--surface));
+	clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+table { border-color: var(--border-strong); }
+thead th { background: hsl(var(--hue) 50% 8%); color: var(--accent); border-bottom: 1px solid var(--accent); }
+tbody tr:hover td { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+td:first-child { color: var(--accent); }
+td:first-child::before { content: "#"; opacity: .6; }
+
+/* ===== Champs ===== */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]), select, textarea, .form-field {
+	background: hsl(var(--hue) 50% 5%); border-radius: var(--r); font-family: var(--font);
+}
+input:focus, select:focus, textarea:focus { box-shadow: 0 0 calc(18px * var(--glow)) var(--accent-ring); }
+
+/* ===== Pastilles de statut : carrées et fluo ===== */
+.label, .status-badge, .checkbox-group label, .checkbox-item, .section-count, kbd, .accordion, .assignments li { border-radius: var(--r) !important; }
+.label { border: 1px solid currentColor; background: transparent !important; text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
+.checkbox-group label:has(input:checked), .checkbox-item:has(input:checked) { box-shadow: 0 0 calc(14px * var(--glow)) var(--accent-ring); }
+.progress-container { border-radius: 0; height: 6px; background: var(--border); }
+.progress-bar { border-radius: 0; background: var(--accent); box-shadow: 0 0 calc(14px * var(--glow)) var(--accent); }
+.avatar, .avatar-sm { border-radius: var(--r); }
+
+/* ===== Détails ===== */
+.icon:hover { box-shadow: 0 0 12px var(--accent-ring); }
+.tab__label { text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; }
+.palette-box, .css-modal-box, .popup-content { border-radius: var(--r); }
+::selection { background: var(--accent); color: var(--on-accent); }

@@ -5,4 +5,9 @@ SetVar *arg_id LASTRESULT
 
 execute app/scripts/db/enableUser.gcs
 
+compare LASTRESULT None
+if 5 then
+	evaluate notify({LASTTUPLE}[1], "[Task Manager Notification]\n\n"+{LASTTUPLE}[0]+", Your account have been enabled.")
+
+SetVar *result evaluate({'msg': 'User enabled successfully!'})
 end

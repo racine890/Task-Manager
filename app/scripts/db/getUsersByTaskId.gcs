@@ -21,12 +21,12 @@ SetVar *json LASTLIST
 count LASTLIST
 compare LASTRESULT 0
 if $DIFFERENT then
-	evaluate list_to_dict({LASTLIST}, ('id', 'username')) =>*json
+	evaluate list_to_dict({LASTLIST}, ('id', 'username', 'email', 'phone', 'active')) =>*json
 
 # Close the database
 close database
 end
 
 [q]
-select user.id, user.username from user, user_task where user_task.user_id = user.id and user_task.task_id = ? and user_task.active = 1 ;
+select user.id, user.username, user.email, user.phone, user.active from user, user_task where user_task.user_id = user.id and user_task.task_id = ? and user_task.active = 1 ;
 [/q]

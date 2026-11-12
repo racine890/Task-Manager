@@ -4,13 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Users</title>
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 <body>
     <NavBarComponent title="Users"></NavBarComponent>
     <div class="container">
-        <button onclick="redirect('userForm.html')">Add</button>
-        <button onclick="printUsers()">Print</button>
+        <div class="page-header">
+            <div>
+                <h1>Profiles</h1>
+                <p>Manage users, rights and assignments.</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn-secondary" onclick="printUsers()"><i class="fas fa-print"></i> Print</button>
+                <button onclick="redirect('userForm.html')"><i class="fas fa-plus"></i> New user</button>
+            </div>
+        </div>
         <table id="to-print">
             <thead>
                 <tr>
@@ -32,6 +43,7 @@
     </div>
     <!-- Core scripts -->
 	<script src="../core/Service.js"></script>
+	<script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>

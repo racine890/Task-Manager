@@ -5,5 +5,9 @@ SetVar *arg_id LASTRESULT
 
 execute app/scripts/db/deleteUser.gcs
 
+compare LASTRESULT None
+if 5 then
+	evaluate notify({LASTTUPLE}[1], "[Task Manager Notification]\n\n"+{LASTTUPLE}[0]+", Your account have been disabled.")
+
 SetVar *result evaluate({'msg': 'User deleted successfully!'})
 end

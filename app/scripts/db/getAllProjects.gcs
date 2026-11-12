@@ -1,3 +1,9 @@
+# Check that the author param is set
+check var *arg_author
+if $MISSING then
+	print Error ------- Missing argument : *arg_author
+	end
+
 # Connect to the database
 compare $DATABASE_TYPE sqlite
 if $EQUAL then
@@ -5,7 +11,10 @@ if $EQUAL then
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
-query select_all with q
+evaluate [ {*arg_author} ]
+SetVar . *prepared_vars LASTRESULT
+
+query select_all with q with *prepared_vars
 
 SetVar *json LASTLIST
 
@@ -19,5 +28,11 @@ close database
 end
 
 [q]
-select id, name from project where active = 1 order by name ;
+select p.id, p.name from project p
+inner join user_project up on p.id = up.project_id
+where p.active = 1
+and up.active = 1
+and up.user_id = ?
+and p.status in (0, 1, 2)
+order by p.name ;
 [/q]

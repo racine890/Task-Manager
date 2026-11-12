@@ -12,6 +12,21 @@ function getAllSubProjects(projectId, visited = new Set()) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    const exportBtn = document.getElementById('generate-report-btn');
+    if (exportBtn && !hasRight('print_report')) {
+        exportBtn.style.display = 'none';
+    }
+
+    const evalReportBtn = document.getElementById('eval-report-btn');
+    if (evalReportBtn && !hasRight('print_report')) {
+        evalReportBtn.style.display = 'none';
+    }
+
+    const exportMenuBtn = document.getElementById('exportMenu');
+    if (exportMenuBtn && !hasRight('print_report')) {
+        exportMenuBtn.style.display = 'none';
+    }
+
     document.getElementById('export-options').style.display = 'none';
 
     const params = new URLSearchParams(window.location.search);
@@ -32,6 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
         tb = document.getElementById('create-task-btn');
         if (tb && !hasRight('create_task')) {
             tb.style.display = 'none';
+        }
+
+        const editBtn = document.getElementById('edit-project-btn');
+        if (editBtn && !hasRight('update_project')) {
+            editBtn.style.display = 'none';
+        } else if (editBtn) {
+            editBtn.style.display = 'inline-block';
         }
 
         getProject(current_project_id).then((project) => {
@@ -66,40 +88,44 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshPrismStyles();
 
             if (project.category_id) {
-                getCategory(project.category_id).then((category) => {
-                    document.getElementById("category").innerText = category.name;
+							getCategory(project.category_id).then((category) => {
+								document.getElementById("category").innerText = category.name;
 
-                    const allowedStatuses = category.allowed_statuses && category.allowed_statuses.length > 0
-                        ? category.allowed_statuses
-                        : [0, 1, 2, 3, 4, 5, 6, 7, 8];
+								const allowedStatuses = category.allowed_statuses && category.allowed_statuses.length > 0
+									? category.allowed_statuses
+									: [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-                    const statusButtons = document.querySelectorAll('#status ~ p button');
-                    if (allowedStatuses.length <= 1) {
-                        statusButtons.forEach(btn => btn.style.display = 'none');
-                    } else {
-                        if (project.status == STATUS.NEW) {
-                            if (allowedStatuses.includes(STATUS.TODO)) document.getElementById("todo").style.display = 'block';
-                            if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
-                        } else if (project.status == STATUS.PAUSED) {
-                            if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
-                        } else if (project.status == STATUS.STARTED) {
-                            if (allowedStatuses.includes(STATUS.PAUSED)) document.getElementById("pause").style.display = 'block';
-                            if (allowedStatuses.includes(STATUS.ABANDONED)) document.getElementById("abandon").style.display = 'block';
-                            if (allowedStatuses.includes(STATUS.FINISHED)) document.getElementById("finish").style.display = 'block';
-                            if (allowedStatuses.includes(STATUS.STARTED)) { const el = document.getElementById('task-creation'); if (el) el.style.display = 'block'; }
-                        } else if (project.status == STATUS.TESTING) {
-                            if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
-                            if (allowedStatuses.includes(STATUS.FINISHED)) document.getElementById("finish").style.display = 'block';
-                        } else if (project.status == STATUS.TODO) {
-                            if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
-                        } else if (project.status == STATUS.FINISHED) {
-                            if (allowedStatuses.includes(STATUS.FEEDBACK)) document.getElementById("feedback").style.display = 'block';
-                            if (allowedStatuses.includes(STATUS.DELIVERED)) document.getElementById("delivered").style.display = 'block';
-                        } else if (project.status == STATUS.FEEDBACK) {
-                            if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
-                        }
-                    }
-                })
+								const statusButtons = document.querySelectorAll('#status ~ p button');
+								if (allowedStatuses.length <= 1) {
+									statusButtons.forEach(btn => btn.style.display = 'none');
+								} else {
+									if (project.status == STATUS.NEW) {
+										if (allowedStatuses.includes(STATUS.TODO)) document.getElementById("todo").style.display = 'block';
+										if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
+									} else if (project.status == STATUS.PAUSED) {
+										if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
+									} else if (project.status == STATUS.STARTED) {
+										if (allowedStatuses.includes(STATUS.PAUSED)) document.getElementById("pause").style.display = 'block';
+										if (allowedStatuses.includes(STATUS.ABANDONED)) document.getElementById("abandon").style.display = 'block';
+										if (allowedStatuses.includes(STATUS.FINISHED)) document.getElementById("finish").style.display = 'block';
+										if (allowedStatuses.includes(STATUS.STARTED)) { const el = document.getElementById('task-creation'); if (el) el.style.display = 'block'; }
+									} else if (project.status == STATUS.TESTING) {
+										if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
+										if (allowedStatuses.includes(STATUS.FINISHED)) document.getElementById("finish").style.display = 'block';
+									} else if (project.status == STATUS.TODO) {
+										if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
+									} else if (project.status == STATUS.FINISHED) {
+										if (allowedStatuses.includes(STATUS.FEEDBACK)) document.getElementById("feedback").style.display = 'block';
+										if (allowedStatuses.includes(STATUS.DELIVERED)) document.getElementById("delivered").style.display = 'block';
+									} else if (project.status == STATUS.FEEDBACK) {
+										if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
+									}
+
+									if (!hasRight('change_project_status')) {
+										statusButtons.forEach(btn => btn.style.display = 'none');
+									}
+								}
+							});
             }
 
             getWorkersByProject(current_project_id).then((workers) => {
@@ -249,8 +275,8 @@ function preloadIdea(idea) {
     li.innerHTML = `
         <a href="#" onclick="editIdea(this.parentElement)">
         ${idea.name}</a>
-        ${hasRight('update_idea') ? editi : ''}
-        ${hasRight('delete_idea') ? deli : ''}
+        ${hasRight('update_idea') || (hasRight('update_my_idea') && idea['creator.id'] == getCurrentUserId()) ? editi : ''}
+        ${hasRight('delete_idea') || (hasRight('delete_my_idea') && idea['creator.id'] == getCurrentUserId()) ? deli : ''}
         ${hasRight('create_task') ? convi : ''}
     `;
     let ideaList = document.getElementById("ideas-list");
@@ -265,13 +291,15 @@ function preloadResource(resource) {
     const li = document.createElement('li');
     li.setAttribute('data-id', resource.id);
 
-    const seer = `<i class="fas fa-eye icon" title="Edit" onclick="seeResource(this.parentElement)"></i>
+    const seer = `<i class="fas fa-eye icon" title="View" onclick="seeResource(this.parentElement)"></i>
     <i class="fas fa-download icon" title="Download" onclick="download('${resource.path}')"></i>`;
+    const editr = `<i class="fas fa-edit icon" title="Edit" onclick="editResource(this.parentElement)"></i>`;
     const delr = `<i class="fas fa-trash icon" title="Delete" onclick="removeResource(this.parentElement)"></i>`;
     li.innerHTML = `
         ${resource.path}
-        ${hasRight('read_ressource') ? seer : ''}
-        ${hasRight('delete_ressource') ? delr : ''}
+        ${hasRight('read_resource') ? seer : ''}
+        ${hasRight('update_resource') || (hasRight('update_my_resource') && resource.creator == getCurrentUserId()) ? editr : ''}
+        ${hasRight('delete_resource') || (hasRight('delete_my_resource') && resource.creator == getCurrentUserId()) ? delr : ''}
     `;
 
     let list = document.getElementById("ressources-list");
@@ -369,6 +397,11 @@ function seeResource(element) {
     })
 }
 
+function editResource(element) {
+    let id = element.getAttribute('data-id');
+    redirect("ressourceForm.html", false, [["no", id]]);
+}
+
 function removeResource(element) {
     let resId = element.getAttribute('data-id');
     dropProjectResource(current_project_id, resId);
@@ -382,7 +415,7 @@ function preloadProject(project) {
     li.setAttribute('class', statuses[project.status]);
     li.setAttribute('data-id', project.id);
     const editp = `<i class="fas fa-edit icon" title="Edit" onclick="editProject(this.parentElement)"></i>`;
-    const delp = `<i class="fas fa-trash icon" title="Delete" onclick="removeProject(this.parentElement)"></i>`;
+    const delp = `<i class="fas fa-trash icon" title="Delete" onclick="unassocProject(this.parentElement)"></i>`;
     const externalBadge = project.external ? ' <span class="label" style="background: #6366f1; font-size: 10px; padding: 2px 6px; margin-left: 5px;">Externe</span>' : '';
     li.innerHTML = `
         <a href="#" onclick="openProject(${project.id})">${project.name}${externalBadge}</a>
@@ -394,10 +427,28 @@ function preloadProject(project) {
 }
 
 function openRandom() {
-	const openable = project_taks.filter(t => t.status < 5);
+	const openable = (project_taks || []).filter(t => t.status < 5);
 	if (openable.length == 0) return;
-	const ind = Math.floor(Math.random() * openable.length);
-	openTask(openable[ind].id);
+	const weights = openable.map(t => {
+		const priority = t.priority !== undefined && t.priority !== null ? parseInt(t.priority) : 0;
+		const p = isNaN(priority) ? 0 : Math.max(0, Math.min(4, priority));
+		return 1 + p;
+	});
+	let totalWeight = weights.reduce((sum, w) => sum + w, 0);
+	if (totalWeight <= 0) {
+		const ind = Math.floor(Math.random() * openable.length);
+		openTask(openable[ind].id);
+		return;
+	}
+	let r = Math.random() * totalWeight;
+	for (let i = 0; i < openable.length; i++) {
+		r -= weights[i];
+		if (r <= 0) {
+			openTask(openable[i].id);
+			return;
+		}
+	}
+	openTask(openable[openable.length - 1].id);
 }
 
 function preloadTask(task) {
@@ -414,8 +465,8 @@ function preloadTask(task) {
     }
     li.innerHTML = `<a href="#" onclick="openTask(${task.id})">
         ${task.name}${evalBadge}</a>
-        ${hasRight('update_task') ? editp : ''}
-        ${hasRight('delete_task') ? delp : ''}
+        ${hasRight('update_task') || (hasRight('update_my_task') && task['creator'] == getCurrentUserId()) ? editp : ''}
+        ${hasRight('delete_task') || (hasRight('delete_my_task') && task['creator'] == getCurrentUserId()) ? delp : ''}
     `;
     let taskList = document.getElementById("tasks-list");
     taskList.appendChild(li);
@@ -449,6 +500,7 @@ function validateUser(element) {
 
 function editUser(element) {
     let userId = element.getAttribute('data-id');
+    redirect("userForm.html", false, [["no", userId]]);
 }
 
 function removeUser(element) {
@@ -490,11 +542,16 @@ function editProject(element) {
     redirect("projectForm.html", true, [["no", id]]);
 }
 
-function removeProject(element) {
-    let projectId = element.getAttribute('data-id');
-    dropSubProject(projectId);
-    const ul = element.parentElement;
-    ul.removeChild(element);
+function editCurrentProject() {
+    redirect("projectForm.html", false, [["no", current_project_id]]);
+}
+
+function unassocProject(element) {
+	console.log("There!");
+  let projectId = element.getAttribute('data-id');
+  dropSubProject(projectId);
+  const ul = element.parentElement;
+  ul.removeChild(element);
 }
 
 function validateTask(element) {
@@ -506,9 +563,9 @@ function validateTask(element) {
         const editp = `<i class="fas fa-edit icon" title="Edit" onclick="${element.editAction}(this.parentElement)"></i>`;
         const delp = `<i class="fas fa-trash icon" title="Delete" onclick="${element.deleteAction}(this.parentElement)"></i>`;
         li.innerHTML = `<a href="#" onclick="openTask(${element.selectedItem})">
-            ${element.selectedValue}</a>
-            ${hasRight('update_task') ? editp : ''}
-            ${hasRight('delete_task') ? delp : ''}
+        ${element.selectedValue}</a>
+        ${hasRight('update_task') || hasRight('update_my_task') ? editp : ''}
+            ${hasRight('delete_task') || hasRight('delete_my_task') ? delp : ''}
         `;
 
         let taskList = document.getElementById("tasks-list");

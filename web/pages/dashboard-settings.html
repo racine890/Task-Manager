@@ -5,19 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Settings</title>
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 
 <body>
     <NavBarComponent title="Settings"></NavBarComponent>
     <div class="container">
-        <button onclick="printSettings()" id="createBtn">Print</button>
+        <div class="page-header">
+            <div>
+                <h1>Settings</h1>
+                <p>Application-wide configuration.</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn-secondary" onclick="printSettings()" id="createBtn"><i class="fas fa-print"></i> Print</button>
+            </div>
+        </div>
         <TableComponent id="settingTable" onLoadColumns="onLoadColumns" onLoadData="onLoadData"
             onLoadAction="onLoadAction" paginationMethod="getSettings" createPermission="create_settings">
         </TableComponent>
     </div>
     <!-- Core scripts -->
     <script src="../core/Service.js"></script>
+    <script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>

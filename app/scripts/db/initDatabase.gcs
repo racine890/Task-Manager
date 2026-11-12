@@ -134,8 +134,6 @@ create table project (
 	category_id integer,
 	create_date timestamp default(CURRENT_TIMESTAMP),
 	active integer(1) default(1),
-	hourly_rate decimal(10,2),
-	external integer(1) default 0,
 	foreign key(creator) references user(id),
 	foreign key(category_id) references category(id),
 	foreign key(parent) references project(id)
@@ -183,8 +181,6 @@ create table task (
 	category_id integer,
 	create_date timestamp default(CURRENT_TIMESTAMP),
 	active integer(1) default(1),
-	evaluated_hours integer,
-	evaluation_validated integer(1) default 0,
 	foreign key(creator) references user(id),
 	foreign key(mother_idea) references idea(id),
 	foreign key(category_id) references category(id),
@@ -219,12 +215,14 @@ create table note (
 [/n]
 
 [re]
-create table resource (
-	id integer primary key autoincrement,
-	title varchar(20),
-	path text,
-	create_date timestamp default(CURRENT_TIMESTAMP)
-)
+	create table resource (
+		id integer primary key autoincrement,
+		title varchar(20),
+		path text,
+		creator integer,
+		create_date timestamp default(CURRENT_TIMESTAMP),
+		active integer(1) default(1)
+	)
 [/re]
 
 [nr]
@@ -280,4 +278,3 @@ create table config (
 	value text
 )
 [/co]
-

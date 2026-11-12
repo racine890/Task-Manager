@@ -4,11 +4,19 @@ function onLoadColumns() { return ["Id", "Label", "Description"]; }
 function onLoadData(idea) { return [idea.id, idea.name, idea.description]; }
 
 function onLoadAction(idea) {
-    return [
-        { name: "Edit", func: "editIdea", arg: idea.id, right: "update_idea" },
-        { name: "Delete", func: "deleteIdea", arg: idea.id, color: "danger", right: "delete_idea" },
-        { name: "Create Project", func: "validate", arg: idea.id, color: "success", right: "create_project" }
-    ];
+    const actions = [];
+
+    if (hasRight('update_idea') || hasRight('update_my_idea')) {
+        actions.push({ name: "Edit", func: "editIdea", arg: idea.id });
+    }
+
+    actions.push({ name: "Create Project", func: "validate", arg: idea.id, color: "success", right: "create_project" });
+
+    if (hasRight('delete_idea') || hasRight('delete_my_idea')) {
+        actions.push({ name: "Delete", func: "deleteIdea", arg: idea.id, color: "danger" });
+    }
+
+    return actions;
 }
 
 function editIdea(id) {

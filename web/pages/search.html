@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search</title>
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 
 <body>
@@ -34,6 +36,7 @@
     </div>
     <!-- Core scripts -->
     <script src="../core/Service.js"></script>
+    <script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>
@@ -54,6 +57,18 @@
     <!-- Specific scripts -->
     <script src="../actions/search.js"></script>
     <script src="../components/navbar.js"></script>
+
+    <script>
+        // Pré-remplit la recherche depuis la palette de commandes (?q=...)
+        window.addEventListener('load', () => {
+            const q = new URLSearchParams(location.search).get('q');
+            const input = document.getElementById('searchInput');
+            if (input) {
+                if (q) { input.value = q; setTimeout(() => document.getElementById('searchBtn').click(), 150); }
+                else input.focus();
+            }
+        });
+    </script>
 </body>
 
 </html>

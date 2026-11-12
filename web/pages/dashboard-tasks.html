@@ -5,17 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Tasks</title>
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 
 <body>
     <NavBarComponent title="Tasks"></NavBarComponent>
     <div class="container">
-        <!--button onclick="redirect('taskForm.html')">Add</button-->
-        <button onclick="openRandomTask()">Open random</button>
-        <button onclick="printTasks()">Print</button>
+        <div class="page-header">
+            <div>
+                <h1>Tasks</h1>
+                <p>Everything you have to do, by status.</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn-secondary" onclick="openRandomTask()"><i class="fas fa-dice"></i> Open random</button>
+                <button class="btn-secondary" onclick="printTasks()"><i class="fas fa-print"></i> Print</button>
+            </div>
+        </div>
 
-        <div class="checkbox-group">
+        <div class="checkbox-group filter-chips" title="Filter by status">
             <label class="checkbox-item">
                 <input type="checkbox" value="0">
                 New
@@ -68,6 +78,7 @@
     </div>
     <!-- Core scripts -->
     <script src="../core/Service.js"></script>
+    <script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>

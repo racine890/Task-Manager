@@ -17,7 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 current_project_id = idea.project_id;
             }
 
-            document.getElementById("convert-btn").style.display = "inline-block";
+            document.getElementById("submission").style.display = "none";
+            document.getElementById("convert-btn").style.display = "none";
+
+            if (hasRight('update_idea') || (hasRight('update_my_idea') && idea['creator.id'] == getCurrentUserId())) {
+                document.getElementById("submission").style.display = "inline-block";
+            }
+
+            if (hasRight('create_task')) {
+                document.getElementById("convert-btn").style.display = "inline-block";
+            }
         });
     }
 

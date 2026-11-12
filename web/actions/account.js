@@ -6,6 +6,7 @@ class accountAction extends Action {
         getMe().then((me) => {
             document.getElementById("username").value = me.username;
             document.getElementById("email").value = me.email;
+            document.getElementById("phone").value = me.phone || "";
 
             getRessourceUrl(me.profile_pic).then((url) => {
                 if (me.profile_pic.endsWith('.jpg') || me.profile_pic.endsWith('.jpeg') || me.profile_pic.endsWith('.png') || me.profile_pic.endsWith('.gif') || me.profile_pic.endsWith('.webp')) {
@@ -42,7 +43,7 @@ class accountAction extends Action {
     submit() {
         const submitValue = { ...this.form.getAll(), pic: lastUploadedFile };
 
-        updateMe(submitValue.username, submitValue.email, submitValue.pic);
+        updateMe(submitValue.username, submitValue.email, submitValue.phone, submitValue.pic);
     }
 
 }
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         new Form([
             ['username', null, VALIDATORS.TEXT_ONLY, "Username should only contain text."],
             ['email', null, VALIDATORS.EMAIL, "Email should be valid."],
+            ['phone', null, null, ""],
             ['profile-photo', null, VALIDATORS.PATH, "Profile pic should be valid."],
         ]),
         'submission'

@@ -1,0 +1,11 @@
+SetVar *result evaluate(None)
+
+GetTableElement contacts of API_DATA
+SetVar *arg_contacts_list LASTRESULT
+
+GetTableElement message of API_DATA
+SetVar *arg_message_content LASTRESULT
+
+evaluate notify({*arg_contacts_list}, {*arg_message_content}) =>*result
+
+end

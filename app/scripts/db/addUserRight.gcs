@@ -2,10 +2,14 @@
 check var *arg_id
 if $MISSING then
 	print Error ------- Missing argument : *arg_id
+	SetVar API_RESPONSE 500
+	SetVar *result evaluate({"msg":"User right added successfully"})
 	end
 
 check var *arg_rightId
 if $MISSING then
+	SetVar API_RESPONSE 500
+	SetVar *result evaluate({"msg":"Server error"})
 	print Error ------- Missing argument : *arg_rightId
 	end
 
@@ -19,6 +23,29 @@ if $EQUAL then
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
+evaluate ({*arg_id},)
+query select_one with cu pass LASTRESULT
+compare LASTTUPLE None
+if 0 then
+	SetVar API_RESPONSE 400
+	SetVar *result evaluate({"msg": "The user does not exists."})
+	end
+
+evaluate ({*arg_rightId},)
+query select_one with cr pass LASTRESULT
+compare LASTTUPLE None
+if 0 then
+	SetVar API_RESPONSE 400
+	SetVar *result evaluate({"msg": "The right does not exists."})
+	end
+
+query select_one with cur pass *prepared_vars
+compare LASTTUPLE None
+if 5 then
+	SetVar API_RESPONSE 400
+	SetVar *result evaluate({"msg": "The user right exists already."})
+	end
+
 execute query i pass *prepared_vars
 commit
 
@@ -29,3 +56,15 @@ end
 [i]
 insert into user_right (user_id, right_id) values ( ?, ? ) ;
 [/i]
+
+[cu]
+select * from user where active = 1 and id = ? ;
+[/cu]
+
+[cr]
+select * from right where active = 1 and id = ? ;
+[/cr]
+
+[cur]
+select * from user_right where active = 1 and user_id = ? and right_id = ? ;
+[/cur]

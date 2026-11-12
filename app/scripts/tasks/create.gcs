@@ -30,6 +30,13 @@ SetVar *arg_end_date LASTRESULT
 GetTableElement evaluated_hours of API_DATA
 SetVar *arg_evaluated_hours LASTRESULT
 
+GetTableElement priority of API_DATA
+SetVar *arg_priority LASTRESULT
+compare *arg_priority None
+if 0 then
+	SetVar *arg_priority 0
+	end
+
 GetTableElement username of API_TOKEN
 SetVar *trace_author LASTRESULT
 
@@ -38,9 +45,22 @@ SetVar *arg_author LASTRESULT
 
 execute app/scripts/db/insertTask.gcs
 
+SetVar *task_id *arg_task_id
+
 SetVar *result evaluate({'msg': 'Task created successfully'})
 
 evaluate {*trace_author} + ' created the task:' + {*arg_name} =>*log_text
 execute app/scripts/system/writeLog.gcs
+
+# Notify project workers via Telegram
+SetVar *arg_id *task_id
+
+SetVar *project_url 0
+evaluate 'Task "' + {*arg_name} + '" has been created.' =>*arg_message_content
+
+execute app/scripts/projects/notifyProjectWorker.gcs
+
+# Restore the success response (notify may overwrite *result)
+SetVar *result evaluate({'msg': 'Task created successfully'})
 
 end

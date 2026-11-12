@@ -12,10 +12,10 @@ class LoaderComponent extends Component {
 	}
 	
 	render(show = false){
-		super.render();
-
-		const loader = this.getChild("loader");
-		loader.classList.toggle("show", show);
+		if (show)
+			appLoader.show();
+		else
+			appLoader.hide();
 	}
 }
 
@@ -23,7 +23,6 @@ let globalLoaderComponent = null;
 document.addEventListener('DOMContentLoaded', () => {
 
 	const loader = new LoaderComponent();
-	loader.render();
 	globalLoaderComponent = loader;
 
 });

@@ -14,6 +14,12 @@ if $EQUAL then
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
+query select_one with test pass *prepared_vars
+compare LASTTUPLE None
+if 0 then
+	SetVar API_RESPONSE 404
+	end
+
 execute query i with *prepared_vars
 commit
 
@@ -22,6 +28,10 @@ SetVar *result *prepared_vars
 # Close the database
 close database
 end
+
+[test]
+select id, name from project where active = 1 and id = ? ;
+[/test]
 
 [i]
 update project set active = 0 where id = ? ;

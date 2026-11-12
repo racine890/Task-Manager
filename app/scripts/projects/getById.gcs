@@ -16,4 +16,5 @@ SetVar *result *json
 
 evaluate {API_TOKEN}['username'] + ' a affiché le projet:' + {*arg_id} =>*log_text
 execute app/scripts/system/writeLog.gcs
+
 end

@@ -7,6 +7,13 @@ GetTableElement wid of API_PARAMS
 SetVar *arg_user_id LASTRESULT
 
 execute app/scripts/db/dropUsersByProjectId.gcs
+
+compare LASTTUPLE None
+if 5 then
+	SetVar *project_url 1
+	evaluate 'User '+{LASTTUPLE}[2]+' have been removed from project '+{LASTTUPLE}[1]+'.' =>*arg_message_content
+	execute app/scripts/projects/notifyProjectWorker.gcs
+
 SetVar *result evaluate({'msg': 'Workers deleted successfully'})
 
 end

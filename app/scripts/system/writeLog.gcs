@@ -1,3 +1,8 @@
+check file $LOGS_DIR/log.txt
+if $MISSING then
+	print val *** Alert: Logs file is missing.
+	end
+
 check var *log_text
 if $MISSING then
 	print val ** Error : *log_text var is missing.

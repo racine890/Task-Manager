@@ -1,3 +1,4 @@
+appLoader.enabled = false; // search-as-you-type: an overlay would interrupt typing
 let searchTimeout = null;
 
 function viewProject(id) {

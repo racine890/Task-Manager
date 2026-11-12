@@ -1,0 +1,40 @@
+check var *arg_id
+if $MISSING then
+	print val ------ Missing argument: *arg_id
+	end
+
+check var *arg_message_content
+if $MISSING then
+	print val ------ Missing argument: *arg_message_content
+	end
+
+check var *project_url
+if $MISSING then
+	SetVar *project_url 0
+	end
+
+switch *project_url
+if 1 then
+	execute app/scripts/db/getUsersByProjectId.gcs
+if 0 then
+	execute app/scripts/db/getUsersByTaskId.gcs
+evaluate ','.join([u['phone'] for u in {*json} if u.get('phone') and u.get('phone') != '']) =>*arg_contacts_list
+
+evaluate '$TM_WEB_URL'
+switch *project_url
+if 1 then
+	add LASTRESULT /pages/projectDetails.html?no=
+if 0 then
+	add LASTRESULT /pages/taskDetails.html?no=
+add LASTRESULT *arg_id
+SetVar *arg_url LASTRESULT
+
+count *arg_contacts_list
+compare LASTRESULT 0
+if 5 then
+	evaluate '[Task Manager Notification]\n\n"' + {*arg_message_content} + '"\nView: ' + {*arg_url}
+	SetVar *arg_message_content LASTRESULT
+
+	evaluate notify({*arg_contacts_list}, {*arg_message_content})
+
+end

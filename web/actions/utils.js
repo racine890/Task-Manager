@@ -52,3 +52,11 @@ function hasRight(right) {
     const rights = appDataManager.getvar("rights");
     return rights.some(r => r.name === 'admin' || r.name === right);
 }
+
+function getCurrentUserId() {
+    try {
+        return appDataManager.getvar("current_user").id;
+    } catch (e) {
+        return null;
+    }
+}

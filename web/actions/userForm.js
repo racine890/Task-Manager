@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         getUser(user_id).then((user) => {
             document.getElementById("username").value = user.username;
             document.getElementById("email").value = user.email;
+            document.getElementById("phone").value = user.phone || "";
             document.getElementById("password").removeAttribute('required');
             document.getElementById("passwordGroup").remove();
             document.getElementById("roleGroup").remove();
@@ -42,15 +43,223 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user_id) {
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
 
-            updateUser(user_id, username, email, lastUploadedFile);
+            updateUser(user_id, username, email, phone, lastUploadedFile);
         } else {
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const role = document.getElementById('role').value;
+            const phone = document.getElementById('phone').value;
 
-            saveUser(username, email, password, role, lastUploadedFile);
+            saveUser(username, email, password, role, phone, lastUploadedFile);
         }
     });
 });
+
+function changeRole() {
+	const role = document.getElementById('role').value;
+	const help = {
+		'worker': '<b>One of the developpers</b>. Can be assignated to tasks and update it.',
+		'manager': '<b>The Scrum master</b>. Can create projects and tasks, and assignate workers.',
+		'public_user': '<b>Public user</b>. Can create ideas to propose features or bug fix.',
+		'ai_agent': '<b>An agentic tool like claude.</b>. Can read and update tasks. Copy and adapt this prompt to it so it can start now : <button onclick="copyPrompt()">Copy Prompt</button>',
+		'common_partner': '<b>A customer\'s company employee.</b>. Can be see tasks and propose ideas.',
+		'product_owner': '<b>The main customer\'s company partner.</b>. He validates the task and propose new ideas to turn into tasks.'
+	};
+	const htmlCode = help[role];
+	if (htmlCode) {
+		document.getElementById('roleHelp').innerHTML = help[role];
+	} else {
+		document.getElementById('roleHelp').innerHTML = '';
+	}
+}
+
+function copyPrompt() {
+	try {
+		const text = buildPrompt(API_MAP);
+		navigator.clipboard.writeText(text);
+		alert('Prompt copied to clipboard!');
+	} catch (Error) {
+		alert("The API map could not be loaded!");
+	}
+}
+
+function buildPrompt(map) {
+	if (!map || !map.endpoints || !map.endpoints.length) {
+		throw new Error('empty api map');
+	}
+
+	const usernameField = document.getElementById('username');
+	const passwordField = document.getElementById('password');
+	const username = (usernameField && usernameField.value) ? usernameField.value : 'claude';
+	const password = (passwordField && passwordField.value) ? passwordField.value : '123456';
+
+	let text = 'I created you a user account on Task Manager, a task management platform\n';
+	text += 'Add in your rules that you should query it to read and update tasks\n';
+	text += 'Url: http://localhost:6102\n';
+	text += 'Username: ' + username + '\n';
+	text += 'Password: ' + password + '\n';
+	text += '\n';
+	text += 'AUTHENTICATION:\n';
+	text += '  Only POST /api/auth is public. It answers {"token": "<jwt>", "rights": [...]}.\n';
+	text += '  Send the token on every other request with the header "Authorization: Bearer <token>".\n';
+	text += '  Request bodies are JSON, send them with the header "Content-Type: application/json".\n';
+	text += '\n';
+	text += 'HOW TO READ THE MAP:\n';
+	text += '  {param} in a path is a value you replace (ids are integers).\n';
+	text += '  "body:" lists the JSON fields to send, the ones marked (required) must always be there.\n';
+	text += '  "returns:" is the JSON answer, "object" is a record, "list" is an array of records.\n';
+	text += '  "rights:" lists the permissions the account needs for that route.\n';
+	text += '  Task and project statuses: 0 New, 1 Todo, 2 Started, 3 Paused, 4 Testing, 5 Finished, 6 Feedback, 7 Delivered, 8 Abandoned.\n';
+	text += '  Categories have a target: "task", "project" or "both".\n';
+	text += '\n';
+	text += 'Here is a map of all possible actions : \n';
+
+	map.groups.forEach((group) => {
+		const endpoints = map.endpoints.filter((endpoint) => endpoint.group === group.key);
+		if (!endpoints.length) return;
+
+		text += '\n';
+		text += group.label + ':\n';
+
+		endpoints.forEach((endpoint) => {
+			text += '  ' + endpoint.method + ' ' + endpoint.path + ' - ' + endpoint.description + '\n';
+
+			if (endpoint.params.length) {
+				text += '    path params: ' + endpoint.params
+					.map((param) => param.name + ': ' + param.type).join(', ') + '\n';
+			}
+
+			if (endpoint.query.length) {
+				text += '    query params: ' + endpoint.query
+					.map((param) => param.name + ': ' + param.type).join(', ') + '\n';
+			}
+
+			if (endpoint.body.length) {
+				if (endpoint.rawBody) {
+					text += '    body: raw JSON value -> {"' + endpoint.body[0].name + '": ' + endpoint.body[0].type + '}\n';
+				} else {
+					text += '    body: {' + endpoint.body
+						.map((field) => '"' + field.name + '": ' + field.type + (field.required ? ' (required)' : ''))
+						.join(', ') + '}\n';
+				}
+			}
+
+			if (endpoint.rights.length) {
+				text += '    rights: ' + endpoint.rights.join(', ') + '\n';
+			}
+
+			const returns = [];
+			if (endpoint.message) returns.push('{"msg": "' + endpoint.message + '"}');
+			if (endpoint.returns.fields.length) {
+				const fields = endpoint.returns.fields.map((field) => '"' + field + '": ...').join(', ');
+				returns.push((endpoint.returns.kind === 'list' ? 'list of ' : '') + '{' + fields + '}');
+			}
+			if (returns.length) {
+				text += '    returns: ' + returns.join(' + ') + '\n';
+			}
+		});
+	});
+
+	text += '\n';
+	text += 'The auth query is public, use it to get a token that you will use for the other queries.\n';
+	text += 'To confirm you can do it, go ahead and make a test.';
+
+	return text;
+}
+
+/* API_MAP_START - generated by tools/generate-api-map.js, do not edit */
+var API_MAP = {
+	"source": "app/scripts/system/apis.gcs",
+	"groups": [{"key":"auth","label":"AUTH"},{"key":"user","label":"USER"},{"key":"idea","label":"IDEA"},{"key":"task","label":"TASK"},{"key":"project","label":"PROJECT"},{"key":"search","label":"SEARCH"},{"key":"category","label":"CATEGORY"},{"key":"ressource","label":"RESOURCE"},{"key":"config","label":"CONFIG"}],
+	"endpoints": [
+	{"method":"POST","path":"/api/auth","group":"auth","description":"authenticate and get a bearer token","isPublic":true,"script":"app/scripts/security/auth.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"username","type":"string","required":false},{"name":"password","type":"string","required":false}],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":"object","fields":["token","rights"]}},
+	{"method":"POST","path":"/api/logout","group":"auth","description":"logout","isPublic":false,"script":"app/scripts/security/logout.gcs","missingScript":false,"params":[],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"User logged out successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/user/me","group":"user","description":"get current user","isPublic":false,"script":"app/scripts/users/getMe.gcs","missingScript":false,"params":[],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","username","profile_pic","email","phone"]}},
+	{"method":"PATCH","path":"/api/user/me","group":"user","description":"update current user","isPublic":false,"script":"app/scripts/users/updateMe.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"username","type":"string","required":false},{"name":"pic","type":"string","required":false},{"name":"email","type":"string","required":false},{"name":"phone","type":"string","required":false}],"rawBody":false,"required":[],"rights":[],"message":"User updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/user/{start}","group":"user","description":"get paginated users","isPublic":false,"script":"app/scripts/users/getPagination.gcs","missingScript":false,"params":[{"name":"start","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_user"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","username","profile_pic","email","phone","active"]}},
+	{"method":"GET","path":"/api/user/get/{id}","group":"user","description":"get user by id","isPublic":false,"script":"app/scripts/users/getById.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","username","profile_pic","email","phone"]}},
+	{"method":"DELETE","path":"/api/user/{id}","group":"user","description":"delete user","isPublic":false,"script":"app/scripts/users/delete.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"User deleted successfully!","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"PATCH","path":"/api/user/enable/{id}","group":"user","description":"enable user","isPublic":false,"script":"app/scripts/users/enable.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/user","group":"user","description":"create user","isPublic":false,"script":"app/scripts/users/create.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"username","type":"string","required":false},{"name":"password","type":"string","required":false},{"name":"pic","type":"string","required":false},{"name":"email","type":"string","required":false},{"name":"role","type":"string","required":false},{"name":"phone","type":"string","required":false}],"rawBody":false,"required":[],"rights":[],"message":"User created successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"PATCH","path":"/api/user/{id}","group":"user","description":"update user","isPublic":false,"script":"app/scripts/users/update.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[{"name":"username","type":"string","required":false},{"name":"pic","type":"string","required":false},{"name":"email","type":"string","required":false},{"name":"phone","type":"string","required":false}],"rawBody":false,"required":[],"rights":[],"message":"User updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/user/rights/{id}","group":"user","description":"get user rights","isPublic":false,"script":"app/scripts/security/getRightsByUser.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name"]}},
+	{"method":"DELETE","path":"/api/user/rights/{id}/{rightId}","group":"user","description":"drop user right","isPublic":false,"script":"app/scripts/security/dropUserRight.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"rightId","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/user/rights/{id}/{rightId}","group":"user","description":"add user right","isPublic":false,"script":"app/scripts/security/addUserRight.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"rightId","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"PATCH","path":"/api/user/me/password","group":"user","description":"update password","isPublic":false,"script":"app/scripts/users/updatePassword.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"oldPassword","type":"string","required":false},{"name":"newPassword","type":"string","required":false}],"rawBody":false,"required":[],"rights":[],"message":"Password updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/user/assignations/{id}","group":"user","description":"get user assignations","isPublic":false,"script":"app/scripts/users/getAssignations.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_user"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["worker","worker_email","task_id","task","task_description","project_id","project","project_status","status","progression","effective_start","end_date","task_start_date"]}},
+	{"method":"POST","path":"/api/user/assignations/{id}/{start}","group":"user","description":"get paginated assignations","isPublic":false,"script":"app/scripts/users/getAssignationsPaginated.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"start","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_user"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["worker","worker_email","task_id","task","task_description","project_id","project","project_status","status","progression","effective_start","end_date","task_start_date"]}},
+	{"method":"GET","path":"/api/idea/get/{id}","group":"idea","description":"get idea by id","isPublic":false,"script":"app/scripts/ideas/getById.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_idea"],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","name","description","create_date","creator_username","creator_profile_pic","creator_email","creator_id","project_id"]}},
+	{"method":"POST","path":"/api/idea","group":"idea","description":"create idea","isPublic":false,"script":"app/scripts/ideas/create.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false},{"name":"project_id","type":"integer","required":false}],"rawBody":false,"required":[],"rights":["create_idea"],"message":"Idea created successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"PATCH","path":"/api/idea/{id}","group":"idea","description":"update idea","isPublic":false,"script":"app/scripts/ideas/update.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false}],"rawBody":false,"required":[],"rights":["update_idea","update_my_idea"],"message":"Idea updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"DELETE","path":"/api/idea/{id}","group":"idea","description":"delete idea","isPublic":false,"script":"app/scripts/ideas/delete.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["delete_idea"],"message":"Idea deleted successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/idea/{start}","group":"idea","description":"get paginated ideas","isPublic":false,"script":"app/scripts/ideas/getPagination.gcs","missingScript":false,"params":[{"name":"start","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_idea"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","description","create_date","creator_username","creator_profile_pic","creator_email"]}},
+	{"method":"GET","path":"/api/idea/project/{id}","group":"idea","description":"get ideas by project","isPublic":false,"script":"app/scripts/ideas/getByProject.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_idea"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","description","create_date","creator_username","creator_profile_pic","creator_email","creator_id","project_id","active"]}},
+	{"method":"GET","path":"/api/task/get/{id}","group":"task","description":"get task by id","isPublic":false,"script":"app/scripts/tasks/getById.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","name","description","create_date","status","progress","creator_username","creator_profile_pic","creator_email","creator_id","category_id","project_id","start_date","end_date","evaluated_hours","evaluation_validated","priority"]}},
+	{"method":"POST","path":"/api/task","group":"task","description":"create task","isPublic":false,"script":"app/scripts/tasks/create.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false},{"name":"mother_idea","type":"integer","required":false},{"name":"project_id","type":"integer","required":true},{"name":"category_id","type":"integer","required":false},{"name":"start_date","type":"string (YYYY-MM-DD)","required":false},{"name":"end_date","type":"string (YYYY-MM-DD)","required":false},{"name":"evaluated_hours","type":"number","required":false},{"name":"priority","type":"string","required":true}],"rawBody":false,"required":["project_id","priority"],"rights":[],"message":"Task created successfully","returnsJson":false,"returns":{"kind":"list","fields":["id","username","email","phone","active"]}},
+	{"method":"PATCH","path":"/api/task/{id}","group":"task","description":"update task","isPublic":false,"script":"app/scripts/tasks/update.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false},{"name":"category_id","type":"integer","required":false},{"name":"project_id","type":"integer","required":false},{"name":"evaluated_hours","type":"number","required":false},{"name":"priority","type":"string","required":false}],"rawBody":false,"required":[],"rights":["update_task","update_my_task"],"message":"Task updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"DELETE","path":"/api/task/{id}","group":"task","description":"delete task","isPublic":false,"script":"app/scripts/tasks/delete.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["delete_task"],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/task/{start}","group":"task","description":"get paginated tasks","isPublic":false,"script":"app/scripts/tasks/getPagination.gcs","missingScript":false,"params":[{"name":"start","type":"integer"}],"query":[],"body":[{"name":"filters","type":"array of objects","required":false}],"rawBody":false,"required":[],"rights":["read_task"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","description","creator","status","project_id","category_id","create_date","active","priority"]}},
+	{"method":"GET","path":"/api/task/workers/{id}","group":"task","description":"get task workers","isPublic":false,"script":"app/scripts/tasks/getWorkers.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","username"]}},
+	{"method":"DELETE","path":"/api/task/workers/{tid}/{wid}","group":"task","description":"delete worker from task","isPublic":false,"script":"app/scripts/tasks/deleteWorkers.gcs","missingScript":false,"params":[{"name":"tid","type":"integer"},{"name":"wid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/task/workers/{tid}/{wid}","group":"task","description":"assign worker to task","isPublic":false,"script":"app/scripts/tasks/assignWorkers.gcs","missingScript":false,"params":[{"name":"tid","type":"integer"},{"name":"wid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/task/notes/{tid}","group":"task","description":"add note to task","isPublic":false,"script":"app/scripts/tasks/addNote.gcs","missingScript":false,"params":[{"name":"tid","type":"integer"}],"query":[],"body":[{"name":"note","type":"string","required":false},{"name":"type","type":"integer","required":false}],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","description","type","creator","create_date","edit_date"]}},
+	{"method":"PATCH","path":"/api/task/notes/{nid}","group":"task","description":"update note","isPublic":false,"script":"app/scripts/tasks/updateNote.gcs","missingScript":false,"params":[{"name":"nid","type":"integer"}],"query":[],"body":[{"name":"description","type":"string","required":true}],"rawBody":true,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","description","type","creator","create_date","edit_date"]}},
+	{"method":"GET","path":"/api/task/notes/{id}","group":"task","description":"get task notes","isPublic":false,"script":"app/scripts/tasks/getNotes.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","description","type","creator","create_date","edit_date"]}},
+	{"method":"GET","path":"/api/task/ressources/{id}","group":"task","description":"get task resources","isPublic":false,"script":"app/scripts/tasks/getRessources.gcs","missingScript":true,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/task/status/{id}/{status}","group":"task","description":"change task status","isPublic":false,"script":"app/scripts/tasks/changeStatus.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"status","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["change_task_status"],"message":"Task status changed successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/task/assign-last/{id}","group":"task","description":"assign last resource","isPublic":false,"script":"app/scripts/tasks/assignLastRessource.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Resource assigned successfully!","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/task/resources/{id}","group":"task","description":"get task resources","isPublic":false,"script":"app/scripts/tasks/getResources.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","path"]}},
+	{"method":"DELETE","path":"/api/task/resources/{id}/{rid}","group":"task","description":"delete resource from task","isPublic":false,"script":"app/scripts/tasks/deleteResources.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"rid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Resource deleted successfully!","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"DELETE","path":"/api/task/notes/{id}/{nid}","group":"task","description":"delete note from task","isPublic":false,"script":"app/scripts/tasks/deleteNotes.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"nid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Note deleted successfully!","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/task/progress/{id}/{progress}","group":"task","description":"update task progress","isPublic":false,"script":"app/scripts/tasks/updateProgress.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"progress","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Task progress changed successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/task/validate-evaluation/{id}","group":"task","description":"validate evaluation","isPublic":false,"script":"app/scripts/tasks/validateEvaluation.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["validate_task_evaluation"],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/project/get/{id}","group":"project","description":"get project by id","isPublic":false,"script":"app/scripts/projects/getById.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_project"],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","name","description","creator","status","start_date","end_date","effective_start","effective_end","parent","category_id","category_name","create_date","active","hourly_rate","external"]}},
+	{"method":"POST","path":"/api/project","group":"project","description":"create project","isPublic":false,"script":"app/scripts/projects/create.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false},{"name":"start_date","type":"string (YYYY-MM-DD)","required":false},{"name":"end_date","type":"string (YYYY-MM-DD)","required":false},{"name":"category_id","type":"integer","required":false},{"name":"parent","type":"integer","required":false},{"name":"hourly_rate","type":"number","required":false},{"name":"external","type":"boolean","required":false}],"rawBody":false,"required":[],"rights":[],"message":"Project created successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/project/all","group":"project","description":"get all projects","isPublic":false,"script":"app/scripts/projects/getAll.gcs","missingScript":false,"params":[],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name"]}},
+	{"method":"PATCH","path":"/api/project/{id}","group":"project","description":"update project","isPublic":false,"script":"app/scripts/projects/update.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false},{"name":"start_date","type":"string (YYYY-MM-DD)","required":false},{"name":"end_date","type":"string (YYYY-MM-DD)","required":false},{"name":"category_id","type":"integer","required":false},{"name":"parent","type":"integer","required":false},{"name":"hourly_rate","type":"number","required":false},{"name":"external","type":"boolean","required":false}],"rawBody":false,"required":[],"rights":[],"message":"Project updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"DELETE","path":"/api/project/{id}","group":"project","description":"delete project","isPublic":false,"script":"app/scripts/projects/delete.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Project deleted successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/project/{start}","group":"project","description":"get paginated projects","isPublic":false,"script":"app/scripts/projects/getPagination.gcs","missingScript":false,"params":[{"name":"start","type":"integer"}],"query":[],"body":[{"name":"filters","type":"array of objects","required":false}],"rawBody":false,"required":[],"rights":["read_project"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","description","creator","status","start_date","end_date","effective_start","effective_end","parent","category_id","create_date","active"]}},
+	{"method":"GET","path":"/api/project/workers/{id}","group":"project","description":"get project workers","isPublic":false,"script":"app/scripts/projects/getWorkers.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_project"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","username","email","phone","active"]}},
+	{"method":"DELETE","path":"/api/project/workers/{pid}/{wid}","group":"project","description":"delete worker from project","isPublic":false,"script":"app/scripts/projects/deleteWorkers.gcs","missingScript":false,"params":[{"name":"pid","type":"integer"},{"name":"wid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Workers deleted successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/project/workers/{pid}/{wid}","group":"project","description":"assign worker to project","isPublic":false,"script":"app/scripts/projects/assignWorkers.gcs","missingScript":false,"params":[{"name":"pid","type":"integer"},{"name":"wid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Workers assigned successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/project/sub-projects/{pid}/{spid}","group":"project","description":"assign sub-project","isPublic":false,"script":"app/scripts/projects/assignProject.gcs","missingScript":false,"params":[{"name":"pid","type":"integer"},{"name":"spid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Project assigned successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/project/{id}/notify","group":"project","description":"post /api/project/{id}/notify","isPublic":false,"script":"app/scripts/projects/notifyProjectWorker.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":"list","fields":["id","username","email","phone","active"]}},
+	{"method":"POST","path":"/api/project/tasks/{id}/{tid}","group":"project","description":"assign task to project","isPublic":false,"script":"app/scripts/projects/assignTask.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"tid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"DELETE","path":"/api/project/sub-projects/{id}","group":"project","description":"unassign sub-project","isPublic":false,"script":"app/scripts/projects/unAssignProject.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Project unassigned successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/project/sub-projects/{id}","group":"project","description":"get sub-projects","isPublic":false,"script":"app/scripts/projects/getSubProjects.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_project"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","status","start_date","end_date","effective_start","effective_end","category_id","category_name","create_date","active","hourly_rate","external"]}},
+	{"method":"GET","path":"/api/project/ressources/{id}","group":"project","description":"get project resources","isPublic":false,"script":"app/scripts/projects/getRessources.gcs","missingScript":true,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/project/tasks/{id}","group":"project","description":"get project tasks","isPublic":false,"script":"app/scripts/projects/getTasks.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_project"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","status","project_id","project_name","category_id","category_name","create_date","active","evaluated_hours","evaluation_validated","creator"]}},
+	{"method":"DELETE","path":"/api/project/tasks/{id}","group":"project","description":"unassign task from project","isPublic":false,"script":"app/scripts/projects/unAssignTask.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Task unassigned successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/project/status/{id}/{status}","group":"project","description":"change project status","isPublic":false,"script":"app/scripts/projects/changeStatus.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"status","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["change_project_status"],"message":"Project status changed successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/project/assign-last/{id}","group":"project","description":"assign last resource","isPublic":false,"script":"app/scripts/projects/assignLastRessource.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Ressource assigned successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/project/resources/{id}","group":"project","description":"get project resources","isPublic":false,"script":"app/scripts/projects/getResources.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_project"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","title","path","create_date","creator"]}},
+	{"method":"DELETE","path":"/api/project/resources/{id}/{rid}","group":"project","description":"delete resource from project","isPublic":false,"script":"app/scripts/projects/deleteResources.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"rid","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":"Resource deleted successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"POST","path":"/api/project/export/{id}/{format}","group":"project","description":"export project","isPublic":false,"script":"app/scripts/projects/export.gcs","missingScript":false,"params":[{"name":"id","type":"integer"},{"name":"format","type":"string"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":"object","fields":["id","name","description","creator","status","start_date","end_date","effective_start","effective_end","parent","category_id","category_name","create_date","active","hourly_rate","external","target","initial_status","allowed_statuses"]}},
+	{"method":"GET","path":"/api/search/user/{term}","group":"search","description":"search users","isPublic":false,"script":"app/scripts/search/users.gcs","missingScript":false,"params":[{"name":"term","type":"string"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["key","value"]}},
+	{"method":"GET","path":"/api/search/project/{term}","group":"search","description":"search projects","isPublic":false,"script":"app/scripts/search/projects.gcs","missingScript":false,"params":[{"name":"term","type":"string"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["key","value"]}},
+	{"method":"GET","path":"/api/search/task/{term}","group":"search","description":"search tasks","isPublic":false,"script":"app/scripts/search/tasks.gcs","missingScript":false,"params":[{"name":"term","type":"string"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["key","value"]}},
+	{"method":"GET","path":"/api/search/idea/{term}","group":"search","description":"search ideas","isPublic":false,"script":"app/scripts/search/ideas.gcs","missingScript":false,"params":[{"name":"term","type":"string"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["key","value"]}},
+	{"method":"GET","path":"/api/search/right/{term}","group":"search","description":"search rights","isPublic":false,"script":"app/scripts/search/rights.gcs","missingScript":false,"params":[{"name":"term","type":"string"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["key","value"]}},
+	{"method":"GET","path":"/api/category","group":"category","description":"get all categories","isPublic":false,"script":"app/scripts/categories/get.gcs","missingScript":false,"params":[],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_category"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","description","target","active","initial_status","allowed_statuses"]}},
+	{"method":"GET","path":"/api/category/get/{id}","group":"category","description":"get category by id","isPublic":false,"script":"app/scripts/categories/getById.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_category"],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","name","description","target","active","initial_status","allowed_statuses"]}},
+	{"method":"POST","path":"/api/category","group":"category","description":"create category","isPublic":false,"script":"app/scripts/categories/create.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false},{"name":"target","type":"string (task|project|both)","required":false},{"name":"initial_status","type":"integer","required":true},{"name":"allowed_statuses","type":"array of integer","required":true}],"rawBody":false,"required":["initial_status","allowed_statuses"],"rights":["create_category"],"message":"Category created successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"PATCH","path":"/api/category/{id}","group":"category","description":"update category","isPublic":false,"script":"app/scripts/categories/update.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"description","type":"string","required":false},{"name":"target","type":"string (task|project|both)","required":false},{"name":"initial_status","type":"integer","required":true},{"name":"allowed_statuses","type":"array of integer","required":true}],"rawBody":false,"required":["initial_status","allowed_statuses"],"rights":["update_category"],"message":"Category updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"DELETE","path":"/api/category/{id}","group":"category","description":"delete category","isPublic":false,"script":"app/scripts/categories/delete.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["delete_category"],"message":"Category deleted successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/category/{start}","group":"category","description":"get paginated categories","isPublic":false,"script":"app/scripts/categories/getPagination.gcs","missingScript":false,"params":[{"name":"start","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_category"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","name","description","target","active","initial_status","allowed_statuses"]}},
+	{"method":"GET","path":"/api/ressource/get/{id}","group":"ressource","description":"get resource by id","isPublic":false,"script":"app/scripts/ressources/getById.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_resource"],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","title","path","creator"]}},
+	{"method":"POST","path":"/api/ressource","group":"ressource","description":"create resource","isPublic":false,"script":"app/scripts/ressources/create.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"path","type":"string","required":false}],"rawBody":false,"required":[],"rights":["create_resource"],"message":"Resource created successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"PATCH","path":"/api/ressource/{id}","group":"ressource","description":"update resource","isPublic":false,"script":"app/scripts/ressources/update.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[{"name":"name","type":"string","required":false},{"name":"path","type":"string","required":false}],"rawBody":false,"required":[],"rights":["update_resource","update_my_resource"],"message":"Resource updated successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"DELETE","path":"/api/ressource/{id}","group":"ressource","description":"delete resource","isPublic":false,"script":"app/scripts/ressources/delete.gcs","missingScript":false,"params":[{"name":"id","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["delete_resource"],"message":"Ressource deleted successfully","returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/ressource/{start}","group":"ressource","description":"get paginated resources","isPublic":false,"script":"app/scripts/ressources/getPagination.gcs","missingScript":false,"params":[{"name":"start","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_resource"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","title","path","creator"]}},
+	{"method":"POST","path":"/api/ressource/upload","group":"ressource","description":"upload resource","isPublic":false,"script":"app/scripts/ressources/upload.gcs","missingScript":true,"params":[],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/ressource/download","group":"ressource","description":"download resource","isPublic":false,"script":"app/scripts/ressources/download.gcs","missingScript":true,"params":[],"query":[],"body":[],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/config/get/{key}","group":"config","description":"get config by key","isPublic":false,"script":"app/scripts/configs/getByKey.gcs","missingScript":false,"params":[{"name":"key","type":"string"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_settings"],"message":null,"returnsJson":true,"returns":{"kind":"object","fields":["id","key","value"]}},
+	{"method":"PATCH","path":"/api/config","group":"config","description":"update config","isPublic":false,"script":"app/scripts/configs/update.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"key","type":"string","required":false},{"name":"value","type":"string","required":false}],"rawBody":false,"required":[],"rights":["update_settings"],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}},
+	{"method":"GET","path":"/api/config/{start}","group":"config","description":"get paginated configs","isPublic":false,"script":"app/scripts/configs/getPagination.gcs","missingScript":false,"params":[{"name":"start","type":"integer"}],"query":[],"body":[],"rawBody":false,"required":[],"rights":["read_settings"],"message":null,"returnsJson":true,"returns":{"kind":"list","fields":["id","key","value"]}},
+	{"method":"POST","path":"/api/telegram/notify","group":"other","description":"send telegram notification to contacts","isPublic":false,"script":"app/scripts/notify/send_notification.gcs","missingScript":false,"params":[],"query":[],"body":[{"name":"contacts","type":"string","required":false},{"name":"message","type":"string","required":false}],"rawBody":false,"required":[],"rights":[],"message":null,"returnsJson":false,"returns":{"kind":null,"fields":[]}}
+	]
+};
+/* API_MAP_END */

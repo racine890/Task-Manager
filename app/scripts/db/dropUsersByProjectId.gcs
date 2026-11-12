@@ -20,6 +20,13 @@ if $EQUAL then
 if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
+query select_one with test pass *prepared_vars
+compare LASTTUPLE None
+if 0 then
+	SetVar API_RESPONSE 404
+	close database
+	end
+
 execute query q pass *prepared_vars
 
 SetVar *result *prepared_vars
@@ -29,5 +36,13 @@ close database
 end
 
 [q]
-update user_project set active = 0 where user_id = ? and project_id = ? ;
+update user_project set active = 0 where project_id = ? and user_id = ? ;
 [/q]
+
+[test]
+select user_project.id, project.name, user.username
+from user_project, project, user
+where user_project.project_id = project.id
+and user_project.user_id = user.id
+and user_project.active = 1 and project_id = ? and user_id = ? ;
+[/test]

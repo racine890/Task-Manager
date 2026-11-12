@@ -1,13 +1,54 @@
 SetVar *result evaluate(None)
 
-if evaluate(not hasRight('delete_resource', {API_TOKEN}['rights'])) then
+GetTableElement id of API_PARAMS
+SetVar *arg_id LASTRESULT
+
+GetTableElement id of API_TOKEN
+SetVar *arg_user_id LASTRESULT
+
+# User has delete_resource right - can delete any resource
+if evaluate(hasRight('delete_resource', {API_TOKEN}['rights'])) then
+	execute app/scripts/ressources/getById.gcs
+	GetTableElement path of *json
+
+	evaluate delete_file({LASTRESULT})
+
+	execute app/scripts/db/deleteRessource.gcs
+	SetVar *result evaluate({'msg': 'Ressource deleted successfully'})
+	end
+
+# User doesn't have delete_resource, check delete_my_resource
+if evaluate((not hasRight('delete_resource', {API_TOKEN}['rights'])) and (not hasRight('delete_my_resource', {API_TOKEN}['rights']))) then
 	SetVar API_RESPONSE 403
 	SetVar *result evaluate({'message': 'Forbidden'})
 	end
 
-GetTableElement id of API_PARAMS
-SetVar *arg_id LASTRESULT
+# User has delete_my_resource only - verify ownership
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	connect database $DATA_DIR/$DATABASE_NAME
+if $DIFFERENT then
+	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
+evaluate [ {*arg_id}, {*arg_user_id} ]
+SetVar . *check_vars LASTRESULT
+
+compare $DATABASE_TYPE sqlite
+if $EQUAL then
+	query select_one with check_owner_sqlite with *check_vars
+if $DIFFERENT then
+	query select_one with check_owner_mysql with *check_vars
+
+compare LASTTUPLE None
+if $EQUAL then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'message': 'Forbidden'})
+	close database
+	end
+
+close database
+
+# Ownership verified - delete the resource
 execute app/scripts/ressources/getById.gcs
 GetTableElement path of *json
 
@@ -17,3 +58,11 @@ execute app/scripts/db/deleteRessource.gcs
 SetVar *result evaluate({'msg': 'Ressource deleted successfully'})
 
 end
+
+[check_owner_sqlite]
+SELECT 1 FROM resource WHERE id = ? AND creator = ? AND active = 1;
+[/check_owner_sqlite]
+
+[check_owner_mysql]
+SELECT 1 FROM resource WHERE id = ? AND creator = ? AND active = 1;
+[/check_owner_mysql]

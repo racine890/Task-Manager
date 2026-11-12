@@ -20,11 +20,9 @@ if $DIFFERENT then
 	connect MySQL with ( "$DATABASE_USER", "$DATABASE_PASSWORD", "$DATABASE_HOST", "$DATABASE_NAME" )
 
 evaluate run_sql_query_with_filters_for_tasks(self.connect, {*prepared_vars}, {*arg_filters})
-
-SetVar *json LASTRESULT
-
-if evaluate(len({*json}) > 0) then
-	evaluate list_to_dict({*json}, ('id', 'name', 'description', 'creator', 'status', 'project_id', 'category_id', 'create_date', 'active')) =>*json
+compare LASTRESULT None
+if $DIFFERENT then
+	evaluate list_to_dict({LASTRESULT}, ('id', 'name', 'description', 'creator', 'status', 'project_id', 'category_id', 'create_date', 'active')) =>*json
 
 # Close the database
 close database

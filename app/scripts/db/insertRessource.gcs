@@ -1,15 +1,20 @@
 # Check that all params are set
 check var *arg_name
 if $MISSING then
-	print val Error ------- Missing argument : *arg_name
+	print Error ------- Missing argument : *arg_name
 	end
 
 check var *arg_path
 if $MISSING then
-	print val Error ------- Missing argument : *arg_path
+	print Error ------- Missing argument : *arg_path
 	end
 
-evaluate [ {*arg_name}, {*arg_path} ]
+check var *arg_creator
+if $MISSING then
+	SetVar *arg_creator 0
+	end
+
+evaluate [ {*arg_name}, {*arg_path}, {*arg_creator} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -29,5 +34,5 @@ close database
 end
 
 [i]
-insert into resource( title, path ) values ( ?, ? ) ;
+insert into resource( title, path, creator ) values ( ?, ?, ? ) ;
 [/i]

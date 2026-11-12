@@ -13,13 +13,16 @@ evaluate {LASTRESULT}[{LASTRESULT}.rindex('/'):]
 SetVar *arg_path LASTRESULT
 
 GetTableElement username of API_TOKEN
-SetVar *arg_author LASTRESULT
+SetVar *trace_author LASTRESULT
+
+GetTableElement id of API_TOKEN
+SetVar *arg_creator LASTRESULT
 
 execute app/scripts/db/insertRessource.gcs
 
 SetVar *result evaluate({'msg': 'Resource created successfully'})
 
-evaluate {*arg_author} + 'created the resource:' + {*arg_name} =>*log_text
+evaluate {*trace_author} + 'created the resource:' + {*arg_name} =>*log_text
 execute app/scripts/system/writeLog.gcs
 
 end

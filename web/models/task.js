@@ -25,6 +25,7 @@ class task extends Model {
         this.active = 1;
         this.evaluated_hours = null;
         this.evaluation_validated = 0;
+        this.priority = 0;
     }
     
     map(jsonObject){
@@ -38,6 +39,9 @@ class task extends Model {
         this.category_id = jsonObject[7];
         this.create_date = new Date(jsonObject[8]);
         this.active = jsonObject[9] == 1 ? true : false;
+        if (jsonObject.length > 10) {
+            this.priority = jsonObject[10];
+        }
     }
 
     mapLite(jsonObject){
@@ -56,7 +60,8 @@ class task extends Model {
             create_date: this.create_date.toISOString().split('T')[0],
             mother_idea: this.mother_idea,
             project_id: this.project_id,
-            evaluated_hours: this.evaluated_hours
+            evaluated_hours: this.evaluated_hours,
+            priority: this.priority
         }
     }
 }

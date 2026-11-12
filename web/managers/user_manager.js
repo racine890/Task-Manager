@@ -26,6 +26,10 @@ async function authenticate(username, password) {
         if (response != null) {
             appDataManager.setvar("token", response.token);
             appDataManager.setvar("rights", response.rights);
+            const me = await getMe();
+            if (me != null) {
+                appDataManager.setvar("current_user", me);
+            }
             return response;
         } else {
 			redirect('auth.html');
@@ -83,7 +87,7 @@ async function getUserRights(id) {
     }
 }
 
-async function saveUser(username, email, password, role, pic) {
+async function saveUser(username, email, password, role, phone, pic) {
 
     try {
         let response = await appUserService.save({
@@ -91,7 +95,8 @@ async function saveUser(username, email, password, role, pic) {
             email: email,
             password: password,
             pic: pic,
-            role: role
+            role: role,
+            phone: phone
         });
         if (response != null) {
             alert("User has been saved !");
@@ -102,11 +107,12 @@ async function saveUser(username, email, password, role, pic) {
     }
 }
 
-async function updateUser(id, username, email, pic) {
+async function updateUser(id, username, email, phone, pic) {
     try {
         let response = await appUserService.update(id, {
             username: username,
             email: email,
+            phone: phone,
             pic: pic
         });
 
@@ -175,11 +181,12 @@ async function getMe() {
     }
 }
 
-async function updateMe(username, email, pic) {
+async function updateMe(username, email, phone, pic) {
     try {
         const response = await appUserService.updateMe({
             username: username,
             email: email,
+            phone: phone,
             pic: pic
         });
         if ('msg' in response) {

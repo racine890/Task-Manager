@@ -7,6 +7,12 @@ GetTableElement spid of API_PARAMS
 SetVar *arg_sub_project_id LASTRESULT
 
 execute app/scripts/db/assocProjectToProject.gcs
+
+SetVar *project_url 1
+evaluate 'A sub-project have been added to your project.' =>*arg_message_content
+
+execute app/scripts/projects/notifyProjectWorker.gcs
+
 SetVar *result evaluate({'msg': 'Project assigned successfully'})
 
 end

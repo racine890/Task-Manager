@@ -1,38 +1,39 @@
 <!DOCTYPE html>
 <html lang="fr">
-	
-<LoaderComponent></LoaderComponent>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Details</title>
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
-    <link rel="preload" href="../assets/style/project.css" as="style" onload="this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="../assets/style/project.css">
-    </noscript>
-    <link rel="stylesheet" href="../assets/style/selection.css">
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
     <link rel="stylesheet" href="../tools/prism/prism.css">
-    <link rel="stylesheet" href="../assets/style/loader.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 
 <body>
+    <LoaderComponent></LoaderComponent>
     <NavBarComponent title="Task details"></NavBarComponent>
     <div class="project-container" id="to-print">
         <h1 id="title">Title</h1>
+        <i class="fas fa-edit icon" title="Edit" id="edit-task-btn" style="display: none;" onclick="editCurrentTask()"></i>
         <i class="fas fa-copy icon" title="Copy" onclick="copyTask()"></i>
         <i class="fas fa-thumbtack icon" title="Pin" onclick="togglePin()" id="pin-btn"></i>
 
         <div class="details">
             <p><strong>Category : </strong><span class="label" id="category"></span></p>
-            <p><strong>Description :</strong></p>
-            <pre>
-                <code class="language-markdown" id="description">
-                    Description
-                </code>
-            </pre>
+            <p><strong>Priority : </strong><span id="priority"></span></p>
+            <section class="accordion">
+            	<CollapseComponent title="Description :" id="coll1" name="coll1">
+		            <p><strong></strong></p>
+		            <pre>
+		                <code class="language-markdown" id="description">
+		                    Description
+		                </code>
+		            </pre>
+              	</CollapseComponent>
+            </section>
             <span class="label" id="status">Status</span>
             <p class="line">
                 <button id="todo" style="display: none">mark as todo</button>
@@ -50,8 +51,8 @@
                 <p><strong>Évaluation validée :</strong> <span id="evaluation-validated">Non</span></p>
             </div>
             <div id="evaluation-blocked" class="line" style="display: none">
-                <p style="color: #ef4444; font-weight: bold;">Le changement de statut est bloqué tant que l'évaluation n'est pas validée.</p>
-                <button id="validate-evaluation" style="display: none">Valider l'évaluation</button>
+                <p style="color: #ef4444; font-weight: bold;">You can't change the task status unless it have been evaluated.</p>
+                <button id="validate-evaluation" style="display: none">Validate evaluation</button>
             </div>
             <div class="progress-section" id="progress-section">
                 <p><strong>Progression :</strong> <span id="progress-value">0%</span></p>
@@ -68,20 +69,33 @@
             <strong>Assignated on this task</strong>
             <SelectionComponent id="user-search" title="Search a user" object="user" validateAction="validateUser"
                 createPermission="update_task"></SelectionComponent>
-            <ul id="users-list">
-            </ul>
+            <section class="accordion">
+            	<CollapseComponent title="Users" id="coll2" name="coll2">
+		            <p><strong></strong></p>
+		            <ul id="users-list">
+		            </ul>
+            	</CollapseComponent>
+           </section>
         </div>
 
         <div class="assignments">
-            <strong>Ressources</strong>
-            <ul id="ressources-list">
-            </ul>
+            <section class="accordion">
+                <CollapseComponent title="Ressources" id="coll3" name="coll3">
+                    <p><strong></strong></p>
+                    <ul id="ressources-list">
+                    </ul>
+                </CollapseComponent>
+            </section>
         </div>
 
         <div class="assignments">
-            <strong>Notes</strong>
-            <ul id="notes-list">
-            </ul>
+            <section class="accordion">
+                <CollapseComponent title="Notes" id="coll4" name="coll4">
+                    <p><strong></strong></p>
+                    <ul id="notes-list">
+                    </ul>
+                </CollapseComponent>
+            </section>
         </div>
 
         <div id="noteCreation">
@@ -100,6 +114,7 @@
     </div>
     <!-- Core scripts -->
     <script src="../core/Service.js"></script>
+    <script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>
@@ -148,6 +163,7 @@
     <script src="../components/selection.js"></script>
     <script src="../assets/scripts/common.js"></script>
     <script src="../tools/prism/prism.js"></script>
+    <script src="../components/collapse.js"></script>
 </body>
 
 </html>

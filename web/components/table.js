@@ -21,6 +21,13 @@ class TableComponent extends Component {
 		this.paginationMethod = this.getArgValue('paginationMethod');
 
 		this.html = `
+		<div class="table-tools">
+			<div class="table-filter">
+				<i class="fas fa-filter"></i>
+				<input type="text" id="tableFilter" placeholder="Filter this page…" autocomplete="off">
+			</div>
+			<span class="table-count" id="tableCount"></span>
+		</div>
 		<table id="tm_table">
             <thead>
                 <tr>
@@ -32,8 +39,8 @@ class TableComponent extends Component {
             </tbody>
         </table>
 		<div class="pagination">
-            <button id="prev">Previous</button>
-            <button id="next">Next</button>
+            <button id="prev"><i class="fas fa-chevron-left"></i> Previous</button>
+            <button id="next">Next <i class="fas fa-chevron-right"></i></button>
         </div>
 		`;
 	}
@@ -93,6 +100,29 @@ class TableComponent extends Component {
 			</tr>`;
 			list.innerHTML += row;
 		});
+
+		if (elements.length === 0) {
+			list.innerHTML = `<tr class="table-empty"><td colspan="${list.closest('table').querySelectorAll('thead th').length}">
+				<i class="fas fa-inbox"></i><br>Nothing to show here yet</td></tr>`;
+		}
+		this.applyFilter();
+	}
+
+	// Filtre local sur les lignes de la page affichée
+	applyFilter() {
+		const input = this.getChild('tableFilter');
+		const count = this.getChild('tableCount');
+		if (!input) return;
+
+		const query = input.value.trim().toLowerCase();
+		let shown = 0;
+		this.getChild('my-table').querySelectorAll('tr:not(.table-empty)').forEach(tr => {
+			const match = !query || tr.textContent.toLowerCase().includes(query);
+			tr.hidden = !match;
+			if (match) shown++;
+		});
+		if (count)
+			count.textContent = this.currentPage.length === 0 ? '' : `${shown} / ${this.currentPage.length} shown`;
 	}
 
 	setFilters(filters) {
@@ -185,6 +215,8 @@ class TableComponent extends Component {
 				createBtn.hidden = true;
 			};
 		}
+
+		this.getChild('tableFilter').addEventListener('input', () => this.applyFilter());
 
 		const prev = this.getChild('prev');
 		const next = this.getChild('next');

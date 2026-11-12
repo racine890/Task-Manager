@@ -1,4 +1,4 @@
-# Update a user
+# Update a config
 SetVar *result evaluate(None)
 
 if evaluate(not hasRight('update_settings', {API_TOKEN}['rights'])) then

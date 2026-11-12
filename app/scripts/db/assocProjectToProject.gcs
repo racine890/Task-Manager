@@ -32,7 +32,7 @@ close database
 end
 
 [test]
-select id from project where parent = ? and id = ? and active = 1;
+select id, name from project where parent = ? and id = ? and active = 1;
 [/test]
 
 [i]

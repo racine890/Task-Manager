@@ -1,7 +1,5 @@
 async function getRessources(lastDisplayed) {
-
     let response = await appRessourceService.get_paginated(lastDisplayed);
-
     return response;
 }
 
@@ -68,10 +66,10 @@ async function uploadRessource(file) {
         formData.append('file', file);
 
         try {
-            const response = await fetch('http://localhost:6102/upload', {
+            const response = await appLoader.track(fetch('http://localhost:6102/upload', {
                 method: 'POST',
                 body: formData
-            });
+            }));
 
             if (response.ok) {
                 const text = await response.json();
@@ -87,9 +85,9 @@ async function uploadRessource(file) {
 async function downloadRessource(filename) {
     if (filename) {
         try {
-            const response = await fetch(`http://localhost:6102/download/${filename}`, {
+            const response = await appLoader.track(fetch(`http://localhost:6102/download/${filename}`, {
                 method: 'GET'
-            });
+            }));
 
             if (response.ok) {
                 const blob = await response.blob();
@@ -109,9 +107,9 @@ async function downloadRessource(filename) {
 async function getRessourceUrl(filename) {
     if (filename) {
         try {
-            const response = await fetch(`http://localhost:6102/download/${filename}`, {
+            const response = await appLoader.track(fetch(`http://localhost:6102/download/${filename}`, {
                 method: 'GET'
-            });
+            }));
 
             if (response.ok) {
                 const blob = await response.blob();

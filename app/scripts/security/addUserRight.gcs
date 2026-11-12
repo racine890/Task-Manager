@@ -1,5 +1,5 @@
 # Authentication
-SetVar *result evaluate(None)
+SetVar *result evaluate({"msg":"User right added successfully"})
 
 # Get Form Data
 GetTableElement id of API_PARAMS
@@ -9,7 +9,5 @@ GetTableElement rightId of API_PARAMS
 SetVar *arg_rightId LASTRESULT
 
 execute app/scripts/db/addUserRight.gcs
-
-SetVar *result evaluate({"msg":"User right added successfully"})
 
 end

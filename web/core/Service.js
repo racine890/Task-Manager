@@ -46,6 +46,8 @@ class Service {
      * @param {Object} providedBody - The body.
      */
     async fetchAResource(resourceAPI, providedMethod = "GET", providedHeaders = { 'Content-Type': 'application/json' }, providedBody = null) {
+        if (typeof appLoader !== 'undefined')
+            appLoader.show();
         try {
 
             let _headers = {
@@ -89,6 +91,9 @@ class Service {
         } catch (error) {
 			console.log("error");
             throw error;
+        } finally {
+            if (typeof appLoader !== 'undefined')
+                appLoader.hide();
         }
     }
 

@@ -24,6 +24,12 @@
   2. Le format de réponse JSON attendu.
   3. La requête SQL d'accès à la base, en s'appuyant sur `app/scripts/db/initDatabase.gcs` pour la structure des tables.
 
+## Generated API Map
+- `web/core/api-map.json` est le contrat de l'API : pour chaque route, les params de chemin, les champs du body (payload), les rights et la forme de la réponse. Il est **généré**, ne pas l'éditer à la main.
+- Régénérer après toute modification de `app/scripts/system/apis.gcs` ou d'un script `.gcs` :
+  `node tools/generate-api-map.js`
+- Le script écrit `web/core/api-map.json` et réinjecte la map entre les marqueurs `API_MAP_START` / `API_MAP_END` de `web/actions/userForm.js` (utilisée par le bouton "Copy Prompt" du formulaire utilisateur).
+
 ## Database Reference
 - `app/scripts/db/initDatabase.gcs` contient le schéma SQLite/MySQL.
 - Tables disponibles : `user`, `right`, `user_right`, `role`, `right_role`, `project`, `user_project`, `idea`, `task`, `user_task`, `note`, `resource`, `note_resource`, `task_resource`, `project_resource`, `category`, `config`.
@@ -101,3 +107,16 @@
 ## Known Issues (do not fix unless asked)
 - `components/selection.js` references missing `../actions/selection.js`.
 - `ressource_manager.js` uses hardcoded `http://localhost:6102/upload` and `/download` instead of `Service.fetchAResource`.
+- `apis.gcs` exposes routes whose script does not exist: `app/scripts/tasks/getRessources.gcs`, `app/scripts/projects/getRessources.gcs`, `app/scripts/ressources/upload.gcs`, `app/scripts/ressources/download.gcs`. Those routes answer 404, the working ones are `getResources.gcs`.
+
+## Task Manager API (Agent Rules)
+
+When working with tasks in this repo, query the Task Manager instance to read and update tasks.
+
+- Base URL: `http://localhost:6102`
+- Auth: `POST /api/auth` with `{"username":"kilo","password":"123456"}` returns a token. Use `Authorization: Bearer <token>` for all other requests.
+- Primary task endpoints: `GET /api/task/get/{id}`, `POST /api/task` (create/list), `PATCH /api/task/{id}` (update), `DELETE /api/task/{id}`, `POST /api/task/status/{id}/{status}`, `POST /api/task/progress/{id}/{progress}`, assign/unassign workers/resources/notes as needed.
+- Always authenticate first when reading/updating tasks via the API (do not rely on browser session). Keep requests minimal and include only necessary fields.
+- Follow API shapes from the provided action map; if an endpoint differs from frontend expectations, prefer the API contract shown here.
+- The full contract (path params, payload fields, rights, response shape) is in `web/core/api-map.json`, read it before calling an endpoint.
+- Do not modify files under `app/` to integrate this agent access unless explicitly requested.

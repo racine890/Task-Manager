@@ -4,9 +4,10 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Worker Assignations</title>
-	<link rel="stylesheet" href="../assets/style/states.css">
-	<link rel="stylesheet" href="../assets/style/dashboard.css">
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 
 <body>
@@ -66,7 +67,7 @@
 
 			<div id="sections-container"></div>
 
-			<div id="loader" class="loader">Loading...</div>
+			<div id="loader" class="inline-loader">Loading...</div>
 			<div id="sentinel"></div>
 
 			<footer>
@@ -76,6 +77,7 @@
 	</div>
 
 	<script src="../core/Service.js"></script>
+	<script src="../core/Loader.js"></script>
 	<script src="../core/Model.js"></script>
 	<script src="../core/DataManager.js"></script>
 	<script src="../core/Component.js"></script>

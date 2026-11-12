@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Idea Form</title>
-    <link rel="stylesheet" href="../assets/style/forms.css">
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <title>Category Form</title>
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 <body>
     <NavBarComponent title="Create a Category"></NavBarComponent>
@@ -57,10 +59,12 @@
                 </div>
             </div>
             <button type="submit" id="submission">Save</button>
+            <button type="button" class="btn-secondary" onclick="history.back()">Cancel</button>
         </form>
     </div>
     <!-- Core scripts -->
 	<script src="../core/Service.js"></script>
+	<script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>

@@ -16,11 +16,21 @@ function onLoadColumns() { return ["Id", "Label", "Description"]; }
 function onLoadData(category) { return [category.id, category.name, category.description]; }
 
 function onLoadAction(category) {
-    return [
+    const actions = [
         { name: "View", func: "viewTask", arg: category.id },
-        { name: "Edit", func: "editTask", arg: category.id },
-        { name: "Delete", func: "deleteTask", arg: category.id, color: "danger" }
     ];
+
+    const isOwner = category.creator == getCurrentUserId();
+
+    if (hasRight('update_task') || (hasRight('update_my_task') && isOwner)) {
+        actions.push({ name: "Edit", func: "editTask", arg: category.id });
+    }
+
+    if (hasRight('delete_task') || (hasRight('delete_my_task') && isOwner)) {
+        actions.push({ name: "Delete", func: "deleteTask", arg: category.id, color: "danger" });
+    }
+
+    return actions;
 }
 
 function editTask(id) {
@@ -43,7 +53,41 @@ function viewTask(id) {
 
 // Header buttons
 function openRandomTask() {
-    viewTask(tableMap.get("taskTable").allItems[Math.floor(Math.random() * tableMap.get("taskTable").allItems.length)].id);
+    const table = tableMap.get("taskTable");
+    if (!table) {
+        return;
+    }
+    const items = table.allItems || [];
+    if (items.length === 0) {
+        return;
+    }
+    const filtered = items.filter(item => {
+        const status = item.status !== undefined && item.status !== null ? parseInt(item.status) : null;
+        if (status !== null && filters[status] === true) {
+            return false;
+        }
+        return true;
+    });
+    const pool = filtered.length > 0 ? filtered : items;
+    const weights = pool.map(item => {
+        const priority = item.priority !== undefined && item.priority !== null ? parseInt(item.priority) : 0;
+        const p = isNaN(priority) ? 0 : Math.max(0, Math.min(4, priority));
+        return 1 + p;
+    });
+    let totalWeight = weights.reduce((sum, w) => sum + w, 0);
+    if (totalWeight <= 0) {
+        viewTask(pool[Math.floor(Math.random() * pool.length)].id);
+        return;
+    }
+    let r = Math.random() * totalWeight;
+    for (let i = 0; i < pool.length; i++) {
+        r -= weights[i];
+        if (r <= 0) {
+            viewTask(pool[i].id);
+            return;
+        }
+    }
+    viewTask(pool[pool.length - 1].id);
 }
 
 function printTasks() {

@@ -1,0 +1,117 @@
+/* ===== THEME "PAPIER" — éditorial, clair, serif ===== */
+/* Change juste ces valeurs :                                                  */
+:root {
+	--ink: #1f1a14;              /* couleur du texte et des boutons pleins */
+	--paper: #f4efe6;            /* fond de page */
+	--accent: #b4452c;           /* terracotta · essaie #2f5d50 (sapin) ou #274c8a (bleu encre) */
+	--r: 3px;                    /* arrondi : 0px = très sobre */
+	--font: Charter, "Iowan Old Style", Georgia, "Times New Roman", serif;
+	--sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	--sidebar-w: 248px;
+}
+
+/* ===== Palette ===== */
+:root {
+	--bg: var(--paper);
+	--surface: #fbf8f2;
+	--surface-2: #f1ebdf;
+	--surface-hover: #ece4d4;
+	--border: #ddd3c1;
+	--border-strong: #c4b8a1;
+	--text: var(--ink);
+	--text-2: #5c5243;
+	--text-3: #968a77;
+	--accent-hover: color-mix(in srgb, var(--accent) 80%, black);
+	--accent-soft: color-mix(in srgb, var(--accent) 12%, var(--surface));
+	--accent-ring: color-mix(in srgb, var(--accent) 28%, transparent);
+	--on-accent: #fffaf2;
+	--side-bg: #ebe4d5; --side-bg-2: #ebe4d5;
+	--side-text: #6b5f4d; --side-text-strong: var(--ink);
+	--side-hover: rgba(31, 26, 20, .06);
+	--side-active: var(--accent-soft); --side-active-text: var(--accent);
+	--side-border: #d6ccb8;
+	--radius-sm: var(--r); --radius: var(--r); --radius-lg: var(--r);
+	--shadow-sm: none; --shadow: none;
+	--shadow-lg: 0 18px 40px -12px rgba(60, 40, 10, .28);
+	--st-new: #4a5aa8;       --st-new-bg: #e5e8f4;
+	--st-todo: #5c5243;      --st-todo-bg: #e9e3d6;
+	--st-started: #2a6a9c;   --st-started-bg: #dfeaf3;
+	--st-paused: #9a6414;    --st-paused-bg: #f4e7cc;
+	--st-testing: #7a4a98;   --st-testing-bg: #eddff4;
+	--st-finished: #3b7a46;  --st-finished-bg: #e0eddc;
+	--st-feedback: #b4532a;  --st-feedback-bg: #f6e1d3;
+	--st-delivered: #2f7482; --st-delivered-bg: #dcecee;
+	--st-abandoned: #8a8478; --st-abandoned-bg: #ebe7df;
+	--danger: #a8321f; --danger-soft: #f5dfd9;
+	--success: #3b7a46; --success-soft: #e0eddc;
+	--warning: #9a6414; --warning-soft: #f4e7cc;
+	color-scheme: light;
+}
+
+/* ===== Texte : serif partout, interface en sans ===== */
+body { font-size: 16px; line-height: 1.6; background: var(--bg); }
+h1, h2, h3, h4 { font-weight: 700; letter-spacing: -.015em; }
+h1 { font-size: 2.1rem; padding-bottom: 10px; border-bottom: 3px double var(--border-strong); margin-bottom: 8px; }
+.page-header { align-items: flex-end; }
+.page-header h1 { border-bottom: none; padding-bottom: 0; }
+.page-header p { font-style: italic; color: var(--text-2); }
+.container > .page-header { border-bottom: 3px double var(--border-strong); padding-bottom: 14px; margin-bottom: 22px; }
+.topbar-title { font-style: italic; font-weight: 400; font-size: 1.1rem; }
+button, .btn, label, thead th, .nav-label, .nav-link, kbd, .label, .status-badge, .table-count, .note-meta, .sidebar-user-link, .quick-search, .tab__label {
+	font-family: var(--sans);
+}
+.nav-label { color: var(--text-3); }
+label, thead th, .nav-label { text-transform: uppercase; letter-spacing: .09em; font-size: .68rem; font-weight: 700; }
+
+/* ===== Navigation ===== */
+.sidebar { box-shadow: none; }
+.sidebar-brand { font-family: var(--font); font-size: 1.15rem; font-style: italic; letter-spacing: 0; }
+.sidebar-logo { background: var(--ink); color: var(--paper); border-radius: var(--r); box-shadow: none; }
+.nav-link { border-radius: var(--r); font-size: .88rem; }
+.nav-link.active { box-shadow: inset 3px 0 0 var(--accent); font-weight: 600; }
+.topbar { background: color-mix(in srgb, var(--paper) 88%, transparent); }
+.quick-search { background: var(--surface); }
+.avatar-sm, .avatar { background: var(--ink); border-radius: 50%; }
+.sidebar-logout:hover { background: var(--danger-soft); color: var(--danger); }
+
+/* ===== Boutons : encre pleine, angles nets ===== */
+button, .btn { border-radius: var(--r); background: var(--ink); color: var(--paper); font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; box-shadow: none; }
+button:hover, .btn:hover { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+.btn-secondary, .pagination button { background: transparent; color: var(--ink); border: 1px solid var(--ink); box-shadow: none; }
+.btn-secondary:hover, .pagination button:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: none; }
+.btn-danger { background: var(--danger); } .btn-danger:hover { background: #7e2314; box-shadow: none; }
+td .btn { background: transparent; color: var(--accent); border: 1px solid var(--border-strong); }
+td .btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+td .btn-danger { color: var(--danger); background: transparent; }
+td .btn-danger:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.icon { border-radius: var(--r); }
+
+/* ===== Cartes & tableaux : filets, pas d'ombres ===== */
+.form-container, .eval-report-container, .details, .assignments, .subprojects, .ideas, .tasks, .stat-card, .eval-stat-box, .status-section, .feature, .panel {
+	background: var(--surface); border: 1px solid var(--border-strong); box-shadow: none;
+}
+.form-container { border-top: 4px solid var(--ink); }
+.details, .assignments, .subprojects, .ideas, .tasks { border-top: 2px solid var(--ink); }
+table { background: transparent; border: none; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink); border-radius: 0; box-shadow: none; }
+thead th { background: transparent; border-bottom: 1px solid var(--border-strong); color: var(--text-2); }
+tbody td { border-bottom: 1px solid var(--border); }
+tbody tr:hover td { background: var(--surface-2); }
+td:first-child { font-family: var(--sans); font-size: .8rem; }
+td:nth-child(2) { font-weight: 700; }
+
+/* ===== Champs : simples lignes ===== */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]), select, textarea, .form-field {
+	background: var(--surface); border-radius: var(--r); border: 1px solid var(--border-strong); font-family: var(--font); font-size: 1rem;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 3px var(--accent-ring); }
+
+/* ===== Pastilles : timbres ===== */
+.label { border-radius: var(--r); text-transform: uppercase; letter-spacing: .08em; font-size: .66rem; font-weight: 700; border: 1px solid currentColor; }
+.checkbox-group label, .checkbox-item, .section-count, .status-badge, kbd { border-radius: var(--r) !important; font-family: var(--sans); }
+.checkbox-group label:has(input:checked), .checkbox-item:has(input:checked) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.accordion, .assignments li, .subprojects li, .ideas li, .tasks li, #permissions-list li { border-radius: var(--r); }
+.progress-container { border-radius: 0; height: 6px; } .progress-bar { border-radius: 0; background: var(--ink); }
+.popup-content, .palette-box, .css-modal-box { border-radius: var(--r); }
+.note-code, pre { font-family: ui-monospace, Menlo, Consolas, monospace; }
+::selection { background: var(--accent); color: var(--on-accent); }
+.project-container > h1 { border-bottom: none; padding-bottom: 0; }

@@ -29,7 +29,12 @@ if $MISSING then
 	SetVar *arg_evaluated_hours None
 	end
 
-evaluate [ {*arg_name}, {*arg_description}, {*arg_category_id}, {*arg_project_id}, {*arg_evaluated_hours}, {*arg_id} ]
+check var *arg_priority
+if $MISSING then
+	SetVar *arg_priority None
+	end
+
+evaluate [ {*arg_name}, {*arg_description}, {*arg_category_id}, {*arg_project_id}, {*arg_evaluated_hours}, {*arg_priority}, {*arg_id} ]
 SetVar . *prepared_vars LASTRESULT
 
 # Connect to the database
@@ -49,5 +54,5 @@ close database
 end
 
 [i]
-update task set name=?, description=?, category_id=?, project_id=?, evaluated_hours=? where id=? ;
+update task set name=?, description=?, category_id=?, project_id=?, evaluated_hours=?, priority=? where id=? ;
 [/i]

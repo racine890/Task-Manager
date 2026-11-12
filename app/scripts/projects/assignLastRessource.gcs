@@ -6,4 +6,10 @@ SetVar *arg_id LASTRESULT
 execute app/scripts/db/assignProjectRessource.gcs
 
 SetVar *result evaluate({'msg': 'Ressource assigned successfully'})
+
+SetVar *project_url 1
+evaluate 'A resource have been added on your project.' =>*arg_message_content
+
+execute app/scripts/projects/notifyProjectWorker.gcs
+
 end

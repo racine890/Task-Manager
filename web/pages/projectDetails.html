@@ -5,29 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails du Projet</title>
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
-    <link rel="preload" href="../assets/style/project.css" as="style" onload="this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="../assets/style/project.css">
-    </noscript>
-    <link rel="stylesheet" href="../assets/style/selection.css">
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
     <link rel="stylesheet" href="../tools/prism/prism.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 
 <body>
     <NavBarComponent title="Project details"></NavBarComponent>
     <div class="project-container" id="to-print">
         <h1 id="title">Title</h1>
+        <i class="fas fa-edit icon" title="Edit" id="edit-project-btn" style="display: none;" onclick="editCurrentProject()"></i>
 
         <div class="details">
             <p><strong>Category : </strong><span class="label" id="category"></span></p>
-            <p><strong>Description :</strong></p>
-            <pre>
-                <code class="language-markdown" id="description">
-                    Description
-                </code>
-            </pre>
+            <section class="accordion">
+            	<CollapseComponent title="Description :" id="coll1" name="coll1">
+		            <p><strong></strong></p>
+		            <pre>
+		                <code class="language-markdown" id="description">
+		                    Description
+		                </code>
+		            </pre>
+             	</CollapseComponent>
+            </section>
             <p><strong>Started the :</strong> <span id="start-date">2024-01-01</span></p>
             <p><strong>Should end the :</strong> <span id="end-date">2024-12-31</span></p>
             <span class="label" id="status">Status</span>
@@ -57,16 +59,26 @@
             <strong>Assignated on this project</strong>
             <SelectionComponent id="user-search" title="Search a user" object="user" createPermission="update_project"
                 validateAction="validateUser"></SelectionComponent>
-            <ul id="users-list">
-            </ul>
+            <section class="accordion">
+            	<CollapseComponent title="Workers" id="coll2" name="coll2">
+		            <p><strong></strong></p>
+		            <ul id="users-list">
+		            </ul>
+            	</CollapseComponent>
+           </section>
         </div>
 
         <div class="subprojects">
             <strong>Sub-projects</strong>
             <SelectionComponent id="project-search" title="Search a project" object="project"
                 createPermission="update_project" validateAction="validateProject"></SelectionComponent>
-            <ul id="projects-list">
-            </ul>
+            <section class="accordion">
+            	<CollapseComponent title="Phases" id="coll3" name="coll3">
+		            <p><strong></strong></p>
+		            <ul id="projects-list">
+		            </ul>
+            	</CollapseComponent>
+           </section>
         </div>
 
         <button type="button" onclick="createSubProject()" id="create-subproject-btn">Create sub-project</button>
@@ -75,8 +87,13 @@
 
         <div class="ideas">
             <strong>Ideas</strong>
-            <ul id="ideas-list">
-            </ul>
+            <section class="accordion">
+            	<CollapseComponent title="Ideas" id="coll4" name="coll4">
+		            <p><strong></strong></p>
+		            <ul id="ideas-list">
+		            </ul>
+            	</CollapseComponent>
+           </section>
         </div>
 
         <button id="random" onclick="openRandom()">Open random</button>
@@ -85,8 +102,13 @@
             <strong>Tasks list</strong>
             <SelectionComponent id="task-search" title="Search a task" object="task" createPermission="update_project"
                 validateAction="validateTask"></SelectionComponent>
-            <ul id="tasks-list">
-            </ul>
+            <section class="accordion">
+            	<CollapseComponent title="Tickets" id="coll5" name="coll5">
+		            <p><strong></strong></p>
+		            <ul id="tasks-list">
+		            </ul>
+            	</CollapseComponent>
+           </section>
         </div>
 
         <div class="assignments">
@@ -97,8 +119,8 @@
 
         <input type="file" id="fileInput" style="display:none;">
         <button type="button" onclick="uploadFileAsResource()">Upload a file</button>
-        <button onclick="generateReport()">Generate Report</button>
-        <button type="button" onclick="openEvaluationReport()">Economic Report</button>
+        <button onclick="generateReport()" id="generate-report-btn">Generate Report</button>
+        <button type="button" onclick="openEvaluationReport()" id="eval-report-btn">Economic Report</button>
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="exportMenu" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false" onclick="exportMenu()">
@@ -114,6 +136,7 @@
 
     <!-- Core scripts -->
     <script src="../core/Service.js"></script>
+    <script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>
@@ -159,6 +182,7 @@
     <script src="../managers/selection_manager.js"></script>
     <script src="../components/navbar.js"></script>
     <script src="../components/selection.js"></script>
+    <script src="../components/collapse.js"></script>
     <script src="../tools/prism/prism.js"></script>
 </body>
 

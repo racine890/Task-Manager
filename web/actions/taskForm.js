@@ -38,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (task.evaluated_hours) {
                     document.getElementById("evaluated-hours").value = task.evaluated_hours;
                 }
+                if (task.priority !== undefined && task.priority !== null) {
+                    const prioSelect = document.getElementById("priority");
+                    if (prioSelect) {
+                        prioSelect.value = task.priority;
+                    }
+                }
                 document.getElementById("submission").innerHTML = "Update";
                 if (task.project_id) {
                     select.value = task.project_id;
@@ -112,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const selected_project_id = document.getElementById("project").value;
         const evaluated_hours = document.getElementById('evaluated-hours').value || null;
+        const priority = document.getElementById('priority') ? document.getElementById('priority').value : 0;
 
         if (urlTaskId) {
             const title = document.getElementById('title').value;
@@ -120,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const start_date = document.getElementById('start-date').value;
             const end_date = document.getElementById('end-date').value;
 
-            updateTask(urlTaskId, title, description, category_id, start_date, end_date, selected_project_id, evaluated_hours);
+            updateTask(urlTaskId, title, description, category_id, start_date, end_date, selected_project_id, evaluated_hours, priority);
         } else {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
@@ -128,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const end_date = document.getElementById('end-date').value;
             const start_date = document.getElementById('start-date').value;
 
-            saveTask(title, description, category_id, start_date, end_date, urlIdeaId || null, selected_project_id, evaluated_hours);
+            saveTask(title, description, category_id, start_date, end_date, urlIdeaId || null, selected_project_id, evaluated_hours, priority);
         }
     });
 });

@@ -37,7 +37,7 @@ async function dropNote(id, nid) {
     }
 }
 
-async function saveTask(title, description, category_id, start_date, end_date, mother_idea = null, project_id = null, evaluated_hours = null) {
+async function saveTask(title, description, category_id, start_date, end_date, mother_idea = null, project_id = null, evaluated_hours = null, priority = 0) {
 
     try {
         let response = await appTaskService.save({
@@ -48,7 +48,8 @@ async function saveTask(title, description, category_id, start_date, end_date, m
             category_id: category_id,
             start_date: start_date,
             end_date: end_date,
-            evaluated_hours: evaluated_hours
+            evaluated_hours: evaluated_hours,
+            priority: priority
         });
 
         if ('msg' in response) {
@@ -73,7 +74,7 @@ async function getTask(id) {
     }
 }
 
-async function updateTask(id, title, description, category_id, start_date, end_date, project_id = null, evaluated_hours = null) {
+async function updateTask(id, title, description, category_id, start_date, end_date, project_id = null, evaluated_hours = null, priority = 0) {
 
     try {
         let response = await appTaskService.update(id, {
@@ -83,7 +84,8 @@ async function updateTask(id, title, description, category_id, start_date, end_d
             start_date: start_date,
             end_date: end_date,
             project_id: project_id || null,
-            evaluated_hours: evaluated_hours
+            evaluated_hours: evaluated_hours,
+            priority: priority
         });
 
         if ('msg' in response) {

@@ -5,14 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Ideas</title>
-    <link rel="stylesheet" href="../assets/style/dashboard.css">
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/theme.css">
+    <script src="../assets/scripts/custom-css.js"></script>
 </head>
 
 <body>
     <NavBarComponent title="Ideas"></NavBarComponent>
     <div class="container">
-        <button onclick="redirect('ideaForm.html')" id="createBtn">Add</button>
-        <button onclick="printIdeas()">Print</button>
+        <div class="page-header">
+            <div>
+                <h1>Ideas</h1>
+                <p>Capture ideas before they become tasks.</p>
+            </div>
+            <div class="toolbar">
+                <button class="btn-secondary" onclick="printIdeas()"><i class="fas fa-print"></i> Print</button>
+                <button onclick="redirect('ideaForm.html')" id="createBtn"><i class="fas fa-plus"></i> New idea</button>
+            </div>
+        </div>
 
         <TableComponent id="ideaTable" onLoadColumns="onLoadColumns" onLoadData="onLoadData" onLoadAction="onLoadAction"
             paginationMethod="getIdeas" createPermission="create_idea"></TableComponent>
@@ -20,6 +31,7 @@
     </div>
     <!-- Core scripts -->
     <script src="../core/Service.js"></script>
+    <script src="../core/Loader.js"></script>
     <script src="../core/Model.js"></script>
     <script src="../core/DataManager.js"></script>
     <script src="../core/Component.js"></script>

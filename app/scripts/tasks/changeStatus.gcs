@@ -1,5 +1,10 @@
 SetVar *result evaluate(None)
 
+if evaluate(not hasRight('change_task_status', {API_TOKEN}['rights'])) then
+	SetVar API_RESPONSE 403
+	SetVar *result evaluate({'msg': 'Forbidden'})
+	end
+
 GetTableElement id of API_PARAMS
 SetVar *arg_id LASTRESULT
 

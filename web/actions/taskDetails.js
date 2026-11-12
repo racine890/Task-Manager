@@ -455,9 +455,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     current_task_id = params.get('no');
 
-    if (current_task_id) {
-		globalLoaderComponent.render(true);
+	if (current_task_id) {
+
         getTask(current_task_id).then((task) => {
+            const editBtn = document.getElementById('edit-task-btn');
+            if (editBtn && (hasRight('update_task') || (hasRight('update_my_task') && task['creator.id'] == getCurrentUserId()))) {
+                editBtn.style.display = 'inline-block';
+            }
             const statuses = ["New", "Todo", "Started", "Paused", "Testing", "Finished", "Feedback", "Delivered", "Abandoned"];
 
             document.getElementById("title").innerText = task.name;
@@ -469,6 +473,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 0);
             document.getElementById("status").innerText = statuses[task.status];
             document.getElementById("status").classList.add(statuses[task.status]);
+            const prioEl = document.getElementById("priority");
+            if (prioEl) {
+                const prio = task.priority !== undefined && task.priority !== null ? parseInt(task.priority) : 0;
+                const prioLabels = ["0 - Very low", "1 - Low", "2 - Common", "3 - High", "4 - Very high"];
+                prioEl.innerText = prioLabels[prio] !== undefined ? prioLabels[prio] : prio;
+            }
 
 			if (task.status == 2) {
 				document.getElementById('progress-section').hidden = false;
@@ -508,6 +518,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (allowedStatuses.includes(STATUS.DELIVERED)) document.getElementById("delivered").style.display = 'block';
                     } else if (task.status == STATUS.FEEDBACK) {
                         if (allowedStatuses.includes(STATUS.STARTED)) document.getElementById("start").style.display = 'block';
+                    }
+
+                    if (!hasRight('change_task_status')) {
+                        statusButtons.forEach(btn => btn.style.display = 'none');
                     }
                 }
 
@@ -555,7 +569,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     preloadNote(note);
                 });
                 refreshPrismStyles();
-                globalLoaderComponent.render(false);
             });
 
             getResourcesByTask(current_task_id).then((resources) => {
@@ -678,6 +691,7 @@ function copyTask(){
 
 function editUser(element) {
     let userId = element.getAttribute('data-id');
+    redirect("userForm.html", false, [["no", userId]]);
 }
 
 function removeUser(element) {
@@ -724,6 +738,10 @@ function openProject(id) {
     redirect("projectDetails.html", true, [["no", id]]);
 }
 
+function editCurrentTask() {
+    redirect("taskForm.html", false, [["no", current_task_id]]);
+}
+
 function preloadNote(note) {
     const li = document.createElement('li');
     li.setAttribute('data-id', note.id);
@@ -763,7 +781,7 @@ function preloadResource(resource) {
     const delr = `<i class="fas fa-trash icon" title="Delete" onclick="removeResource(this.parentElement)"></i>`;
     li.innerHTML = `
         ${resource.path}
-        ${hasRight('read_ressource') ? see : ''}
+        ${hasRight('read_resource') ? see : ''}
         ${hasRight('download_ressource') ? down : ''}
         ${hasRight('delete_ressource') ? delr : ''}
     `;
@@ -854,7 +872,6 @@ async function generateTaskReport() {
     }
 
     if (typeof globalLoaderComponent !== 'undefined' && globalLoaderComponent) {
-        globalLoaderComponent.render(true);
     }
 
     try {
@@ -897,6 +914,9 @@ async function generateTaskReport() {
         const allowedStatusText = taskReportAllowedStatusValues(category).join(', ') || 'Not specified';
         const categoryDescription = categoryAvailable ? escapeTaskReportValue(category.description) : 'No category description available.';
         const categoryTarget = categoryAvailable ? escapeTaskReportValue(category.target) : 'N/A';
+        const taskPriority = task.priority !== undefined && task.priority !== null ? task.priority : 0;
+        const priorityLabels = ["0 - Très faible", "1 - Faible", "2 - Moyenne", "3 - Élevée", "4 - Très urgente"];
+        const taskPriorityLabel = priorityLabels[taskPriority] !== undefined ? priorityLabels[taskPriority] : taskPriority;
 
         const projectName = projectAvailable ? (project.name ? escapeTaskReportValue(project.name) : `Project #${escapeTaskReportValue(project.id)}`) : (task.project_id ? `Project #${escapeTaskReportValue(task.project_id)}` : 'Not assigned');
         const projectStatus = projectAvailable ? taskReportStatusBadge(taskReportStatuses[Number(project.status)] || 'N/A') : 'N/A';
@@ -972,6 +992,7 @@ async function generateTaskReport() {
     <pre class="report-description">${taskDescription || 'No description available.'}</pre>
     <p style="margin-bottom:15px;"><strong>Creator:</strong> ${creatorName} ${creatorEmail ? `(${creatorEmail})` : ''}</p>
     <p style="margin-bottom:15px;"><strong>Category:</strong> ${categoryName}${categoryAvailable ? ` (${escapeTaskReportValue(category.target)} / ${allowedStatusText})` : ''}</p>
+    <p style="margin-bottom:15px;"><strong>Priority:</strong> ${escapeTaskReportValue(taskPriorityLabel)}</p>
     <p style="margin-bottom:15px;"><strong>Parent Project:</strong> ${projectName}</p>
     <p style="margin-bottom:15px;"><strong>Current Status:</strong> ${taskReportStatusBadge(statusName)}</p>
     <p style="margin-bottom:15px;"><strong>Schedule:</strong> ${scheduleState} (planned start: ${startDate}, planned end: ${endDate})</p>
@@ -999,6 +1020,7 @@ async function generateTaskReport() {
       <tr><td>Status</td><td>${taskReportStatusBadge(statusName)}</td></tr>
       <tr><td>Creator</td><td>${creatorName} ${creatorEmail ? `(${creatorEmail})` : ''}</td></tr>
       <tr><td>Category</td><td>${categoryName}</td></tr>
+      <tr><td>Priority</td><td>${escapeTaskReportValue(taskPriorityLabel)}</td></tr>
       <tr><td>Parent Project</td><td>${projectName}</td></tr>
       <tr><td>Planned Start</td><td>${startDate}</td></tr>
       <tr><td>Planned End</td><td>${endDate}</td></tr>
@@ -1156,7 +1178,6 @@ ${pages.join('')}
         alert('An error occurred while generating the report!');
     } finally {
         if (typeof globalLoaderComponent !== 'undefined' && globalLoaderComponent) {
-            globalLoaderComponent.render(false);
         }
     }
 }
@@ -1195,8 +1216,7 @@ function saveNote() {
 
     document.getElementById("newNote").value = '';
     document.getElementById("noteCreation").style.display = 'none';
-    globalLoaderComponent.render(true);
-    
+
     if (edited_note_id == null) {
 		addNoteToTask(current_task_id, note, noteType).then((note) => {
 			const noteElement = preloadNote(note);
@@ -1206,11 +1226,9 @@ function saveNote() {
 				Prism.highlightElement(code);
 				code.classList.add("my-class");
 			});
-			globalLoaderComponent.render(false);
 		});
 	} else {
 		updateNote(edited_note_id, note).then((note) => {
-			globalLoaderComponent.render(false);
             location.reload();
 			/*const noteElement = changeNote(note);
 			const codeBlocks = noteElement.querySelectorAll("code");
@@ -1226,11 +1244,9 @@ function saveNote() {
 function seeResource(element) {
     let resId = element.getAttribute('data-id');
 
-	globalLoaderComponent.render(true);
     getRessource(resId).then((resource) => {
         path = resource.path;
         getRessourceUrl(path).then((url) => {
-			globalLoaderComponent.render(false);
             const popup = window.open('', 'popup', 'width=600,height=400,scrollbars=yes');
             if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.gif') || path.endsWith('.webp')) {
                 const img = document.createElement('img');
@@ -1329,12 +1345,10 @@ function uploadFileAsResource() {
 document.getElementById('fileInput').addEventListener('change', (event) => {
     const file = event.target.files[0];
 
-	globalLoaderComponent.render(true);
     uploadRessource(file).then((path) => {
         saveRessource('tr-' + current_task_id, path).then((response) => {
 			if (response != null) {
 				assignLastResourceToTask(current_task_id).then(() => {
-					globalLoaderComponent.render(false);
 					alert("Resource successfully added !");
 					location.reload();
 				})

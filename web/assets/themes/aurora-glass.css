@@ -1,0 +1,110 @@
+/* ===== THEME "AURORA GLASS" — verre dépoli, dégradés, très arrondi ===== */
+/* Change juste ces valeurs :                                                  */
+:root {
+	--h1: 265;           /* première teinte de l'aurore : 265 violet · 330 rose · 20 corail */
+	--h2: 190;           /* deuxième teinte : 190 cyan · 150 vert · 45 or */
+	--blur: 18px;        /* flou du verre (0px = plat, 30px = très laiteux) */
+	--r: 20px;           /* arrondi des cartes */
+	--sidebar-w: 256px;
+	--font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* ===== Palette ===== */
+:root {
+	--bg: hsl(240 45% 7%);
+	--surface: hsl(240 40% 100% / .06);
+	--surface-2: hsl(240 40% 100% / .09);
+	--surface-hover: hsl(240 40% 100% / .13);
+	--border: hsl(240 40% 100% / .12);
+	--border-strong: hsl(240 40% 100% / .22);
+	--text: #f2f4ff; --text-2: #b9bfdc; --text-3: #7f86ab;
+	--accent: hsl(var(--h2) 95% 66%);
+	--accent-hover: hsl(var(--h2) 95% 76%);
+	--accent-soft: hsl(var(--h2) 95% 66% / .14);
+	--accent-ring: hsl(var(--h2) 95% 66% / .35);
+	--on-accent: #ffffff;
+	--grad: linear-gradient(135deg, hsl(var(--h1) 85% 62%), hsl(var(--h2) 90% 55%));
+	--side-bg: hsl(240 40% 100% / .05); --side-bg-2: hsl(240 40% 100% / .03);
+	--side-text: #b9bfdc; --side-text-strong: #fff;
+	--side-hover: hsl(240 40% 100% / .08);
+	--side-active: hsl(var(--h2) 95% 66% / .16); --side-active-text: hsl(var(--h2) 95% 78%);
+	--side-border: hsl(240 40% 100% / .1);
+	--radius-sm: 10px; --radius: 14px; --radius-lg: var(--r);
+	--shadow-sm: 0 4px 16px rgba(0, 0, 0, .18); --shadow: 0 8px 32px rgba(0, 0, 0, .28);
+	--shadow-lg: 0 24px 60px rgba(0, 0, 0, .55);
+	--st-new: #a9b4ff;       --st-new-bg: hsl(235 90% 70% / .18);
+	--st-todo: #c4cbe6;      --st-todo-bg: hsl(225 30% 80% / .14);
+	--st-started: #8cc2ff;   --st-started-bg: hsl(212 100% 65% / .18);
+	--st-paused: #ffcb78;    --st-paused-bg: hsl(38 100% 60% / .16);
+	--st-testing: #d2adff;   --st-testing-bg: hsl(270 100% 70% / .2);
+	--st-finished: #7df0b0;  --st-finished-bg: hsl(150 80% 55% / .16);
+	--st-feedback: #ffb08a;  --st-feedback-bg: hsl(18 100% 62% / .16);
+	--st-delivered: #6fe3f2; --st-delivered-bg: hsl(188 90% 55% / .16);
+	--st-abandoned: #a3a9c4; --st-abandoned-bg: hsl(225 20% 70% / .13);
+	--danger: #ff6b8a; --danger-soft: hsl(345 100% 66% / .15);
+	--success: #5fe6a2; --success-soft: hsl(150 80% 55% / .15);
+	--warning: #ffbf5e; --warning-soft: hsl(38 100% 60% / .15);
+	color-scheme: dark;
+}
+
+/* ===== Aurore ===== */
+body {
+	background:
+		radial-gradient(700px 520px at 8% 6%, hsl(var(--h1) 90% 55% / .45), transparent 65%),
+		radial-gradient(760px 560px at 92% 12%, hsl(var(--h2) 90% 50% / .32), transparent 65%),
+		radial-gradient(800px 600px at 60% 105%, hsl(calc(var(--h1) + 60) 90% 55% / .3), transparent 65%),
+		var(--bg);
+	background-attachment: fixed;
+}
+.topbar { background: hsl(240 45% 8% / .45); backdrop-filter: blur(var(--blur)) saturate(160%); border-bottom-color: var(--border); }
+.sidebar { backdrop-filter: blur(var(--blur)) saturate(160%); }
+.sidebar-logo { background: var(--grad); border-radius: 12px; box-shadow: 0 6px 20px hsl(var(--h1) 90% 55% / .5); }
+.nav-link { border-radius: 12px; }
+.nav-link.active { box-shadow: inset 0 0 0 1px hsl(var(--h2) 95% 66% / .3); }
+.avatar-sm, .avatar { background: var(--grad); }
+
+/* ===== Titres ===== */
+h1 { font-weight: 800; letter-spacing: -.03em; background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; width: fit-content; }
+.project-container > h1, .page-header h1 { font-size: 2rem; }
+
+/* ===== Verre : cartes, tableaux, modales ===== */
+.form-container, .eval-report-container, .details, .assignments, .subprojects, .ideas, .tasks, .stat-card, .eval-stat-box, .status-section, .feature, .panel, table, #noteCreation, .search-bar-container {
+	background: var(--surface); border: 1px solid var(--border);
+	backdrop-filter: blur(var(--blur)) saturate(150%); -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+	box-shadow: var(--shadow-sm), inset 0 1px 0 hsl(0 0% 100% / .08);
+}
+.palette-box, .css-modal-box, .popup-content, .dropdown-menu { background: hsl(240 40% 12% / .92); backdrop-filter: blur(24px); border: 1px solid var(--border-strong); border-radius: var(--r); }
+select option { background: hsl(240 40% 12%); color: var(--text); }
+thead th { background: hsl(240 40% 100% / .04); color: var(--text-2); }
+tbody tr:hover td { background: hsl(240 40% 100% / .06); }
+.table-filter input, .quick-search { background: hsl(240 40% 100% / .06); }
+
+/* ===== Boutons : dégradé, pilules ===== */
+button, .btn { border-radius: 999px; background: var(--grad); color: #fff; border: none; padding: 0 18px; font-weight: 600; box-shadow: 0 6px 18px hsl(var(--h1) 90% 55% / .35); }
+button:hover, .btn:hover { background: var(--grad); color: #fff; filter: brightness(1.12); transform: translateY(-1px); box-shadow: 0 10px 26px hsl(var(--h1) 90% 55% / .5); }
+.btn-secondary, .pagination button { background: hsl(240 40% 100% / .08); color: var(--text); border: 1px solid var(--border-strong); box-shadow: none; backdrop-filter: blur(8px); }
+.btn-secondary:hover, .pagination button:hover { background: hsl(240 40% 100% / .16); filter: none; box-shadow: none; }
+.btn-danger { background: linear-gradient(135deg, #ff5f7e, #ff8a5c); box-shadow: 0 6px 18px rgba(255, 95, 126, .35); }
+.btn-success { background: linear-gradient(135deg, #2fd48a, #20b6c9); }
+.btn-warning { background: linear-gradient(135deg, #ffb340, #ff8a4c); }
+td .btn { background: hsl(240 40% 100% / .08); color: var(--text); box-shadow: none; border: 1px solid var(--border); }
+td .btn-primary { color: var(--accent); }
+td .btn:hover { filter: none; background: var(--grad); color: #fff; box-shadow: none; transform: none; }
+td .btn-danger { color: var(--danger); background: var(--danger-soft); }
+.icon, .icon-btn { border-radius: 50%; }
+.icon:hover { background: var(--accent-soft); }
+
+/* ===== Champs & pastilles ===== */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]), select, textarea, .form-field {
+	background: hsl(240 40% 100% / .06); border-radius: 14px; border-color: var(--border-strong);
+}
+input:focus, select:focus, textarea:focus { background: hsl(240 40% 100% / .1); box-shadow: 0 0 0 4px var(--accent-ring); }
+.accordion, .assignments li, .subprojects li, .ideas li, .tasks li, #permissions-list li { border-radius: 14px; background: hsl(240 40% 100% / .05); }
+.tab__label { background: hsl(240 40% 100% / .05); }
+.progress-container { height: 8px; background: hsl(240 40% 100% / .12); }
+.progress-bar { background: var(--grad); box-shadow: 0 0 14px hsl(var(--h2) 95% 60% / .6); }
+.checkbox-group label:has(input:checked), .checkbox-item:has(input:checked) { background: var(--grad); border-color: transparent; color: #fff; }
+.eval-stat-box { border-top-width: 1px; }
+.note-code, pre { background: hsl(240 45% 5% / .55) !important; }
+::selection { background: hsl(var(--h1) 90% 60% / .6); color: #fff; }
+.form-container > h1 { width: auto; background: none; -webkit-text-fill-color: var(--text); }

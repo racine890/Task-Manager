@@ -4,12 +4,21 @@ function onLoadColumns() { return ["Id", "Title", "Path"]; }
 function onLoadData(ressource) { return [ressource.id, ressource.title, ressource.path]; }
 
 function onLoadAction(ressource) {
-    return [
+    const actions = [
         { name: "View", func: "viewRessource", arg: ressource.path, right: "read_resource" },
-        { name: "Edit", func: "editRessource", arg: ressource.id, right: "update_resource" },
-        { name: "Delete", func: "deleteRessource", arg: ressource.id, color: "danger", right: "delete_resource" },
         { name: "Download", func: "download", arg: ressource.path, color: "success", right: "read_resource" }
     ];
+
+    const isOwner = ressource.creator == getCurrentUserId();
+
+    if (hasRight('update_resource') || (hasRight('update_my_resource') && isOwner)) {
+        actions.splice(1, 0, { name: "Edit", func: "editRessource", arg: ressource.id });
+    }
+    if (hasRight('delete_resource') || (hasRight('delete_my_resource') && isOwner)) {
+        actions.splice(2, 0, { name: "Delete", func: "deleteRessource", arg: ressource.id, color: "danger" });
+    }
+
+    return actions;
 }
 
 function editRessource(id) {

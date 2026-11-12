@@ -3,45 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasks Manager</title>
-    <link rel="stylesheet" href="assets/style/styles.css">
+    <title>Task Manager</title>
+    <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <link rel="stylesheet" href="assets/style/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/style/theme.css">
+    <script src="assets/scripts/custom-css.js"></script>
 </head>
-<body>
-    <header>
-        <div class="hero-image">
-            <div class="hero-text">
-                <h1>Tasks Manager</h1>
-                <a href="pages/auth.html"><button class="auth-button">Sign In</button></a>
-                <a href="pages/auth.html"><button class="register-button">Sign Up</button></a>
+<body class="no-shell">
+    <nav class="landing-nav">
+        <div class="auth-brand">
+            <span class="sidebar-logo"><i class="fas fa-check-double"></i></span>
+            Task Manager
+        </div>
+        <a class="btn btn-light" href="pages/auth.html">Sign in</a>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-inner">
+            <span class="hero-badge"><i class="fas fa-bolt"></i> Projects · Tasks · Reports</span>
+            <h1>Run your projects <em>without the chaos</em></h1>
+            <p>Plan, assign and follow every task from the first idea to delivery — with the reporting your team and your clients expect.</p>
+            <div class="hero-actions">
+                <a class="btn btn-lg" href="pages/auth.html">Sign in <i class="fas fa-arrow-right"></i></a>
+                <a class="btn btn-lg btn-light" href="pages/auth.html">Sign up</a>
             </div>
         </div>
     </header>
-    
-    <!--main>
-        <section class="projects">
-            <h2>Recently Opened</h2>
-            <div class="project-card">
-                <h3>Projet 1</h3>
-                <p>Description du projet 1.</p>
-            </div>
-            <div class="project-card">
-                <h3>Projet 2</h3>
-                <p>Description du projet 2.</p>
-            </div>
-            <div class="project-card">
-                <h3>Projet 3</h3>
-                <p>Description du projet 3.</p>
-            </div>
-            <div class="project-card">
-                <h3>Projet 4</h3>
-                <p>Description du projet 4.</p>
-            </div>
-        </section>
-    </main-->
 
-    <footer>
-        <p>&copy; 2024 Tasks Manager. All rights reserved.</p>
-    </footer>
+    <main class="features">
+        <article class="feature">
+            <i class="fas fa-diagram-project"></i>
+            <h3>Projects &amp; phases</h3>
+            <p>Break work into sub-projects, tasks and ideas, each with its own status and progress.</p>
+        </article>
+        <article class="feature">
+            <i class="fas fa-list-check"></i>
+            <h3>Focused task tracking</h3>
+            <p>Pin what matters, log notes with syntax highlighting and let the app pick your next task.</p>
+        </article>
+        <article class="feature">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <h3>Economic reports</h3>
+            <p>Evaluate hours, validate them and export clean PDF reports for your external projects.</p>
+        </article>
+        <article class="feature">
+            <i class="fas fa-user-shield"></i>
+            <h3>Rights &amp; roles</h3>
+            <p>Give each profile exactly the access it needs, from worker to product owner.</p>
+        </article>
+    </main>
+
+    <footer class="landing-foot">&copy; Task Manager. All rights reserved.</footer>
 </body>
 </html>
-

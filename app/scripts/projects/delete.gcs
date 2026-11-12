@@ -10,6 +10,12 @@ execute app/scripts/db/deleteProject.gcs
 
 SetVar *result evaluate({'msg': 'Project deleted successfully'})
 
+compare LASTTUPLE None
+if 5 then
+	SetVar *project_url 1
+	evaluate 'Project '+{LASTTUPLE}[1]+' have been deleted.' =>*arg_message_content
+	execute app/scripts/projects/notifyProjectWorker.gcs
+
 evaluate {*arg_author} + ' deleted the project: ' + {*arg_name} =>*log_text
 execute app/scripts/system/writeLog.gcs
 

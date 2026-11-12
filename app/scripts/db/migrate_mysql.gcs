@@ -9,6 +9,7 @@ GetTableElement 0 of LASTTUPLE
 SetVar *last_version LASTRESULT
 
 evaluate migrate({*last_version}, self.connect)
+
 close database
 end
 

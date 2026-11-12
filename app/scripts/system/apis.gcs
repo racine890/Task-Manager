@@ -54,6 +54,7 @@ expose /api/project/workers/{id} using *result from app/scripts/projects/getWork
 expose /api/project/workers/{pid}/{wid} using *result from app/scripts/projects/deleteWorkers.gcs with DELETE
 expose /api/project/workers/{pid}/{wid} using *result from app/scripts/projects/assignWorkers.gcs with POST
 expose /api/project/sub-projects/{pid}/{spid} using *result from app/scripts/projects/assignProject.gcs with POST
+expose /api/project/{id}/notify using *result from app/scripts/projects/notifyProjectWorker.gcs with POST
 expose /api/project/tasks/{id}/{tid} using *result from app/scripts/projects/assignTask.gcs with POST
 expose /api/project/sub-projects/{id} using *result from app/scripts/projects/unAssignProject.gcs with DELETE
 expose /api/project/sub-projects/{id} using *result from app/scripts/projects/getSubProjects.gcs with GET
@@ -90,5 +91,7 @@ expose /api/ressource/download using *result from app/scripts/ressources/downloa
 expose /api/config/get/{key} using *result from app/scripts/configs/getByKey.gcs with GET
 expose /api/config using *result from app/scripts/configs/update.gcs with PATCH
 expose /api/config/{start} using *result from app/scripts/configs/getPagination.gcs with GET
+
+expose /api/telegram/notify using *result from app/scripts/notify/send_notification.gcs with POST
 
 end

@@ -24,10 +24,13 @@ if $MISSING then
 	print val Error ------- Missing argument : *arg_role
 	end
 
+GetTableElement phone of API_DATA
+SetVar *arg_phone LASTRESULT
+
 evaluate [ {*arg_username}, {*arg_email} ]
 SetVar . *test_vars LASTRESULT
 
-evaluate [ {*arg_username}, '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', {*arg_pic}, {*arg_email} ]
+evaluate [ {*arg_username}, '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', {*arg_pic}, {*arg_email}, {*arg_phone} ]
 SetVar . *prepared_vars LASTRESULT
 
 SetVar LASTTUPLE evaluate(None)
@@ -65,7 +68,7 @@ select * from user where username = ? or email = ? limit 1;
 [/q]
 
 [i]
-insert into user( username, password, profile_pic, email ) values ( ?, ?, ?, ?) ;
+insert into user( username, password, profile_pic, email, phone ) values ( ?, ?, ?, ?, ?) ;
 [/i]
 
 [link]
