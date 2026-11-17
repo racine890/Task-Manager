@@ -7,7 +7,7 @@ For users :
 	You can install it :
 		Either from the sources (On a server or i don't know) :
 			- Cloning the repository
-			- Installing GC_tk on your system and adding the cores directory to your path (Get it there : https://gcenterburkina.com/sys_pages/page_programm.php?id=9)
+			- Installing GC_tk on your system and adding the cores directory to your path (Get it there : https://mega.nz/file/pltWlKrb#l1Ors7EEmHEVJdizA_S190gJjxSU67CNmctVks0PufY for linux or https://mega.nz/file/kktGSDxR#Mprq1S57ILIH7CxAFkx6eFyqea0rAreP9dHDMrYMcYA for windows)
 			- Access the root directory (where you can access home.ch) and run "GC_tk" in your terminal.
 
 		Either through the GC. Launcher App Store
