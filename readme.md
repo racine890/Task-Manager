@@ -1,6 +1,8 @@
-Task Manager V3
+# Task Manager V3
 
-An app for task Management
+![Task Manager](https://github.com/racine890/Task-Manager/blob/c499d2d01170100abb2c75a6a42b0149e35dd5a6/web/assets/themes/previews/paper.png)
+
+**An app for task Management**
 
 For users :
 
