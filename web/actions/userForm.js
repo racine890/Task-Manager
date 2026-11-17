@@ -102,6 +102,14 @@ function buildPrompt(map) {
 	text += 'Username: ' + username + '\n';
 	text += 'Password: ' + password + '\n';
 	text += '\n';
+	text += 'HOW WE WILL WORK TOGETHER:\n';
+	text += 'When i start a new conversation, I will give you the task id and you will query the API to get the task details.\n';
+	text += 'Once you have the task details, you will read it and propose a plan to complete the task.\n';
+	text += 'When the plan is ready, you will update the task with your plan and set the status to "Started".\n';
+	text += 'You will then work on the task, updating the task progress and notes as you go.\n';
+	text += 'If you find any issues or blockers, you will update the task notes and set the status to "Paused".\n';
+	text += 'You can also make suggestions for new ideas by creating new ideas through the API.\n';
+	text += '\n';
 	text += 'AUTHENTICATION:\n';
 	text += '  Only POST /api/auth is public. It answers {"token": "<jwt>", "rights": [...]}.\n';
 	text += '  Send the token on every other request with the header "Authorization: Bearer <token>".\n';
